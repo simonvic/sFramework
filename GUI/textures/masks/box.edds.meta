@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{D89FCA4E3D8CEF89}MyMODS/sVisual/GUI/textures/masks/box.edds"
+ Author "simonvic"
+ ChangeDate 1861315321
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "box.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

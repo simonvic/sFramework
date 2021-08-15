@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{9E3846B68EAD6E39}MyMODS/sVisual/GUI/textures/masks/linear_down_top.edds"
+ Author "simonvic"
+ ChangeDate 383347449
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "linear_down_top.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

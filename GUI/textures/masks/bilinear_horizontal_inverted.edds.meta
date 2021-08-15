@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{71AFE7B14B1785BA}MyMODS/sVisual/GUI/textures/masks/bilinear_horizontal_inverted.edds"
+ Author "simonvic"
+ ChangeDate 1157720825
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "bilinear_horizontal_inverted.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

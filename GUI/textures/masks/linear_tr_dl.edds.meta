@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{0CBA85217AE43F1B}MyMODS/sVisual/GUI/textures/masks/linear_tr_dl.edds"
+ Author "simonvic"
+ ChangeDate 509700857
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "linear_tr_dl.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

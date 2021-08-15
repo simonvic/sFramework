@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{A65AEBFAC8B4D960}MyMODS/sVisual/GUI/textures/masks/linear_right_left.edds"
+ Author "simonvic"
+ ChangeDate 1857121017
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "linear_right_left.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

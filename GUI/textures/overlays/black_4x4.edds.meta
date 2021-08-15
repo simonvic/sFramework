@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{6725A53274F5E83F}MyMODS/sVisual/GUI/textures/overlays/black_4x4.edds"
+ Author "simonvic"
+ ChangeDate -1686361351
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "black_4x4.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

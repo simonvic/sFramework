@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{2554CF99D7BD9641}MyMODS/sVisual/GUI/textures/masks/binoculars_inverted.edds"
+ Author "simonvic"
+ ChangeDate -1751373063
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "binoculars_inverted.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

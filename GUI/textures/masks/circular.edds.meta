@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{717FBFF9005DE08D}MyMODS/sVisual/GUI/textures/masks/circular.edds"
+ Author "simonvic"
+ ChangeDate 787049209
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "circular.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

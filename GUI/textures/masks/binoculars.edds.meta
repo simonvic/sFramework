@@ -1,0 +1,16 @@
+MetaFileClass {
+ Name "{CC73E9B9567BBBEB}MyMODS/sVisual/GUI/textures/masks/binoculars.edds"
+ Author "simonvic"
+ ChangeDate 1736190713
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "binoculars.tga"
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

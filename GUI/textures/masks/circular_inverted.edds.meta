@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{2E468EB486AD82B8}MyMODS/sVisual/GUI/textures/masks/circular_inverted.edds"
+ Author "simonvic"
+ ChangeDate 1457613561
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "circular_inverted.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

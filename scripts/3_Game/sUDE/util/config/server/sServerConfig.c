@@ -1,0 +1,6 @@
+/*
+*	@Singleton
+*/
+class SServerConfig{
+	
+}

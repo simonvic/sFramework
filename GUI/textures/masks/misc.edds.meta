@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{A891054DB47F7D60}MyMODS/sVisual/GUI/textures/masks/misc.edds"
+ Author "simonvic"
+ ChangeDate 632875769
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "misc.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

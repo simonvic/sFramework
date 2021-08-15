@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{F8B2C2B97739576F}MyMODS/sVisual/GUI/textures/masks/linear_tl_dr.edds"
+ Author "simonvic"
+ ChangeDate 1084320505
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "linear_tl_dr.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

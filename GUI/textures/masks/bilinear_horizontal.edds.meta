@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{5460384CF467D411}MyMODS/sVisual/GUI/textures/masks/bilinear_horizontal.edds"
+ Author "simonvic"
+ ChangeDate 285829881
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "bilinear_horizontal.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

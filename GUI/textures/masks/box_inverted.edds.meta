@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{CAB3D340F3C59321}MyMODS/sVisual/GUI/textures/masks/box_inverted.edds"
+ Author "simonvic"
+ ChangeDate 250702585
+ Configurations {
+  TGAResourceClass PC {
+   SourceFile "box_inverted.tga"
+   Conversion DXTCompression
+  }
+  TGAResourceClass XBOX_ONE : PC {
+  }
+  TGAResourceClass PS4 : PC {
+  }
+  TGAResourceClass LINUX : PC {
+  }
+ }
+}

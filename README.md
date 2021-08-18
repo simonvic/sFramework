@@ -1,7 +1,7 @@
 # sFramework
 
 <p align="center">
-        <img src="https://imgur.com/cQvynpF.png" width="50%">
+        <img src="https://imgur.com/5DNmgGU.png" width="50%">
         <br>
 		<img src="https://img.shields.io/github/v/tag/simonvic/sFramework?color=F0544C&label=latest%20stable%20release&style=for-the-badge">
         <br>

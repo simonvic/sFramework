@@ -10,6 +10,7 @@ class SLog{
 		
 	static bool overrideEnabled = true;
 	static bool filePrintEnabled = true;
+	static bool beautify = true;
 	
 	/**
 	*	$profile
@@ -59,7 +60,11 @@ class SLog{
 	}
 	
 	static void d(Class variable, string caller = "", int indentation = 0, bool enabled = true){
-		SLog.d(toString(variable), caller, indentation, enabled);
+		if(variable){
+			SLog.d(toString(variable), caller, indentation, enabled);
+		}else{
+			SLog.d("NULL", caller, indentation, enabled);
+		}
 	}
 	
 	static void d(typename variable, string caller = "", int indentation = 0, bool enabled = true){
@@ -331,7 +336,7 @@ class SLog{
 	}
 		
 	static string toString(Class variable){
-		return string.Format(VARIABLE_PRINT_FORMAT, variable.Type().ToString(), variable.ToString());
+		return string.Format(VARIABLE_PRINT_FORMAT, "", variable.ToString());
 	}
 	
 	static string toString(typename variable){
@@ -405,6 +410,7 @@ class SLog{
 		for(int i=0; i<indentation; i++){
 			temp += "│\t";
 		}
+		if(beautify && indentation > 0 ) temp += "├ ";
 		return temp;
 	}
 	

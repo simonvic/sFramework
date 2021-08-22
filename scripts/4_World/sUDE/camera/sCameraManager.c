@@ -1,4 +1,4 @@
-class SCameraManager {
+class SCameraManager : Managed {
 	
 	protected float m_time;
 	

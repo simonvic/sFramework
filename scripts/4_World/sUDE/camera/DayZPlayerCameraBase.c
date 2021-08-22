@@ -15,13 +15,19 @@ modded class DayZPlayerCameraBase{
 		if(DayZPlayerCameraBase.Cast(pPrevCamera)){
 			m_enteringTransitionTime = DayZPlayerCameras.GetTransitionTime(DayZPlayerCameraBase.Cast(pPrevCamera).getRegisteredCameraID(), this.getRegisteredCameraID());
 		}
+		GetGame().GetCallQueue(CALL_CATEGORY_GAMEPLAY).CallLater(this.onTransitionComplete, getTransitionTime() * 1000, false, pPrevCamera, pPrevCameraResult);
 	}
 	
 	override void OnUpdate(float pDt, out DayZPlayerCameraResult pOutResult){
 		super.OnUpdate(pDt, pOutResult);
-		m_camManager.onUpdate(pDt, pOutResult);		
+		m_camManager.onUpdate(pDt, pOutResult);  
 	}
 	
+	void onTransitionComplete(DayZPlayerCamera pPrevCamera, DayZPlayerCameraResult pPrevCameraResult){}
+	
+	float getTransitionTime(){
+		return m_enteringTransitionTime;
+	}
 	
 	int getRegisteredCameraID(){
 		return -1;

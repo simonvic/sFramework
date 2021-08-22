@@ -359,34 +359,7 @@ class SCameraOverlaysManager {
 			co.debugPrint(1);
 		}
 		SLog.d("-------------- tree debug --------------");
-		debugPrintOverlayRoot(m_root);
-	}
-	
-	void debugPrintOverlayRoot(Widget root, int depth = 0){
-		if(!root) return;
-		SLog.d(""+root.GetName(),"",depth);
-		
-		if(root.GetChildren()){
-			debugPrintOverlayRoot(root.GetChildren(), depth + 1);
-		}
-		
-		if(root.GetSibling() && depth > 0){
-			debugPrintOverlayRoot(root.GetSibling(), depth);
-		}
-	}
-		
-	static void debugPrintLayout(Widget root, int depth = 0){
-		if(!root) return;
-		SLog.d(""+root.GetName(),"",depth);
-		
-		if(root.GetChildren()){
-			debugPrintLayout(root.GetChildren(), depth + 1);
-		}
-		
-		if(root.GetSibling()){
-			debugPrintLayout(root.GetSibling(), depth);
-		}
-	}
-	
+		SDebug.printLayoutTree(m_root);
+	}		
 
 }

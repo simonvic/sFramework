@@ -22,6 +22,19 @@ class SDebug {
 		Debug.DestroyAllShapes();
 	}
 	
+	static void printLayoutTree(Widget root, int depth = 0){
+		if(!root) return;
+		SLog.d(""+root.GetName(),"",depth);
+		
+		if(root.GetChildren()){
+			printLayoutTree(root.GetChildren(), depth + 1);
+		}
+		
+		if(root.GetSibling()){
+			printLayoutTree(root.GetSibling(), depth);
+		}
+	}
+	
 	
 
 }

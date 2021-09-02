@@ -41,7 +41,7 @@ class SCameraOverlaysManager {
 	}
 
 	/**
-	*	@brief Remove an overlay, decrease counter if it has been requested multiple time
+	*	@brief Remove an overlay
 	*	 @param overlay \p SCameraOverlay - overlay to remove
 	*/
 	void deactivate(SCameraOverlay overlay){

@@ -1,7 +1,7 @@
 typedef set<ref PPEParams> TPPEParamsList;
 typedef set<ref PPEAnimatedParams> TPPEAnimatedParamsList;
 
-class PPEManager {
+class SPPEManager {
 	
 	protected static float m_time;
 	
@@ -45,11 +45,11 @@ class PPEManager {
 	//				INIT
 	////////////////////////////////////////////////////////////
 	
-	void PPEManager(){
+	void SPPEManager(){
 		
 	}
 	
-	void ~PPEManager(){
+	void ~SPPEManager(){
 		onDestroy();
 	}
 	
@@ -107,7 +107,7 @@ class PPEManager {
 	*/
 	static void activate(PPEParams params){
 		if(GetGame().IsServer() && GetGame().IsMultiplayer()){
-			SLog.w("ACTIVATING " + params + " on server!","PPEManager::activate");
+			SLog.w("ACTIVATING " + params + " on server!","SPPEManager::activate");
 			return;
 		}
 		if(params.IsInherited(PPEAnimatedParams)){
@@ -126,7 +126,7 @@ class PPEManager {
 	*/
 	static void deactivate(PPEParams params){
 		if(GetGame().IsServer() && GetGame().IsMultiplayer()){
-			SLog.w("DEACTIVATING " + params + " on server!","PPEManager::deactivate");
+			SLog.w("DEACTIVATING " + params + " on server!","SPPEManager::deactivate");
 			return;
 		}
 		if(params.IsInherited(PPEAnimatedParams)){
@@ -234,7 +234,7 @@ class PPEManager {
 
 		//if the final result of PPEffects are altered, return to default values at RESET_SPEED
 		if(!m_resultPPE.equals(m_defaultPPE)){
-			m_resultPPE.merge(m_defaultPPE, PPEMergeFlags.SIMPLE, PPEConstants.RESET_SPEED);
+			m_resultPPE.merge(m_defaultPPE, PPEMergeFlags.SIMPLE, SPPEConstants.RESET_SPEED);
 		}
 		
 		//Apply persistent PPEffects
@@ -255,7 +255,7 @@ class PPEManager {
 		
 		//Apply vanilla effects
 		//if(m_vanillaPPE.hasChanged()){
-			m_resultPPE.merge(m_vanillaPPE, PPEMergeFlags.MAX, PPEConstants.VANILLA_COEFF);
+			m_resultPPE.merge(m_vanillaPPE, PPEMergeFlags.MAX, SPPEConstants.VANILLA_COEFF);
 		//}
 		
 	}
@@ -519,7 +519,7 @@ class PPEManager {
 	static void setDDOFBlurStrength(float blurStrength){
 		if(blurStrength <= 0){
 			m_DDOF.blurStrength = 0;
-			PPEManager.resetDDOF(true);
+			SPPEManager.resetDDOF(true);
 		}else{
 			m_DDOF.blurStrength = blurStrength;
 		}

@@ -112,7 +112,7 @@ class PPEParams {
 	}
 	
 	void ~PPEParams(){
-		//PPEManager.deactivate(this);
+		//SPPEManager.deactivate(this);
 	}
 	
 	void onInit(){}
@@ -212,9 +212,9 @@ class PPEParams {
 			foreach(auto ppeParamName, auto ppeParamValue : ppeParam){
 				TPPEColor prevColor = getColorParam(ppeMaterial, ppeParamName);
 				if(!prevColor){ 
-					prevColor = PPEManager.getColorDefaultValue(ppeMaterial, ppeParamName);
+					prevColor = SPPEManager.getColorDefaultValue(ppeMaterial, ppeParamName);
 				}
-				setParam(ppeMaterial, ppeParamName, PPEManager.mixColors(ppeParamValue, prevColor, coeff ));
+				setParam(ppeMaterial, ppeParamName, SPPEManager.mixColors(ppeParamValue, prevColor, coeff ));
 			}
 		}
 	}
@@ -329,13 +329,13 @@ class PPEParams {
 	*/
 	void resetToDefault(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName){
 		
-		TPPEColor colorDefault = PPEManager.getColorDefaultValue(ppeMaterial,ppeParamName);		
+		TPPEColor colorDefault = SPPEManager.getColorDefaultValue(ppeMaterial,ppeParamName);		
 		if(colorDefault) {
 			setParam(ppeMaterial, ppeParamName, colorDefault);
 			return;
 		}
 		
-		float floatDefault = PPEManager.getFloatDefaultValue(ppeMaterial,ppeParamName);	
+		float floatDefault = SPPEManager.getFloatDefaultValue(ppeMaterial,ppeParamName);	
 		setParam(ppeMaterial, ppeParamName, floatDefault);
 	}
 	
@@ -407,7 +407,7 @@ class PPEParams {
 			
 			foreach(auto ppeParamName, auto ppeParamValue : ppeParam){
 				//if the parameter value is different				
-				if( !SMath.equal(floatParams[ppeMaterial][ppeParamName], m_params[ppeMaterial][ppeParamName], PPEConstants.EPSILON) ){
+				if( !SMath.equal(floatParams[ppeMaterial][ppeParamName], m_params[ppeMaterial][ppeParamName], SPPEConstants.EPSILON) ){
 					return false;
 				}
 			}
@@ -424,7 +424,7 @@ class PPEParams {
 			}
 			foreach(auto ppeParamName, auto ppeParamValue : ppeParam){
 				//if the parameter value is different
-				if( !SMath.equal(colorParams[ppeMaterial][ppeParamName], m_colorParams[ppeMaterial][ppeParamName], PPEConstants.EPSILON) ){ 
+				if( !SMath.equal(colorParams[ppeMaterial][ppeParamName], m_colorParams[ppeMaterial][ppeParamName], SPPEConstants.EPSILON) ){ 
 					return false;
 				}
 			}
@@ -486,7 +486,7 @@ class PPEParams {
 	* 	@param color \p SColor - Color of vignette
 	*/
 	void setVignette(float intensity, SColor color){
-		setVignette(intensity, PPEManager.getPPEColor(color));
+		setVignette(intensity, SPPEManager.getPPEColor(color));
 	}
 	
 	/**
@@ -510,7 +510,7 @@ class PPEParams {
 	* 	@param color \p SColor - Color of vignette
 	*/
 	void setVignetteColor(SColor color){
-		setVignetteColor(PPEManager.getPPEColor(color));
+		setVignetteColor(SPPEManager.getPPEColor(color));
 	}
 	
 	
@@ -534,7 +534,7 @@ class PPEParams {
 	* 	@param color \p SColor - Color of overlay
 	*/
 	void setOverlay(float factor, SColor color){
-		setOverlay(factor, PPEManager.getPPEColor(color));
+		setOverlay(factor, SPPEManager.getPPEColor(color));
 	}
 	
 	/**
@@ -558,7 +558,7 @@ class PPEParams {
 	* 	@param color \p SColor - Color of overlay
 	*/
 	void setOverlayColor(SColor color){
-		setOverlayColor(PPEManager.getPPEColor(color));
+		setOverlayColor(SPPEManager.getPPEColor(color));
 	}
 	
 	
@@ -860,7 +860,7 @@ class PPEParams {
 	* 	@param colorization \p SColor - Some kind of instagram color effect lol (pretty cool)
 	*/
 	void setCameraEffects(float saturation, SColor colorization){
-		setCameraEffects(saturation, PPEManager.getPPEColor(colorization));
+		setCameraEffects(saturation, SPPEManager.getPPEColor(colorization));
 	}
 	
 	/**
@@ -884,7 +884,7 @@ class PPEParams {
 	* 	@param colorization \p SColor - Some kind of instagram color effect lol (pretty cool)
 	*/
 	void setColorization(SColor colorization){
-		setColorization(PPEManager.getPPEColor(colorization));
+		setColorization(SPPEManager.getPPEColor(colorization));
 	}
 	
 	

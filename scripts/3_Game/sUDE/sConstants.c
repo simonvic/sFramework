@@ -1,4 +1,4 @@
-class PPEConstants{
+class SPPEConstants{
 	static const float RESET_SPEED = 0.95; //how slow post process effects will return to normal. (0.0 = immediate | 0.5 = almost immediate | 0.95 = normal | 0.999 very slow)
 	static const float VANILLA_COEFF = 0.91; //coefficient used when merging with vanilla values. (0.1 = very high | 0.5 = high | 0.90 normal | 0.999 very low)
 	

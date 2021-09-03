@@ -11,6 +11,10 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	
 	void onBuild();
 	
+	
+	
+	
+	
 	protected void initOption(out SSliderWidget slider, string name, float value){
 		slider = new SSliderWidget(m_root, name, value, this);
 	}
@@ -20,6 +24,24 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		checkbox.SetChecked(value);
 		checkbox.SetHandler(this);
 	}
+	
+	
+		
+	protected void lockOption(SSliderWidget slider){
+		lockOption(slider.getSliderWidget());
+		
+		TextWidget txtWidget = slider.getTextWidget();
+		txtWidget.SetText("" + slider.getValue() + " ( #STR_SUDE_LAYOUT_OPTIONS_LOCKED )");
+		lockOption(txtWidget);
+	}
+	
+	protected void lockOption(Widget widget){
+		widget.Enable(false);
+	}
+		
+	
+	
+	
 		
 	override bool OnChange(Widget w, int x, int y, bool finished){
 		if(!w) return false;

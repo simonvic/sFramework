@@ -87,6 +87,17 @@ class PluginSDebug extends PluginBase {
 		}
 	}
 	
+	static void spawnProneBoris(){
+		SurvivorBase boris = SurvivorBase.Cast(GetGame().CreateObject("SurvivorM_Boris",simonvic.GetPosition() + "1 2 1"));
+		boris.SetOrientation("0 0 0");
+		HumanCommandMove hcm = boris.StartCommand_Move();
+		Print(hcm);
+		if(hcm){
+			GetGame().GetCallQueue(CALL_CATEGORY_GAMEPLAY).CallLater(hcm.ForceStance, 1000, false, DayZPlayerConstants.STANCEIDX_PRONE);
+			hcm.ForceStance(DayZPlayerConstants.STANCEIDX_PRONE);
+		}
+	}
+	
 	static void spawnDefaultBorisDummies(){
 		PluginSDebug.spawnBorisDummies(simonvic.GetPosition(), {
 			25,

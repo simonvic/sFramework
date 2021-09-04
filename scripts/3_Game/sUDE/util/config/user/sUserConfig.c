@@ -35,7 +35,7 @@ class SUserConfig{
 		// Load config
 		moduleCfg.load();
 		modulesConfigs.Set(moduleType, moduleCfg);
-		SLog.i("Done","",1);
+		SLog.i("Done -> " + moduleCfg,"",1);
 	}
 	
 	/**

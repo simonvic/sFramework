@@ -1,3 +1,4 @@
+//this is needed to circumvent the horrendous hierarchy of DayZPlayerCamera...
 class SCameraManager : Managed {
 	
 	protected float m_time;
@@ -6,12 +7,7 @@ class SCameraManager : Managed {
 	protected DayZPlayerCameraBase m_camera;
 	protected PlayerBase m_player;
 	
-	private static ref SCameraManager INSTANCE = new SCameraManager();
-	static SCameraManager getInstance(){
-		return INSTANCE;
-	}
-	
-	private void SCameraManager(){
+	void SCameraManager(){
 		onInit();
 	}
 	
@@ -35,10 +31,6 @@ class SCameraManager : Managed {
 	
 	bool isCameraTransitioning(){
 		return m_player.IsCameraBlending();
-	}
-	
-	float getHeadLeanAngle(){
-		return 0;
 	}
 	
 }

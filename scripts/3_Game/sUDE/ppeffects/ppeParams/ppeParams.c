@@ -662,6 +662,15 @@ class PPEParams {
 	
 	/**
 	* @brief Quickly set chromatic aberration parameters
+	* 	@param power \p float - Horizontal and Vertical intensity
+	*/
+	void setChromAber(float power){
+		setChromAber(power, power);
+		
+	}
+	
+	/**
+	* @brief Quickly set chromatic aberration parameters
 	* 	@param powerX \p float - Horizontal intensity
 	* 	@param powerY \p float - Vertical intensity
 	*/

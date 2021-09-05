@@ -1,12 +1,12 @@
 typedef string TPPEMaterial;
-typedef string TPPEParamName; //name of the post process effect parameter
+typedef string TPPEParamName;   // name of the post process effect parameter
 typedef array<float> TPPEColor; // dynamic array of float representing RGBA color
 
-typedef map<TPPEParamName, float> TPPEFloatParams; //float post process effect parameter
-typedef map<TPPEParamName, ref TPPEColor> TPPEColorParams; //RGBA post process effect parameter
+typedef map<TPPEParamName, float> TPPEFloatParams; // float post process effect parameter
+typedef map<TPPEParamName, ref TPPEColor> TPPEColorParams; // RGBA post process effect parameter
 
-typedef map<TPPEMaterial, ref TPPEFloatParams> TPPEFloatParamsMap; //map of Material and its float parameters
-typedef map<TPPEMaterial, ref TPPEColorParams> TPPEColorParamsMap; //map of Material and its color parameters (because fuck generics lol)
+typedef map<TPPEMaterial, ref TPPEFloatParams> TPPEFloatParamsMap; // map of Material and its float parameters
+typedef map<TPPEMaterial, ref TPPEColorParams> TPPEColorParamsMap; // map of Material and its color parameters (because fuck generics lol)
 
 typedef array<ref PPEMaterialPresetBase> TPPEMaterialPresets;
 
@@ -23,17 +23,17 @@ enum PPEMergeFlags {
 	INTERSECTION = 64
 }
 
-class MaterialNames {
-	static const TPPEMaterial GLOW = "Graphics/Materials/postprocess/glow";
-	static const TPPEMaterial RADIAL_BLUR = "graphics/materials/postprocess/radialblur";
-	static const TPPEMaterial MOTION_BLUR = "graphics/materials/postprocess/rotblur";
-	static const TPPEMaterial GAUSS_BLUR = "graphics/materials/postprocess/gauss";
-	static const TPPEMaterial CHROM_ABER = "graphics/materials/postprocess/chromaber";
-	static const TPPEMaterial FILM_GRAIN = "Graphics/Materials/postprocess/filmgrainNV";
-	static const TPPEMaterial GODRAYS_SUN = "graphics/materials/postprocess/godrayssun";
+class PPEMaterialsNames {
+	static const TPPEMaterial GLOW             = "Graphics/Materials/postprocess/glow";
+	static const TPPEMaterial RADIAL_BLUR      = "graphics/materials/postprocess/radialblur";
+	static const TPPEMaterial MOTION_BLUR      = "graphics/materials/postprocess/rotblur";
+	static const TPPEMaterial GAUSS_BLUR       = "graphics/materials/postprocess/gauss";
+	static const TPPEMaterial CHROM_ABER       = "graphics/materials/postprocess/chromaber";
+	static const TPPEMaterial FILM_GRAIN       = "Graphics/Materials/postprocess/filmgrainNV";
+	static const TPPEMaterial GODRAYS_SUN      = "graphics/materials/postprocess/godrayssun";
 	static const TPPEMaterial GODRAYS_SUN_MASK = "graphics/materials/postprocess/godrayssunmask";
-	static const TPPEMaterial HBAO = "graphics/materials/postprocess/hbao";
-	static const TPPEMaterial RAIN = "graphics/materials/postprocess/rain";
+	static const TPPEMaterial HBAO             = "graphics/materials/postprocess/hbao";
+	static const TPPEMaterial RAIN             = "graphics/materials/postprocess/rain";
 }
 
 class PPEParamNames { //just a precaution for future updates... because who knows :shrug:
@@ -513,7 +513,7 @@ class PPEParams : Managed {
 	* 	@param intensity \p float - Intensity of vignette
 	*/
 	void setVignetteIntensity(float intensity){
-		setParam(MaterialNames.GLOW, PPEParamNames.VIGNETTE_STRENGTH, intensity);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.VIGNETTE_STRENGTH, intensity);
 	}
 	
 	/**
@@ -521,7 +521,7 @@ class PPEParams : Managed {
 	* 	@param color \p TPPEColor - Color of vignette
 	*/
 	void setVignetteColor(TPPEColor color){
-		setParam(MaterialNames.GLOW, PPEParamNames.VIGNETTE_COLOR, color);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.VIGNETTE_COLOR, color);
 	}
 	
 	/**
@@ -561,7 +561,7 @@ class PPEParams : Managed {
 	* 	@param factor \p float - Factor(strength?) of overlay
 	*/
 	void setOverlayFactor(float factor){
-		setParam(MaterialNames.GLOW, PPEParamNames.OVERLAY_FACTOR, factor);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.OVERLAY_FACTOR, factor);
 	}
 	
 	/**
@@ -569,7 +569,7 @@ class PPEParams : Managed {
 	* 	@param color \p TPPEColor - Color of overlay
 	*/
 	void setOverlayColor(TPPEColor color){
-		setParam(MaterialNames.GLOW, PPEParamNames.OVERLAY_COLOR, color);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.OVERLAY_COLOR, color);
 	}
 	
 	/**
@@ -603,7 +603,7 @@ class PPEParams : Managed {
 	* 	@param powerX \p float - Horizontal strength
 	*/
 	void setRadialBlurPowerX(float powerX){
-		setParam(MaterialNames.RADIAL_BLUR, PPEParamNames.RADIAL_BLUR_POWER_X, powerX);			
+		setParam(PPEMaterialsNames.RADIAL_BLUR, PPEParamNames.RADIAL_BLUR_POWER_X, powerX);			
 	}
 	
 	/**
@@ -611,7 +611,7 @@ class PPEParams : Managed {
 	* 	@param powerY \p float - Vertical strength
 	*/
 	void setRadialBlurPowerY(float powerY){
-		setParam(MaterialNames.RADIAL_BLUR, PPEParamNames.RADIAL_BLUR_POWER_Y, powerY);			
+		setParam(PPEMaterialsNames.RADIAL_BLUR, PPEParamNames.RADIAL_BLUR_POWER_Y, powerY);			
 	}
 	
 	/**
@@ -619,7 +619,7 @@ class PPEParams : Managed {
 	* 	@param offsetX \p float - Horizontal offset
 	*/
 	void setRadialBlurOffsetX(float offsetX){
-		setParam(MaterialNames.RADIAL_BLUR, PPEParamNames.RADIAL_BLUR_OFFSET_X, offsetX);
+		setParam(PPEMaterialsNames.RADIAL_BLUR, PPEParamNames.RADIAL_BLUR_OFFSET_X, offsetX);
 	}
 	
 	/**
@@ -627,7 +627,7 @@ class PPEParams : Managed {
 	* 	@param offsetY \p float - Vertical offset
 	*/
 	void setRadialBlurOffsetY(float offsetY){
-		setParam(MaterialNames.RADIAL_BLUR, PPEParamNames.RADIAL_BLUR_OFFSET_Y, offsetY);
+		setParam(PPEMaterialsNames.RADIAL_BLUR, PPEParamNames.RADIAL_BLUR_OFFSET_Y, offsetY);
 	}
 	
 	
@@ -650,7 +650,7 @@ class PPEParams : Managed {
 	* 	@param sharpness \p float - Sharpness
 	*/
 	void setFilmGrainSharpness(float sharpness){
-		setParam(MaterialNames.FILM_GRAIN, PPEParamNames.FILM_GRAIN_SHARPNESS, sharpness);		
+		setParam(PPEMaterialsNames.FILM_GRAIN, PPEParamNames.FILM_GRAIN_SHARPNESS, sharpness);		
 	}
 	
 	/**
@@ -658,7 +658,7 @@ class PPEParams : Managed {
 	* 	@param grainSize \p float - Grain size
 	*/
 	void setFilmGrainSize(float grainSize){
-		setParam(MaterialNames.FILM_GRAIN, PPEParamNames.FILM_GRAIN_GRAIN_SIZE, grainSize);
+		setParam(PPEMaterialsNames.FILM_GRAIN, PPEParamNames.FILM_GRAIN_GRAIN_SIZE, grainSize);
 	}
 	
 	
@@ -672,7 +672,7 @@ class PPEParams : Managed {
 	* 	@param intensity \p float - Intensity
 	*/
 	void setGausBlur(float intensity){
-		setParam(MaterialNames.GAUSS_BLUR, PPEParamNames.GAUSS_BLUR_INTENSITY, intensity);
+		setParam(PPEMaterialsNames.GAUSS_BLUR, PPEParamNames.GAUSS_BLUR_INTENSITY, intensity);
 	}
 	
 	
@@ -703,7 +703,7 @@ class PPEParams : Managed {
 	* 	@param powerX \p float - Horizontal intensity
 	*/
 	void setChromAberPowerX(float powerX){
-		setParam(MaterialNames.CHROM_ABER, PPEParamNames.CHROM_ABER_POWER_X, powerX);
+		setParam(PPEMaterialsNames.CHROM_ABER, PPEParamNames.CHROM_ABER_POWER_X, powerX);
 	}
 	
 	/**
@@ -711,7 +711,7 @@ class PPEParams : Managed {
 	* 	@param powerY \p float - Vertical intensity
 	*/
 	void setChromAberPowerY(float powerY){
-		setParam(MaterialNames.CHROM_ABER, PPEParamNames.CHROM_ABER_POWER_Y, powerY);
+		setParam(PPEMaterialsNames.CHROM_ABER, PPEParamNames.CHROM_ABER_POWER_Y, powerY);
 	}
 	
 	
@@ -738,7 +738,7 @@ class PPEParams : Managed {
 	* 	@param intensity \p float - Magnification power
 	*/
 	void setLensIntensity(float intensity){
-		setParam(MaterialNames.GLOW, PPEParamNames.LENS_DISTORT, intensity);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.LENS_DISTORT, intensity);
 	}
 	
 	/**
@@ -746,7 +746,7 @@ class PPEParams : Managed {
 	* 	@param centerX \p float - Horizontal screen position
 	*/
 	void setLensCenterX(float centerX){
-		setParam(MaterialNames.GLOW, PPEParamNames.LENS_CENTER_X, centerX);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.LENS_CENTER_X, centerX);
 	}
 	
 	/**
@@ -754,7 +754,7 @@ class PPEParams : Managed {
 	* 	@param centerY \p float - Vertical screen position
 	*/
 	void setLensCenterY(float centerY){
-		setParam(MaterialNames.GLOW, PPEParamNames.LENS_CENTER_Y, centerY);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.LENS_CENTER_Y, centerY);
 	}
 	
 	/**
@@ -762,7 +762,7 @@ class PPEParams : Managed {
 	* 	@param chromAber \p float - Lens chromatic aberration
 	*/
 	void setLensChromAber(float chromAber = 0.0){
-		setParam(MaterialNames.GLOW, PPEParamNames.LENS_CHROM_ABER, chromAber);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.LENS_CHROM_ABER, chromAber);
 	}
 	
 	
@@ -789,7 +789,7 @@ class PPEParams : Managed {
 	* 	@param power \p float - Power
 	*/
 	void setMotionBlurPower(float power){
-		setParam(MaterialNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_POWER, power);
+		setParam(PPEMaterialsNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_POWER, power);
 	}
 	
 	/**
@@ -797,7 +797,7 @@ class PPEParams : Managed {
 	* 	@param minDepth \p float - Minimum depth from the camera position
 	*/
 	void setMotionBlurMinDepth(float minDepth){
-		setParam(MaterialNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_MINDEPTH, minDepth);
+		setParam(PPEMaterialsNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_MINDEPTH, minDepth);
 	}
 	
 	/**
@@ -805,7 +805,7 @@ class PPEParams : Managed {
 	* 	@param maxDepth \p float - Maximum depth from the camera position
 	*/
 	void setMotionBlurMaxDepth(float maxDepth){
-		setParam(MaterialNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_MAXDEPTH, maxDepth);
+		setParam(PPEMaterialsNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_MAXDEPTH, maxDepth);
 	}
 	
 	/**
@@ -813,7 +813,7 @@ class PPEParams : Managed {
 	* 	@param maxDepth \p float - Minimum angle
 	*/
 	void setMotionBlurMinAnglePerSec(float minAnglePerSec){
-		setParam(MaterialNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_MIN_ANGLE_PER_SEC, minAnglePerSec);
+		setParam(PPEMaterialsNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_MIN_ANGLE_PER_SEC, minAnglePerSec);
 	}
 	
 	/**
@@ -821,7 +821,7 @@ class PPEParams : Managed {
 	* 	@param maxDepth \p float - Maximum angle
 	*/
 	void setMotionBlurMaxAnglePerSec(float maxAnglePerSec){
-		setParam(MaterialNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_MAX_ANGLE_PER_SEC, maxAnglePerSec);
+		setParam(PPEMaterialsNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_MAX_ANGLE_PER_SEC, maxAnglePerSec);
 	}
 	
 	
@@ -848,7 +848,7 @@ class PPEParams : Managed {
 	* 	@param steepness \p float - The "smoothness" of the bloom (also used as strength setting instead of `Intensity`)	
 	*/
 	void setBloomSteepness(float steepness){
-		setParam(MaterialNames.GLOW, PPEParamNames.BLOOM_STEEPNESS, steepness);		
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.BLOOM_STEEPNESS, steepness);		
 	}
 	
 	/**
@@ -856,7 +856,7 @@ class PPEParams : Managed {
 	* 	@param intensity \p float - Intensity	
 	*/
 	void setBloomIntensity(float intensity){
-		setParam(MaterialNames.GLOW, PPEParamNames.BLOOM_INTENSITY, intensity);		
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.BLOOM_INTENSITY, intensity);		
 	}
 	
 	/**
@@ -864,10 +864,99 @@ class PPEParams : Managed {
 	* 	@param treshold \p float - Treshold of bloom, lower treshold means bloom on less reflective materials
 	*/
 	void setBloomTreshold(float treshold){
-		setParam(MaterialNames.GLOW, PPEParamNames.BLOOM_THRESHOLD, treshold);		
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.BLOOM_THRESHOLD, treshold);		
 	}
 	
 	
+	
+	////////////// GODRAYS //@todo complete doc
+	
+	/**
+	*	@brief Quickly set godrays parameters
+	*	 @param intensity \p float - 
+	*	 @param overburn \p float - 
+	*	 @param overburnStart \p float - 
+	*	 @param overburnEnd \p float - 
+	*	 @param mask \p float - 
+	*	 @param size \p float - 
+	*	 @param verticalIntensity \p float - 
+	*	 @param diagonalIntensity \p float - 
+	*/
+	void setGodrays(float intensity, float overburn, float overburnStart, float overburnEnd, float mask, float size, float verticalIntensity, float diagonalIntensity){
+		setGodraysIntensity(intensity);
+		setGodraysOverburn(overburn);
+		setGodraysOverburnStart(overburnStart);
+		setGodraysOverburnEnd(overburnEnd);
+		setGodraysMask(mask);
+		setGodraysSize(size);
+		setGodraysVerticalIntensity(verticalIntensity);
+		setGodraysDiagonalIntensity(diagonalIntensity);
+	}
+	
+	/**
+	*	@brief Quickly set godrays intensity
+	*	 @param intensity \p float - 
+	*/
+	void setGodraysIntensity(float intensity){
+		setParam(PPEMaterialsNames.GODRAYS_SUN, PPEParamNames.GODRAYS_SUN_INTENSITY, intensity);
+	}
+	
+	/**
+	*	@brief Quickly set godrays overburn
+	*	 @param overburn \p float - 
+	*/
+	void setGodraysOverburn(float overburn){
+		setParam(PPEMaterialsNames.GODRAYS_SUN, PPEParamNames.GODRAYS_SUN_OVERBURN_INTENSITY, overburn);	
+	}
+	
+	/**
+	*	@brief Quickly set godrays overburn start
+	*	 @param overburnStart \p float - 
+	*/
+	void setGodraysOverburnStart(float overburnStart){
+		setParam(PPEMaterialsNames.GODRAYS_SUN, PPEParamNames.GODRAYS_SUN_OVERBURN_START, overburnStart);
+	}
+	
+	
+	/**
+	*	@brief Quickly set godrays overburn end
+	*	 @param overburnEnd \p float - 
+	*/
+	void setGodraysOverburnEnd(float overburnEnd){
+		setParam(PPEMaterialsNames.GODRAYS_SUN, PPEParamNames.GODRAYS_SUN_OVERBURN_END, overburnEnd);
+	}
+	
+	/**
+	*	@brief Quickly set godrays mask
+	*	 @param mask \p float - 
+	*/
+	void setGodraysMask(float mask){
+		setParam(PPEMaterialsNames.GODRAYS_SUN_MASK, PPEParamNames.GODRAYS_SUN_MASK, mask);
+	}
+	
+	/**
+	*	@brief Quickly set godrays sun size
+	*	 @param size \p float - 
+	*/
+	void setGodraysSize(float size){
+		setParam(PPEMaterialsNames.GODRAYS_SUN_MASK, PPEParamNames.GODRAYS_SUN_SIZE, size);	
+	}
+	
+	/**
+	*	@brief Quickly set godrays vertical intensity
+	*	 @param verticalIntensity \p float - 
+	*/
+	void setGodraysVerticalIntensity(float verticalIntensity){
+		setParam(PPEMaterialsNames.GODRAYS_SUN_MASK, PPEParamNames.GODRAYS_SUN_V_INTENSITY, verticalIntensity);	
+	}
+	
+	/**
+	*	@brief Quickly set godrays diagonal intensity
+	*	 @param diagonalIntensity \p float - 
+	*/
+	void setGodraysDiagonalIntensity(float diagonalIntensity){
+		setParam(PPEMaterialsNames.GODRAYS_SUN_MASK, PPEParamNames.GODRAYS_SUN_D_INTENSITY, diagonalIntensity);	
+	}
 	
 	
 	////////////// CAMERA EFFECTS
@@ -896,7 +985,7 @@ class PPEParams : Managed {
 	* 	@param saturation \p float - Saturation of the camera
 	*/
 	void setSaturation(float saturation){
-		setParam(MaterialNames.GLOW, PPEParamNames.SATURATION, saturation);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.SATURATION, saturation);
 	}
 	
 	/**
@@ -904,7 +993,7 @@ class PPEParams : Managed {
 	* 	@param colorization \p TPPEColor - Some kind of instagram color effect lol (pretty cool)
 	*/
 	void setColorization(TPPEColor colorization){
-		setParam(MaterialNames.GLOW, PPEParamNames.GLOW_COLORIZATION, colorization);
+		setParam(PPEMaterialsNames.GLOW, PPEParamNames.GLOW_COLORIZATION, colorization);
 	}
 	
 	/**

@@ -72,12 +72,12 @@ class SPPEManager {
 	
 	//@todo find a way of caching material instead of getting it every time
 	protected static void loadMaterials(){
-		glow = GetGame().GetWorld().GetMaterial(MaterialNames.GLOW);
-		radialBlur = GetGame().GetWorld().GetMaterial(MaterialNames.RADIAL_BLUR);
-		motionBlur = GetGame().GetWorld().GetMaterial(MaterialNames.MOTION_BLUR);
-		gaussBlur = GetGame().GetWorld().GetMaterial(MaterialNames.GAUSS_BLUR);
-		chromAber = GetGame().GetWorld().GetMaterial(MaterialNames.CHROM_ABER);
-		filmgrain = GetGame().GetWorld().GetMaterial(MaterialNames.FILM_GRAIN);
+		glow = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.GLOW);
+		radialBlur = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.RADIAL_BLUR);
+		motionBlur = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.MOTION_BLUR);
+		gaussBlur = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.GAUSS_BLUR);
+		chromAber = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.CHROM_ABER);
+		filmgrain = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.FILM_GRAIN);
 	}
 	
 	protected static void loadDefaultParams(){
@@ -98,7 +98,6 @@ class SPPEManager {
 
 	////////////////////////////////////////////////////////////
 	//				ACTIVATION / DEACTIVATION
-	////////////////////////////////////////////////////////////
 	
 	//@todo check for IsClient inside activate/deactivate ?
 	
@@ -231,11 +230,17 @@ class SPPEManager {
 		}
 	}
 	
+	/**
+	*	@brief Merge the result PPEparams that will finally be applied
+	*/
 	protected static void mergeResult(){
 		mergeResultWithRequestedPPE();
 		mergeResultWithDefault();		
 	}
 	
+	/**
+	*	@brief Merge the requested PPE 
+	*/
 	protected static void mergeResultWithRequestedPPE(){
 	
 		m_requestedPPE.clear();
@@ -257,6 +262,10 @@ class SPPEManager {
 		m_resultPPE.merge(m_requestedPPE, PPEMergeFlags.INTERPOLATE | PPEMergeFlags.INTERSECTION, SPPEConstants.ACTIVATION_SPEED);
 	}
 	
+	/**
+	*	@brief Interpolate non-requested values to default
+	*	 forgive me for this crap, I need to rush :(
+	*/
 	protected static void mergeResultWithDefault(){
 		mergeResultFloatWithDefault();
 		mergeResultColorWithDefault();
@@ -666,7 +675,7 @@ class SPPEManager {
 	}
 	
 	static float getMotionBlurStrength(){
-		return m_defaultPPE.getFloatParam(MaterialNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_POWER);
+		return m_defaultPPE.getFloatParam(PPEMaterialsNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_POWER);
 	}
 	
 	static void setMotionBlurStrength(float strength){
@@ -689,7 +698,7 @@ class SPPEManager {
 	}
 	
 	static float getBloomStrength(){
-		return m_defaultPPE.getFloatParam(MaterialNames.GLOW, PPEParamNames.BLOOM_STEEPNESS);
+		return m_defaultPPE.getFloatParam(PPEMaterialsNames.GLOW, PPEParamNames.BLOOM_STEEPNESS);
 	}
 	
 	static void setBloomStrength(float strength){

@@ -1,8 +1,7 @@
-typedef string TPPEMaterial; //I have to use material name instead of Material because it crashes (maybe the problem is passing the material which is int[] ? )
+typedef string TPPEMaterial;
 typedef string TPPEParamName; //name of the post process effect parameter
 typedef array<float> TPPEColor; // dynamic array of float representing RGBA color
 
-typedef float Float;
 typedef map<TPPEParamName, float> TPPEFloatParams; //float post process effect parameter
 typedef map<TPPEParamName, ref TPPEColor> TPPEColorParams; //RGBA post process effect parameter
 
@@ -13,13 +12,15 @@ typedef array<ref PPEMaterialPresetBase> TPPEMaterialPresets;
 
 
 enum PPEMergeFlags {
-	SIMPLE = 1,
-	MAX = 2,
-	MIN = 4,
-	ADDITIVE = 8,
-	INTERPOLATE = 16,
-	
-	COUNT
+	DEFAULT = 0,
+	COPY = 1,
+	INTERPOLATE = 2,
+	MAX = 4,
+	MIN = 8,
+	ADDITIVE = 16,
+
+	UNION = 32,
+	INTERSECTION = 64
 }
 
 class MaterialNames {
@@ -99,8 +100,7 @@ class PPEParamNames { //just a precaution for future updates... because who know
 	
 }
 
-//@todo make this managed?
-class PPEParams {
+class PPEParams : Managed {
 	
 	protected ref TPPEFloatParamsMap m_params = new TPPEFloatParamsMap();
 	protected ref TPPEColorParamsMap m_colorParams = new TPPEColorParamsMap();
@@ -192,102 +192,92 @@ class PPEParams {
 	* 	@param params \p PPEParams - Parameters to be merged with
 	* 	@param coeff \p float - Interpolation coefficient
 	*/
-	void merge(PPEParams params, PPEMergeFlags mergeFlags = PPEMergeFlags.SIMPLE, float coeff = 0.5){
+	void merge(PPEParams params, PPEMergeFlags mergeFlags = PPEMergeFlags.DEFAULT, float coeff = 0.5){
+		if (mergeFlags == PPEMergeFlags.DEFAULT) mergeFlags = PPEMergeFlags.INTERPOLATE | PPEMergeFlags.UNION;
 		mergeFloatParams(params, mergeFlags, coeff);
 		mergeColorParams(params, mergeFlags, coeff);
 	} 
 	
-	void mergeFloatParams(PPEParams params, PPEMergeFlags mergeFlags = PPEMergeFlags.SIMPLE, float coeff = 0.5){
+	void mergeFloatParams(PPEParams params, PPEMergeFlags mergeFlags, float coeff = 0.5){
 		TPPEFloatParamsMap tempFloat = params.getFloatParams();
-		foreach(auto ppeMaterial, auto ppeParam : tempFloat){
-			foreach(auto ppeParamName, auto ppeParamValue : ppeParam){
-				setParam(ppeMaterial, ppeParamName, performMerge(ppeParamValue, getFloatParam(ppeMaterial, ppeParamName), mergeFlags, coeff));
+		foreach (auto ppeMaterial, auto ppeFloatParams : tempFloat) {
+			foreach (auto ppeParamName, auto ppeParamValue : ppeFloatParams) {
+				performMerge(ppeMaterial, ppeParamName, ppeParamValue, mergeFlags, coeff);
 			}
 		}
 	}
-	
-	void mergeColorParams(PPEParams params, PPEMergeFlags mergeFlags = PPEMergeFlags.SIMPLE, float coeff = 0.5){
-		TPPEColorParamsMap tempColor = params.getColorParams();
-		foreach(auto ppeMaterial, auto ppeParam : tempColor){
-			foreach(auto ppeParamName, auto ppeParamValue : ppeParam){
-				TPPEColor prevColor = getColorParam(ppeMaterial, ppeParamName);
-				if(!prevColor){ 
-					prevColor = SPPEManager.getColorDefaultValue(ppeMaterial, ppeParamName);
+		
+	protected void performMerge(TPPEMaterial material, TPPEParamName paramName, float paramValue, PPEMergeFlags mergeFlags, float coeff = 0.5){
+				
+		// just copy the ppe
+		if (PPEMergeFlags.COPY & mergeFlags) {
+			this.setParam(material, paramName, paramValue);
+			return;
+		}
+		
+		// the ppe needs to be interpolated
+		if (PPEMergeFlags.INTERPOLATE & mergeFlags) {
+			
+			// interpolate only ppe present in the intersection
+			if ((PPEMergeFlags.INTERSECTION & mergeFlags) && containsFloat(material, paramName)) {
+				this.setParam(material, paramName, Math.Lerp(this.getFloatParam(material, paramName), paramValue, coeff) );
+				return;
+			}
+			
+			// interpolate ppe, if not present, copy it
+			if (PPEMergeFlags.UNION & mergeFlags) {
+				if (containsFloat(material, paramName)){
+					this.setParam(material, paramName, Math.Lerp(this.getFloatParam(material, paramName), paramValue, coeff) );
+				} else {
+					this.setParam(material, paramName, paramValue);
 				}
-				setParam(ppeMaterial, ppeParamName, SPPEManager.mixColors(ppeParamValue, prevColor, coeff ));
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	void mergeColorParams(PPEParams params, PPEMergeFlags mergeFlags, float coeff = 0.5){
+		TPPEColorParamsMap tempColor = params.getColorParams();
+		foreach (auto ppeMaterial, auto ppeParam : tempColor) {
+			foreach (auto ppeParamName, auto ppeParamValue : ppeParam) {
+				performMerge(ppeMaterial, ppeParamName, ppeParamValue, mergeFlags, coeff);
 			}
 		}
 	}
 	
-	float performMerge(float value1, float value2, PPEMergeFlags mergeFlags = PPEMergeFlags.SIMPLE, float coeff = 0.5){
-		float result = value1;
-		SFlagOperator fop = new SFlagOperator(mergeFlags);
+	protected void performMerge(TPPEMaterial material, TPPEParamName paramName, TPPEColor paramValue, PPEMergeFlags mergeFlags, float coeff = 0.5){
+		if (!paramValue) return;
 		
-		bool log = false;
-		if(log){
-			string before;
-			if(fop.check(PPEMergeFlags.SIMPLE)) before += "SIMPLE ";
-			if(fop.check(PPEMergeFlags.MAX)) before += "MAX ";
-			if(fop.check(PPEMergeFlags.MIN)) before += "MIN ";
-			if(fop.check(PPEMergeFlags.ADDITIVE)) before += "ADDITIVE ";
-			if(fop.check(PPEMergeFlags.INTERPOLATE)) before += "INTERPOLATE ";
-			SLog.d("FOP: " + fop.collectBinaryString() + " - [ " + fop.collect() + " ] " + before);
+		// just copy the ppe
+		if (PPEMergeFlags.COPY & mergeFlags) {
+			this.setParam(material, paramName, paramValue);
+			return;
 		}
 		
-		if(fop.check(PPEMergeFlags.SIMPLE)){
-			fop.reset(PPEMergeFlags.MAX).reset(PPEMergeFlags.MIN).reset(PPEMergeFlags.ADDITIVE);
+		// the ppe needs to be interpolated
+		if (PPEMergeFlags.INTERPOLATE & mergeFlags) {
 			
-		}else if(fop.check(PPEMergeFlags.MAX)){
-			fop.reset(PPEMergeFlags.SIMPLE).reset(PPEMergeFlags.MIN).reset(PPEMergeFlags.ADDITIVE);
-			
-		}else if(fop.check(PPEMergeFlags.MIN)){
-			fop.reset(PPEMergeFlags.SIMPLE).reset(PPEMergeFlags.MAX).reset(PPEMergeFlags.ADDITIVE);
-			
-		}else if(fop.check(PPEMergeFlags.ADDITIVE)){
-			fop.reset(PPEMergeFlags.SIMPLE).reset(PPEMergeFlags.MAX).reset(PPEMergeFlags.MIN);
-			
-		}
-		
-		
-		if(fop.check(PPEMergeFlags.SIMPLE)){
-			result = Math.Lerp(value1, value2, coeff);
-			
-		}else if(fop.check(PPEMergeFlags.MAX)){
-			if(fop.check(PPEMergeFlags.INTERPOLATE)){
-				result = Math.Lerp(value1, Math.Max(value1, value2), coeff);				
-			}else{
-				result = Math.Max(value1, value2);
+			// interpolate only ppe present in the intersection
+			if ((PPEMergeFlags.INTERSECTION & mergeFlags) && containsColor(material, paramName)) {
+				this.setParam(material, paramName, SPPEManager.mixColors(this.getColorParam(material, paramName), paramValue, coeff) );
+				return;
 			}
 			
-		}else if(fop.check(PPEMergeFlags.MIN)){
-			if(fop.check(PPEMergeFlags.INTERPOLATE)){
-				result = Math.Lerp(value1, Math.Min(value1, value2), coeff);
-			}else{
-				result = Math.Min(value1, value2);
+			// interpolate ppe, if not present, copy it
+			if (PPEMergeFlags.UNION & mergeFlags) {
+				if (containsFloat(material, paramName)){
+					this.setParam(material, paramName, SPPEManager.mixColors(this.getColorParam(material, paramName), paramValue, coeff) );
+				} else {
+					this.setParam(material, paramName, paramValue);
+				}
 			}
 			
-		}else if(fop.check(PPEMergeFlags.ADDITIVE)){
-			if(fop.check(PPEMergeFlags.INTERPOLATE)){
-				result = Math.Lerp(value1, value1 + value2, coeff);
-			}else{
-				result = value1 + value2;
-			}
-		}
-		
-		
-		if(log){
-			string after;
-			if(fop.check(PPEMergeFlags.SIMPLE)) after += "SIMPLE ";
-			if(fop.check(PPEMergeFlags.MAX)) after += "MAX ";
-			if(fop.check(PPEMergeFlags.MIN)) after += "MIN ";
-			if(fop.check(PPEMergeFlags.ADDITIVE)) after += "ADDITIVE ";
-			if(fop.check(PPEMergeFlags.INTERPOLATE)) after += "INTERPOLATE ";
-			SLog.d("FOP: " + fop.collectBinaryString() + " - [ " + fop.collect() + " ] " + after);
 		}
 
-		return result;
 	}
-	
 	
 	
 	/**
@@ -347,18 +337,47 @@ class PPEParams {
 		return m_colorParams;
 	}
 	
+	/**
+	*	@brief Get a specific float parameter
+	*	 @return float - parameter specified, 0 if not found
+	*/
 	float getFloatParam(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName){
-		if(m_params && m_params[ppeMaterial]) {
+		if (containsFloat(ppeMaterial, ppeParamName)) {
 			return m_params[ppeMaterial][ppeParamName];
 		}
-		return 0;
+		return 0; //@todo find a proper way of announcing that the value has not been found
 	}
 	
+	/**
+	*	@brief Get a specific color parameter
+	*	 @return TPPEColor - parameter specified, null if not found
+	*/
 	TPPEColor getColorParam(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName){
-		if(m_colorParams && m_colorParams[ppeMaterial] ) {
+		if (containsColor(ppeMaterial, ppeParamName)) {
 			return m_colorParams[ppeMaterial][ppeParamName];
 		}
 		return null;
+	}
+	
+	/**
+	*	@brief Check if contains a specific float or color parameter
+	*/
+	bool contains(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName){
+		return containsFloat(ppeMaterial, ppeParamName) || containsColor(ppeMaterial, ppeParamName);
+	}
+	
+	/**
+	*	@brief Check if contains a specific float parameter
+	*/
+	bool containsFloat(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName) {
+		return m_params.Contains(ppeMaterial) && m_params.Get(ppeMaterial).Contains(ppeParamName);
+	}
+	
+	/**
+	*	@brief Check if contains a specific color parameter
+	*/
+	bool containsColor(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName) {
+		return m_colorParams.Contains(ppeMaterial) && m_colorParams.Get(ppeMaterial).Contains(ppeParamName);
 	}
 	
 	int count(){
@@ -900,10 +919,8 @@ class PPEParams {
 	
 	
 	
-	//----------------------------------------------------------
-	//				LOW LEVEL SETTER
-	//----------------------------------------------------------
-	
+	////////////////////////////////////////////////////////////
+	//				LOW LEVEL SETTERS
 	
 	/**
 	* @brief Set a float parameter, (instantiate the maps if not instantiated)
@@ -911,7 +928,7 @@ class PPEParams {
 	* 	@param paramValue \p float - Value of the parameter
 	* 	@param mat \p TPPEMaterial - Material of the parameter to
 	*/
-	protected void setParam(TPPEMaterial mat, TPPEParamName paramName, float paramValue){
+	void setParam(TPPEMaterial mat, TPPEParamName paramName, float paramValue){
 		if(!m_params) 		m_params = new TPPEFloatParamsMap();
 		if(!m_params[mat]) 	m_params[mat] = new TPPEFloatParams();
 		
@@ -926,7 +943,7 @@ class PPEParams {
 	* 	@param paramValue \p TPPEColor - Value of the parameter
 	* 	@param mat \p TPPEMaterial - Material of the parameter to
 	*/
-	protected void setParam(TPPEMaterial mat, TPPEParamName paramName, TPPEColor paramValue){
+	void setParam(TPPEMaterial mat, TPPEParamName paramName, TPPEColor paramValue){
 		if(!paramValue) 			return;
 		if(!m_colorParams) 			m_colorParams = new TPPEColorParamsMap();
 		if(!m_colorParams[mat]) 	m_colorParams[mat] = new TPPEColorParams();
@@ -937,7 +954,7 @@ class PPEParams {
 	
 	void debugPrint(bool logsEnabled = true){
 		if(logsEnabled == false) return;
-		SLog.d("printing...","PPEParams::debugPrint",0);
+		//SLog.d("printing...","PPEParams::debugPrint",0);
 		SLog.d(this);
 		SLog.d("float parameters","",1);
 		foreach(auto ppeMaterial, auto ppeParam : m_params){

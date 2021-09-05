@@ -36,6 +36,7 @@ class SPPEManager {
 	protected static ref TPPEParamsList m_persistentPPE = new TPPEParamsList; //all "non-animated" params
 	protected static ref TPPEAnimatedParamsList m_animatedPPE = new TPPEAnimatedParamsList; //all animated params
 	
+	protected static ref PPEParams m_requestedPPE = new PPEParams(); // merged values of requested ppe
 	protected static ref PPEParams m_resultPPE = new PPEParams(); // final ppe params after the merge
 	
 	//=========================================================
@@ -80,8 +81,8 @@ class SPPEManager {
 	}
 	
 	protected static void loadDefaultParams(){
-		m_defaultPPE.init(new PPEDefaultPreset);
-		//m_resultPPE.init(new PPEDefaultPreset);
+		m_defaultPPE.init(new PPEDefaultPreset());
+		m_resultPPE.init(new PPEDefaultPreset());
 	}
 	
 	protected static void activateInitialPPE(){
@@ -194,9 +195,9 @@ class SPPEManager {
 	
 	static void onUpdate(float delta_time){
 		m_time += delta_time;
-		
+
 		animateParams(delta_time);
-		mergeResult();		
+		mergeResult();
 		if(m_resultPPE.hasChanged()){
 			applyParams(m_resultPPE);
 		}
@@ -231,34 +232,70 @@ class SPPEManager {
 	}
 	
 	protected static void mergeResult(){
-
-		//if the final result of PPEffects are altered, return to default values at RESET_SPEED
-		if(!m_resultPPE.equals(m_defaultPPE)){
-			m_resultPPE.merge(m_defaultPPE, PPEMergeFlags.SIMPLE, SPPEConstants.RESET_SPEED);
-		}
+		mergeResultWithRequestedPPE();
+		mergeResultWithDefault();		
+	}
+	
+	protected static void mergeResultWithRequestedPPE(){
+	
+		m_requestedPPE.clear();
 		
 		//Apply persistent PPEffects
-		foreach(PPEParams p : m_persistentPPE){
-			//if(p.hasChanged()){
-				m_resultPPE.merge(p, PPEMergeFlags.MAX | PPEMergeFlags.INTERPOLATE);
-				p.onMerge();
-			//}
+		foreach (PPEParams persistentPPE : m_persistentPPE) {
+			m_requestedPPE.merge(persistentPPE);
+			persistentPPE.onMerge();
 		}
 		
 		//Apply animated PPEffects
-		foreach(PPEAnimatedParams ap : m_animatedPPE){
-			if(ap.hasChanged() || ap.isPaused()){
-				m_resultPPE.merge(ap, PPEMergeFlags.MAX);
-				ap.onMerge();
+		foreach (PPEAnimatedParams animatedPPE : m_animatedPPE) {
+			if (animatedPPE.hasChanged() || animatedPPE.isPaused()) {
+				m_requestedPPE.merge(animatedPPE);
+				animatedPPE.onMerge();
 			}
 		}
 		
-		//Apply vanilla effects
-		//if(m_vanillaPPE.hasChanged()){
-			m_resultPPE.merge(m_vanillaPPE, PPEMergeFlags.MAX, SPPEConstants.VANILLA_COEFF);
-		//}
-		
+		m_resultPPE.merge(m_requestedPPE, PPEMergeFlags.INTERPOLATE | PPEMergeFlags.INTERSECTION, SPPEConstants.ACTIVATION_SPEED);
 	}
+	
+	protected static void mergeResultWithDefault(){
+		mergeResultFloatWithDefault();
+		mergeResultColorWithDefault();
+	}
+	
+	protected static void mergeResultFloatWithDefault(){
+		TPPEFloatParamsMap temp = m_resultPPE.getFloatParams();
+		foreach (auto ppeMaterial, auto ppeFloatParams : temp) {
+			foreach (auto ppeParamName, auto ppeParamValue : ppeFloatParams) {
+				if (!m_requestedPPE.containsFloat(ppeMaterial, ppeParamName)) {
+					float defaultValue = m_defaultPPE.getFloatParam(ppeMaterial, ppeParamName);
+					if (!SMath.equal(ppeParamValue, defaultValue, SPPEConstants.EPSILON)) {
+						m_resultPPE.setParam(
+							ppeMaterial,
+							ppeParamName,
+							Math.Lerp(ppeParamValue, defaultValue, SPPEConstants.RESET_SPEED));
+					}
+				}
+			}
+		}
+	}
+	
+	protected static void mergeResultColorWithDefault(){
+		TPPEColorParamsMap temp = m_resultPPE.getColorParams();
+		foreach (auto ppeMaterial, auto ppeColorParams : temp) {
+			foreach (auto ppeParamName, auto ppeParamValue : ppeColorParams) {
+				if (!m_requestedPPE.containsColor(ppeMaterial, ppeParamName)) {
+					TPPEColor defaultValue = m_defaultPPE.getColorParam(ppeMaterial, ppeParamName);
+					if (!SMath.equal(ppeParamValue, defaultValue, SPPEConstants.EPSILON)) {
+						m_resultPPE.setParam(
+							ppeMaterial,
+							ppeParamName,
+							SPPEManager.mixColors(ppeParamValue, defaultValue, SPPEConstants.RESET_SPEED));
+					}
+				}
+			}
+		}
+	}
+
 	
 	/**
 	* @brief Iterate and apply the parameters
@@ -407,25 +444,41 @@ class SPPEManager {
 		SLog.d("debugPrintAll","PluginPPEffect",0);
 		
 		SLog.d("======================================================", "",0);
-		SLog.d("-------------------- m_defaultPPE --------------------", "",1);
+		SLog.d("-------------------- m_defaultPPE --------------------", "",0);
 		m_defaultPPE.debugPrint();
 				
-		SLog.d("-------------------- m_persistentPPE --------------------", "",1);
+		SLog.d("-------------------- m_persistentPPE --------------------", "",0);
 		foreach(PPEParams p : m_persistentPPE){
-			SLog.d(p);
-			if (printParamsValues) p.debugPrint();
+			if (printParamsValues) 
+				p.debugPrint();
+			else
+				SLog.d(p);
 		}
 		
-		SLog.d("-------------------- m_animatedPPE --------------------", "",1);
+		SLog.d("-------------------- m_animatedPPE --------------------", "",0);
 		foreach(PPEParams ap : m_animatedPPE){
-			SLog.d(ap);
-			if (printParamsValues) ap.debugPrint();
+			if (printParamsValues)
+				ap.debugPrint();
+			else
+				SLog.d(ap);
+				
 		}
 		
-		SLog.d("-------------------- m_vanillaPPE --------------------", "",1);
-		if (true) m_vanillaPPE.debugPrint();
+		/*
+		SLog.d("-------------------- m_vanillaPPE --------------------", "",0);
+		if (printParamsValues)
+			m_vanillaPPE.debugPrint();
+		else
+			SLog.d(m_vanillaPPE);
+		*/
+		SLog.d("-------------------- m_requestedPPE --------------------", "",0);		
+		if (printParamsValues) 
+			m_requestedPPE.debugPrint();
+		else
+			SLog.d(m_requestedPPE);
 		
-		SLog.d("-------------------- m_resultPPE --------------------", "",1);
+		
+		SLog.d("-------------------- m_resultPPE --------------------", "",0);
 		m_resultPPE.debugPrint();
 		SLog.d("======================================================", "",0);
 

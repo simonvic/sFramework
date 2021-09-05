@@ -1,6 +1,7 @@
 class SPPEConstants{
-	static const float RESET_SPEED = 0.95; //how slow post process effects will return to normal. (0.0 = immediate | 0.5 = almost immediate | 0.95 = normal | 0.999 very slow)
-	static const float VANILLA_COEFF = 0.91; //coefficient used when merging with vanilla values. (0.1 = very high | 0.5 = high | 0.90 normal | 0.999 very low)
+	static const float ACTIVATION_SPEED = 0.25; //how fast post process effects will reach the desired value. (0.01 = slow | 0.5 = almost immediate | 0.9 = immediate)
+	static const float RESET_SPEED = 0.1;       //how fast post process effects will return to normal. (0.01 = slow | 0.5 = almost immediate | 0.9 = immediate)
+	//static const float VANILLA_COEFF = 0.91; //coefficient used when merging with vanilla values. (0.1 = very high | 0.5 = high | 0.90 normal | 0.999 very low)
 	
 	static const float EPSILON = 1e-3; //used when comparing two float values (PPEffects.equals())
 	

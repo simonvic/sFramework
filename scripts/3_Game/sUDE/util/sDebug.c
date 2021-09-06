@@ -1,5 +1,11 @@
 class SDebug {
 
+	static void spawnDebugDots(array<vector> positions, float lifetime = 0.01, float size = 1){
+		foreach (vector position : positions){
+			spawnDebugDot(position, lifetime, size);
+		}
+	}
+	
 	static Particle spawnDebugDot(vector position, float lifetime = 0.05, float size = 1){
 		//if(!GetGame().IsClient()) return;
 		Particle particle = Particle.PlayInWorld(ParticleList.DEBUG_DOT,position);

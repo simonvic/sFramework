@@ -8,9 +8,6 @@ typedef map<TPPEParamName, ref TPPEColor> TPPEColorParams; // RGBA post process 
 typedef map<TPPEMaterial, ref TPPEFloatParams> TPPEFloatParamsMap; // map of Material and its float parameters
 typedef map<TPPEMaterial, ref TPPEColorParams> TPPEColorParamsMap; // map of Material and its color parameters (because fuck generics lol)
 
-typedef array<ref PPEMaterialPresetBase> TPPEMaterialPresets;
-
-
 enum PPEMergeFlags {
 	DEFAULT = 0,
 	COPY = 1,
@@ -118,40 +115,12 @@ class PPEParams : Managed {
 	void onInit(){}
 	
 	/**
-	* @brief Init the parameters with multiple PPEPresets
-	* 	@param presets \p TPPEMaterialPresets - Presets parameters to be added
-	*/
-	void init(TPPEMaterialPresets presets){
-		clear();
-		add(presets);
-	}
-	
-	/**
-	* @brief Init the parameters with a PPEPreset
-	* 	@param preset \p PPEMaterialPresetBase - Preset parameters to be added
-	*/
-	void init(PPEMaterialPresetBase preset){
-		clear();
-		add(preset);	
-	}
-	
-	/**
 	* @brief Init the parameters with another PPEParams
 	* 	@param ppeParams \p PPEParams - Parameters to be added
 	*/
 	void init(PPEParams ppeParams){
 		clear();
 		add(ppeParams);
-	}
-	
-	/**
-	* @brief Add parameters of multiple presets
-	* 	@param presets \p TPPEMaterialPresets - Presets parameters to be added
-	*/
-	void add(TPPEMaterialPresets presets){
-		foreach(PPEMaterialPresetBase preset : presets){
-			add(preset);
-		}
 	}
 	
 	/**

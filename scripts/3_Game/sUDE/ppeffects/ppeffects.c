@@ -1,3 +1,6 @@
+class PPEDefaultPreset : PPEParams {}
+
+
 class PPEDebugAnimation : PPELoopedParams{	
 	override void onAnimate(float deltaTime){
 		clear();

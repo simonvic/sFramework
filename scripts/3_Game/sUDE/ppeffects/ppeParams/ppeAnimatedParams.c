@@ -4,7 +4,7 @@ enum ePPEAnimationStates {
 	STOPPED	
 }
 
-class PPEAnimatedParams : PPEParams {
+class SPPEffectAnimated : SPPEffect {
 
 	protected ePPEAnimationStates m_animationState = ePPEAnimationStates.STOPPED;
 	protected float m_time;
@@ -78,13 +78,11 @@ class PPEAnimatedParams : PPEParams {
 	}
 }
 
-class PPELoopedParams : PPEAnimatedParams {}
-
-class PPETimedParams : PPEAnimatedParams {
+class SPPEffectTimed : SPPEffectAnimated {
 	protected float m_duration;
 	protected bool m_deactivationOnStop;
 	
-	void PPETimedParams(float duration, bool deactivationOnStop = true){
+	void SPPEffectTimed(float duration, bool deactivationOnStop = true){
 		m_duration = duration;
 		m_deactivationOnStop = deactivationOnStop;
 	}

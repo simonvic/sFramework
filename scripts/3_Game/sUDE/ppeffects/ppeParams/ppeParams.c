@@ -8,128 +8,40 @@ typedef map<TPPEParamName, ref TPPEColor> TPPEColorParams; // RGBA post process 
 typedef map<TPPEMaterial, ref TPPEFloatParams> TPPEFloatParamsMap; // map of Material and its float parameters
 typedef map<TPPEMaterial, ref TPPEColorParams> TPPEColorParamsMap; // map of Material and its color parameters (because fuck generics lol)
 
-enum PPEMergeFlags {
-	DEFAULT = 0,
-	COPY = 1,
-	INTERPOLATE = 2,
-	MAX = 4,
-	MIN = 8,
-	ADDITIVE = 16,
 
-	UNION = 32,
-	INTERSECTION = 64
-}
-
-class PPEMaterialsNames {
-	static const TPPEMaterial GLOW             = "Graphics/Materials/postprocess/glow";
-	static const TPPEMaterial RADIAL_BLUR      = "graphics/materials/postprocess/radialblur";
-	static const TPPEMaterial MOTION_BLUR      = "graphics/materials/postprocess/rotblur";
-	static const TPPEMaterial GAUSS_BLUR       = "graphics/materials/postprocess/gauss";
-	static const TPPEMaterial CHROM_ABER       = "graphics/materials/postprocess/chromaber";
-	static const TPPEMaterial FILM_GRAIN       = "Graphics/Materials/postprocess/filmgrainNV";
-	static const TPPEMaterial GODRAYS_SUN      = "graphics/materials/postprocess/godrayssun";
-	static const TPPEMaterial GODRAYS_SUN_MASK = "graphics/materials/postprocess/godrayssunmask";
-	static const TPPEMaterial HBAO             = "graphics/materials/postprocess/hbao";
-	static const TPPEMaterial RAIN             = "graphics/materials/postprocess/rain";
-}
-
-class PPEParamNames { //just a precaution for future updates... because who knows :shrug:
-	static const TPPEParamName VIGNETTE_STRENGTH = "Vignette";
-	static const TPPEParamName VIGNETTE_COLOR = "VignetteColor";
-	
-	static const TPPEParamName MOTION_BLUR_POWER = "Power";
-	static const TPPEParamName MOTION_BLUR_MINDEPTH = "MinDepth";
-	static const TPPEParamName MOTION_BLUR_MAXDEPTH = "MaxDepth";
-	static const TPPEParamName MOTION_BLUR_MIN_ANGLE_PER_SEC = "MinAnglePerSec";
-	static const TPPEParamName MOTION_BLUR_MAX_ANGLE_PER_SEC = "MaxAnglePerSec";
-	
-	static const TPPEParamName RADIAL_BLUR_POWER_X = "PowerX";
-	static const TPPEParamName RADIAL_BLUR_POWER_Y = "PowerY";
-	static const TPPEParamName RADIAL_BLUR_OFFSET_X = "OffsetX";
-	static const TPPEParamName RADIAL_BLUR_OFFSET_Y = "OffsetY";
-	
-	static const TPPEParamName LENS_DISTORT = "LensDistort";
-	static const TPPEParamName LENS_CENTER_X = "LensCenterX";
-	static const TPPEParamName LENS_CENTER_Y = "LensCenterY";
-	static const TPPEParamName LENS_CHROM_ABER = "MaxChromAbberation";
-	
-	static const TPPEParamName GLOW_COLORIZATION = "ColorizationColor";
-	static const TPPEParamName SATURATION = "Saturation";
-	
-	static const TPPEParamName OVERLAY_FACTOR = "OverlayFactor";
-	static const TPPEParamName OVERLAY_COLOR = "OverlayColor";
-	
-	static const TPPEParamName BLOOM_THRESHOLD = "BloomThreshold";
-	static const TPPEParamName BLOOM_STEEPNESS = "BloomSteepness";
-	static const TPPEParamName BLOOM_INTENSITY = "BloomIntensity";
-	
-	static const TPPEParamName CHROM_ABER_POWER_X = "PowerX";
-	static const TPPEParamName CHROM_ABER_POWER_Y = "PowerY";
-	
-	static const TPPEParamName FILM_GRAIN_SHARPNESS = "Sharpness";
-	static const TPPEParamName FILM_GRAIN_GRAIN_SIZE = "GrainSize";
-	static const TPPEParamName FILM_GRAIN_INTENSITY = "Intensity";
-	static const TPPEParamName FILM_GRAIN_INTENSITY_X0 = "IntensityX0";
-	static const TPPEParamName FILM_GRAIN_INTENSITY_X1 = "IntensityX1";
-	static const TPPEParamName FILM_GRAIN_MONOCHROMATIC = "Monochromatic";
-	static const TPPEParamName FILM_GRAIN_SIMPLE = "Simple";
-	static const TPPEParamName FILM_GRAIN_DISTORT = "Distort";
-	static const TPPEParamName FILM_GRAIN_FREQUENCY = "Frequency";
-	
-	static const TPPEParamName GAUSS_BLUR_INTENSITY = "Intensity";
-	
-	static const TPPEParamName GODRAYS_SUN_INTENSITY = "Intensity";
-	static const TPPEParamName GODRAYS_SUN_OVERBURN_INTENSITY = "OverBurnIntensity";
-	static const TPPEParamName GODRAYS_SUN_OVERBURN_START = "OverBurnStart";
-	static const TPPEParamName GODRAYS_SUN_OVERBURN_END = "OverBurnEnd";
-	
-	static const TPPEParamName GODRAYS_SUN_MASK = "Intensity";
-	static const TPPEParamName GODRAYS_SUN_SIZE = "SunSize";
-	static const TPPEParamName GODRAYS_SUN_V_INTENSITY = "VerticalStreakIntensity";
-	static const TPPEParamName GODRAYS_SUN_D_INTENSITY = "DiagonalStreakIntensity";
-	
-	static const TPPEParamName HBAO_RADIUS = "RadiusMeters";
-	static const TPPEParamName HBAO_INTENSITY = "Intensity";
-	static const TPPEParamName HBAO_SAMPLES = "NumSamples"; //power of 2
-	
-	static const TPPEParamName RAIN_SPEED = "Speed";
-	static const TPPEParamName RAIN_DISTANTSPEED = "DistantSpeed";
-	
-}
-
-class PPEParams : Managed {
+class SPPEffect : Managed {
 	
 	protected ref TPPEFloatParamsMap m_params = new TPPEFloatParamsMap();
 	protected ref TPPEColorParamsMap m_colorParams = new TPPEColorParamsMap();
 	protected bool m_hasChanged = true;
 	protected bool m_isActive = false;
 	
-	void PPEParams(){
+	void SPPEffect(){
 		onInit();
 	}
 	
-	void ~PPEParams(){
+	void ~SPPEffect(){
 		//SPPEManager.deactivate(this);
 	}
 	
 	void onInit(){}
 	
 	/**
-	* @brief Init the parameters with another PPEParams
-	* 	@param ppeParams \p PPEParams - Parameters to be added
+	* @brief Init the effect with another SPPEffect
+	* 	@param ppeParams \p SPPEffect - Parameters to be added
 	*/
-	void init(PPEParams ppeParams){
+	void init(SPPEffect ppe){
 		clear();
-		add(ppeParams);
+		add(ppe);
 	}
 	
 	/**
-	* @brief Add parameters from another PPEParams
-	* 	@param ppeParams \p PPEParams - Parameters to be added
+	* @brief Add parameters from another SPPEffect
+	* 	@param ppe \p SPPEffect - Effect's parameters to be added
 	*/
-	void add(PPEParams ppeParams){
-		add(ppeParams.getFloatParams());
-		add(ppeParams.getColorParams());
+	void add(SPPEffect ppe){
+		add(ppe.getFloatParams());
+		add(ppe.getColorParams());
 	}
 	
 	/**
@@ -157,18 +69,18 @@ class PPEParams : Managed {
 	}
 	
 	/**
-	* @brief Merge with another PPEParams by interpolating the values
-	* 	@param params \p PPEParams - Parameters to be merged with
+	* @brief Merge with another SPPEffect by interpolating the values
+	* 	@param ppe \p SPPEffect - SPPEffect to be merged with
 	* 	@param coeff \p float - Interpolation coefficient
 	*/
-	void merge(PPEParams params, PPEMergeFlags mergeFlags = PPEMergeFlags.DEFAULT, float coeff = 0.5){
+	void merge(SPPEffect ppe, PPEMergeFlags mergeFlags = PPEMergeFlags.DEFAULT, float coeff = 0.5){
 		if (mergeFlags == PPEMergeFlags.DEFAULT) mergeFlags = PPEMergeFlags.INTERPOLATE | PPEMergeFlags.UNION;
-		mergeFloatParams(params, mergeFlags, coeff);
-		mergeColorParams(params, mergeFlags, coeff);
+		mergeFloatParams(ppe, mergeFlags, coeff);
+		mergeColorParams(ppe, mergeFlags, coeff);
 	} 
 	
-	void mergeFloatParams(PPEParams params, PPEMergeFlags mergeFlags, float coeff = 0.5){
-		TPPEFloatParamsMap tempFloat = params.getFloatParams();
+	void mergeFloatParams(SPPEffect ppe, PPEMergeFlags mergeFlags, float coeff = 0.5){
+		TPPEFloatParamsMap tempFloat = ppe.getFloatParams();
 		foreach (auto ppeMaterial, auto ppeFloatParams : tempFloat) {
 			foreach (auto ppeParamName, auto ppeParamValue : ppeFloatParams) {
 				performMerge(ppeMaterial, ppeParamName, ppeParamValue, mergeFlags, coeff);
@@ -208,8 +120,8 @@ class PPEParams : Managed {
 	
 	
 	
-	void mergeColorParams(PPEParams params, PPEMergeFlags mergeFlags, float coeff = 0.5){
-		TPPEColorParamsMap tempColor = params.getColorParams();
+	void mergeColorParams(SPPEffect ppe, PPEMergeFlags mergeFlags, float coeff = 0.5){
+		TPPEColorParamsMap tempColor = ppe.getColorParams();
 		foreach (auto ppeMaterial, auto ppeParam : tempColor) {
 			foreach (auto ppeParamName, auto ppeParamValue : ppeParam) {
 				performMerge(ppeMaterial, ppeParamName, ppeParamValue, mergeFlags, coeff);
@@ -258,7 +170,7 @@ class PPEParams : Managed {
 	}
 	
 	/**
-	* @brief Reset all parameters to their default values
+	* @brief Reset all currently set parameters to their default values
 	*/
 	void resetAllToDefault(){
 		resetFloatToDefault();
@@ -374,19 +286,19 @@ class PPEParams : Managed {
 	}
 	
 	/**
-	* @brief Check if two PPEParams are equals
-	* 	@param params \p PPEParams - params to compare with
+	* @brief Check if two SPPEffect are equals
+	* 	@param ppe \p SPPEffect - effect to compare with
 	* 	@return \p bool - if are equals (not really equals, for now it only checks if their shared parameters values are equals; it doesn't compare additional parameters in "params")
 	*/
-	bool equals(PPEParams params){
-		if(this == params) return true;
-		if(params == null) return false;
-		//if(this.Type() != params.Type()) return false;
-		return equalsFloat(params) && equalsColor(params);
+	bool equals(SPPEffect ppe){
+		if(this == ppe) return true;
+		if(ppe == null) return false;
+		//if(this.Type() != ppe.Type()) return false;
+		return equalsFloat(ppe) && equalsColor(ppe);
 	}
 	
-	bool equalsFloat(PPEParams params){
-		TPPEFloatParamsMap floatParams = params.getFloatParams();
+	bool equalsFloat(SPPEffect ppe){
+		TPPEFloatParamsMap floatParams = ppe.getFloatParams();
 		foreach(auto ppeMaterial, auto ppeParam : m_params){
 			//if it doesn't contain the same parameter
 			if(!floatParams[ppeMaterial]){
@@ -403,8 +315,8 @@ class PPEParams : Managed {
 		return true;
 	}
 	
-	bool equalsColor(PPEParams params){
-		TPPEColorParamsMap colorParams = params.getColorParams();
+	bool equalsColor(SPPEffect ppe){
+		TPPEColorParamsMap colorParams = ppe.getColorParams();
 		foreach(auto ppeMaterial, auto ppeParam : m_colorParams){
 			//if it doesn't contain the same parameter
 			if(!colorParams[ppeMaterial]){ 
@@ -1012,7 +924,7 @@ class PPEParams : Managed {
 	
 	void debugPrint(bool logsEnabled = true){
 		if(logsEnabled == false) return;
-		//SLog.d("printing...","PPEParams::debugPrint",0);
+		//SLog.d("printing...","SPPEffect::debugPrint",0);
 		SLog.d(this);
 		SLog.d("float parameters","",1);
 		foreach(auto ppeMaterial, auto ppeParam : m_params){

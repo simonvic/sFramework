@@ -1,5 +1,5 @@
-typedef set<ref PPEParams> TPPEParamsList;
-typedef set<ref PPEAnimatedParams> TPPEAnimatedParamsList;
+typedef set<ref SPPEffect> TSPPEffectsList;
+typedef set<ref SPPEffectAnimated> TSPPEffectsAnimatedList;
 
 class SPPEManager {
 	
@@ -30,14 +30,14 @@ class SPPEManager {
 	protected static Material filmgrain;
 	
 	//=========== PostProcess Effects Parameters ==============
-	protected static ref PPEParams m_defaultPPE = new PPEParams(); //default params with no modifiers
-	protected static ref PPEParams m_vanillaPPE = new PPEParams(); // used by vanilla PPEffects class
+	protected static ref SPPEffect m_defaultPPE = new SPPEffect(); //default params with no modifiers
+	protected static ref SPPEffect m_vanillaPPE = new SPPEffect(); // used by vanilla PPEffects class
 	
-	protected static ref TPPEParamsList m_persistentPPE = new TPPEParamsList; //all "non-animated" params
-	protected static ref TPPEAnimatedParamsList m_animatedPPE = new TPPEAnimatedParamsList; //all animated params
+	protected static ref TSPPEffectsList m_persistentPPE = new TSPPEffectsList; //all "non-animated" params
+	protected static ref TSPPEffectsAnimatedList m_animatedPPE = new TSPPEffectsAnimatedList; //all animated params
 	
-	protected static ref PPEParams m_requestedPPE = new PPEParams(); // merged values of requested ppe
-	protected static ref PPEParams m_resultPPE = new PPEParams(); // final ppe params after the merge
+	protected static ref SPPEffect m_requestedPPE = new SPPEffect(); // merged values of requested ppe
+	protected static ref SPPEffect m_resultPPE = new SPPEffect(); // final ppe params after the merge
 	
 	//=========================================================
 	
@@ -103,15 +103,15 @@ class SPPEManager {
 	
 	/**
 	* @brief Add a post process effect 
-	* 	@params params \p PPEParams - Parameters to be added
+	* 	@params params \p SPPEffect - Parameters to be added
 	*/
-	static void activate(PPEParams params){
+	static void activate(SPPEffect params){
 		if(GetGame().IsServer() && GetGame().IsMultiplayer()){
 			SLog.w("ACTIVATING " + params + " on server!","SPPEManager::activate");
 			return;
 		}
-		if(params.IsInherited(PPEAnimatedParams)){
-			PPEAnimatedParams ppeAp = PPEAnimatedParams.Cast(params);
+		if(params.IsInherited(SPPEffectAnimated)){
+			SPPEffectAnimated ppeAp = SPPEffectAnimated.Cast(params);
 			m_animatedPPE.Insert(ppeAp); // https://www.youtube.com/watch?v=Ct6BUPvE2sM
 			ppeAp.start();
 		}else{
@@ -122,15 +122,15 @@ class SPPEManager {
 	
 	/**
 	* @brief Remove a post process effect 
-	* 	@params params \p PPEParams - Parameters to be removed
+	* 	@params params \p SPPEffect - Parameters to be removed
 	*/
-	static void deactivate(PPEParams params){
+	static void deactivate(SPPEffect params){
 		if(GetGame().IsServer() && GetGame().IsMultiplayer()){
 			SLog.w("DEACTIVATING " + params + " on server!","SPPEManager::deactivate");
 			return;
 		}
-		if(params.IsInherited(PPEAnimatedParams)){
-			PPEAnimatedParams ppeAp = PPEAnimatedParams.Cast(params);
+		if(params.IsInherited(SPPEffectAnimated)){
+			SPPEffectAnimated ppeAp = SPPEffectAnimated.Cast(params);
 			ppeAp.stop();
 			m_animatedPPE.Remove(m_animatedPPE.Find(ppeAp));
 		}else{
@@ -141,10 +141,10 @@ class SPPEManager {
 	
 	/**
 	*	@brief Toggle the post process effect
-	*	 @params params \p PPEParams - Parameters to be toggled
+	*	 @params params \p SPPEffect - Parameters to be toggled
 	*	 @params activate \p bool - state
 	*/
-	static void toggle(PPEParams params, bool activate){
+	static void toggle(SPPEffect params, bool activate){
 		if(activate) 
 			activate(params);
 		else
@@ -216,16 +216,16 @@ class SPPEManager {
 	* @brief Iterate over all animated parameters and animate
 	*/
 	protected static void animateParams(float deltaTime){
-		TPPEAnimatedParamsList toDeactivate = new TPPEAnimatedParamsList;
-		foreach(PPEAnimatedParams ap : m_animatedPPE){
+		TSPPEffectsAnimatedList toDeactivate = new TSPPEffectsAnimatedList;
+		foreach(SPPEffectAnimated ap : m_animatedPPE){
 			if(ap.isPlaying()) {
 				ap.animate(deltaTime);
-			}else if(ap.hasStopped() && PPETimedParams.Cast(ap) && PPETimedParams.Cast(ap).shouldDeactivateOnStop()){
+			}else if(ap.hasStopped() && SPPEffectTimed.Cast(ap) && SPPEffectTimed.Cast(ap).shouldDeactivateOnStop()){
 				toDeactivate.Insert(ap);
 			}
 		}
 		
-		foreach(PPEAnimatedParams apToDeactivate : toDeactivate){
+		foreach(SPPEffectAnimated apToDeactivate : toDeactivate){
 			deactivate(apToDeactivate);
 		}
 	}
@@ -246,13 +246,13 @@ class SPPEManager {
 		m_requestedPPE.clear();
 		
 		//Apply persistent PPEffects
-		foreach (PPEParams persistentPPE : m_persistentPPE) {
+		foreach (SPPEffect persistentPPE : m_persistentPPE) {
 			m_requestedPPE.merge(persistentPPE);
 			persistentPPE.onMerge();
 		}
 		
 		//Apply animated PPEffects
-		foreach (PPEAnimatedParams animatedPPE : m_animatedPPE) {
+		foreach (SPPEffectAnimated animatedPPE : m_animatedPPE) {
 			if (animatedPPE.hasChanged() || animatedPPE.isPaused()) {
 				m_requestedPPE.merge(animatedPPE);
 				animatedPPE.onMerge();
@@ -307,20 +307,20 @@ class SPPEManager {
 
 	
 	/**
-	* @brief Iterate and apply the parameters
-	* 	@params params \p PPEParams - Parameters to be applied
+	* @brief Iterate and apply the effect
+	* 	@params params \p SPPEffect - Effect to be applied
 	*/
-	protected static void applyParams(PPEParams params){
-		applyFloatParams(params);
-		applyColorParams(params);
-		params.onApply();
+	protected static void applyParams(SPPEffect ppe){
+		applyFloatParams(ppe);
+		applyColorParams(ppe);
+		ppe.onApply();
 	}
 
 	
 	/**
 	* @brief Iterate over all (float) parameters for each material and apply them	
 	*/
-	protected static void applyFloatParams(PPEParams params){
+	protected static void applyFloatParams(SPPEffect params){
 		TPPEFloatParamsMap ppeParams = params.getFloatParams();
 		foreach(auto ppeMaterial, auto ppeParam : ppeParams){
 			foreach(auto ppeParamName, auto ppeParamValue : ppeParam){
@@ -333,8 +333,8 @@ class SPPEManager {
 	/**
 	* @brief Iterate over all (TPPEColor) parameters for each material and apply them
 	*/
-	protected static void applyColorParams(PPEParams params){
-		TPPEColorParamsMap ppeParams = params.getColorParams();
+	protected static void applyColorParams(SPPEffect ppe){
+		TPPEColorParamsMap ppeParams = ppe.getColorParams();
 		foreach(auto ppeMaterial, auto ppeParam : ppeParams){
 			foreach(auto ppeParamName, auto ppeParamValue : ppeParam){
 				applyPPEParamTo(ppeParamName, ppeParamValue, ppeMaterial);
@@ -445,7 +445,7 @@ class SPPEManager {
 	////////////////////////////////////////////////////////////
 	//				DEBUG
 	////////////////////////////////////////////////////////////
-	static TPPEAnimatedParamsList getAnimations(){
+	static TSPPEffectsAnimatedList getAnimations(){
 		return m_animatedPPE;
 	}
 	
@@ -457,7 +457,7 @@ class SPPEManager {
 		m_defaultPPE.debugPrint();
 				
 		SLog.d("-------------------- m_persistentPPE --------------------", "",0);
-		foreach(PPEParams p : m_persistentPPE){
+		foreach(SPPEffect p : m_persistentPPE){
 			if (printParamsValues) 
 				p.debugPrint();
 			else
@@ -465,7 +465,7 @@ class SPPEManager {
 		}
 		
 		SLog.d("-------------------- m_animatedPPE --------------------", "",0);
-		foreach(PPEParams ap : m_animatedPPE){
+		foreach(SPPEffect ap : m_animatedPPE){
 			if (printParamsValues)
 				ap.debugPrint();
 			else

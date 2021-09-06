@@ -1,7 +1,7 @@
-class PPEDefaultPreset : PPEParams {}
+class PPEDefaultPreset : SPPEffect {}
 
 
-class PPEDebugAnimation : PPELoopedParams{	
+class PPEDebugAnimation : SPPEffectAnimated {	
 	override void onAnimate(float deltaTime){
 		clear();
 		setGodraysIntensity(0.0);

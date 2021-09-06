@@ -102,7 +102,7 @@ class SPPEConstants{
 	static const float HIT_RECEIVED_MIN_STRENGTH = 1;          //Minimum strength of the effects
 	static const float HIT_RECEIVED_STRENGTH_MULTIPLIER = 1.5; //How much the effect strength will increment when being hit multiple time
 	static const float HIT_RECEIVED_MAX_CHROM_ABER = 0.5;      //Maximum value of chromatic aberration applied when being hit
-	static const float HIT_RECEIVED_MAX_VIGNETTE = 1.0;        //Maximum value of vignette intensity applied when being hit
+	static const float HIT_RECEIVED_RED_SPEED = 5.0;           //How fast the red overlay will dissipate
 	
 	static const float HIT_RECEIVED_MAX_STRENGTH = 10.0; //Maximum value of hit strength
 	

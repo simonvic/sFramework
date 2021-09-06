@@ -480,6 +480,15 @@ class SPPEffect : Managed {
 	}
 	
 	/**
+	* @brief Quickly set radial blur power
+	* 	@param power \p float - Horizontal and Vertical strength
+	*/
+	void setRadialBlurPower(float power){
+		setRadialBlurPowerX(power);
+		setRadialBlurPowerY(power);
+	}
+	
+	/**
 	* @brief Quickly set radial blur horizontal power
 	* 	@param powerX \p float - Horizontal strength
 	*/
@@ -493,6 +502,15 @@ class SPPEffect : Managed {
 	*/
 	void setRadialBlurPowerY(float powerY){
 		setParam(PPEMaterialsNames.RADIAL_BLUR, PPEParamNames.RADIAL_BLUR_POWER_Y, powerY);			
+	}
+	
+	/**
+	* @brief Quickly set radial blur offset
+	* 	@param power \p float - Horizontal and Vertical offset
+	*/
+	void setRadialBlurOffset(float offset){
+		setRadialBlurOffsetX(offset);
+		setRadialBlurOffsetY(offset);
 	}
 	
 	/**

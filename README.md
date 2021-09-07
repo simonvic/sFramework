@@ -1,7 +1,7 @@
 # sFramework
 
 <p align="center">
-        <img src="https://imgur.com/5DNmgGU.png" width="50%">
+        <img src="https://imgur.com/wHfyEnv.png" width="50%">
         <br>
 		<img src="https://img.shields.io/github/v/tag/simonvic/sFramework?color=F0544C&label=latest%20stable%20release&style=for-the-badge">
         <br>
@@ -10,20 +10,141 @@
 
 # Getting started
 
+sFramework is the core of the sUDE project.
+
+It ships many features and utilities used and/or implemented by sUDE modules :
+  - [Advanced PostProcessing](#PostProcessing-effects)
+  - [Cameras Overlays](#Camera-Overlays)
+  - [Game and User configuration interface](#Configurations-interfaces)
+  - [Helper classes and utilities for developing and debugging](#Utilities)
+  - Improvements to base game classes
+  - ...more
+
 ---
 ---
 
 <br>
 <br>
 
-# Camera Overlays
+<h1 align="center"> PostProcessing effects </h1>
+
+sFramework ships a centralized post processing effects manager, with the goal of allowing multiple requests of the same effects, without hardcoding them.
+
+<br>
+
+## SPPEffect
+`SPPEffect` is the "container" of any PostProcess Effect you wish to add to it (e.g. saturation, vignette, motion blur etc.).
+```csharp
+SPPEffect myPPE = new SPPEffect();
+```
+To add a parameter use the provided setters:
+```csharp
+myPPE.setVignette(intensity, color);
+myPPE.setRadialBlur(powerX, powerY, offsetX, offsetY);
+myPPE.setChromAber(powerX, powerY);
+//...
+```
+
+To apply it, "hand it over" to the SPPEManager, which will calculate the correct value of all active SPPEffect and then apply it
+```csharp
+SPPEManager.activate(myPPE);
+```
+and to deactivate it:
+```csharp
+SPPEManager.deactivate(myPPE);
+```
+
+<br>
+
+## SPPEffectAnimated
+A `SPPEffectAnimated` is just like a `SPPEffect`, but it has an animation mechanism which allows you to animate the values of a PostProcess effect.
+
+A `SPPEffectAnimated` is an *abstract* class. You need to implement it with your own class and override the `onAnimate()` method, which will be called on every frame.
+
+There also is a timed variant `SPPEffectTimed`, which will be automatically deactivated once a certain amount has passed.
+
+To create your animation, simply extend either `SPPEffectAnimated` or `SPPEffectTimed`
+```csharp
+class MyLoopAnimation : PPELoopedParams{
+	override void onAnimate(float deltaTime){
+		/* change PPE values here
+		setOverlay(...);
+		setChromAber(...);
+		setCameraEffects(...);
+		*/
+		setVignetteIntensity( Math.Sin(getTime()) );
+	}
+}
+
+class MyTimedAnimation : SPPEffectTimed{
+	override void onAnimate(float deltaTime){
+		setVignetteIntensity( Math.Cos(getTime()) );
+	}
+}
+```
+
+A `SPPEffectTimed` also has a "duration" which can be set with the constructor, or the provided method:
+```csharp
+MyTimedAnimation myTimedAnimation = new MyTimedAnimation(6); // the animation will last 6 seconds
+myTimedAnimation.setDuration(10.0); // the animation will last 10 seconds
+```
+
+The activation of the animation is identical to any other `SPPEffect`
+```csharp
+MyLoopAnimation myAnimation = new MyLoopAnimation();
+SPPEManager.activate(myAnimation);
+
+MyTimedAnimation myTimedAnimation = new MyTimedAnimation(5.5);
+SPPEManager.activate(myTimedAnimation);
+```
+If you want to manually manage the animation you can use the provided methods
+```csharp
+myAnimation.start();  // Set the animation state to "Playing"
+myAnimation.stop();   // Reset the time and set the animation state to "Stopped"
+myAnimation.pause();  // Freeze the animation values and set the animation state to "Paused"
+myAnimation.resume(); // Resume the the animation and set the animation state to "Playing"
+```
+
+## The insides of SPPEManager
+<h3 align="center">PostProcess Effect Manager</h3>
+The SPPEManager is in charge of managing the PostProcessing effects; this is a small diagram roughly showing how it works
+<img src="https://imgur.com/IKHcKQR.png">
+---
+---
+<br>
+<br>
+
+<br>
+<br>
+
+<h1 align="center"> Camera Overlays </h1>
+
 A camera overlay is nothing else than an image, used like an HUD.
 The fundemental unit of camera overlays is the `SCameraOverlay`, a very simple wrapper for the `ImageWidget` (the DayZ UI component that holds an image).
 
-Define the overlay, with all the attributes you want:
+It can be used in countless ways:
+
+As an animated UI :
+
+<img src="https://imgur.com/78gLf3X.gif" width="50%">
+
+or for emulating headgear damage: 
+
+
+<img src="https://imgur.com/u4Sng17.gif" width="50%">
+
+##### (_from sVisual, MotoHelmet in various health state: Pristine, Worn, Damaged, BadlyDamaged and Ruined)_
+
+<br>
+<br>
+
+Defining an overlay is very simple and very similar to SPPEffects, in fact there are three types as well and the logic is identical to the SPPEffects:
+- `SCameraOverlay`
+- `SCameraOverlayAnimated`
+- `SCameraOverlayTimed`
 ```csharp
 class MyAnimatedOverlay : SCameraOverlayAnimated {
-    //onInit() gets called only once
+
     override void onInit(){
         setImage("path/to/texture.edds");
         //...
@@ -35,11 +156,11 @@ class MyAnimatedOverlay : SCameraOverlayAnimated {
         //setPosition(...)
         //setRotation(...)
         //setMask(...)
-        //etc.
+        //...
     }
 }
 ```
-And activate/deactivate it using the SCameraOverlayManager:
+To activate/deactivate an overlay, you use the `SCameraOverlayManager`:
 ```csharp
 // NOTE: SCameraOverlaysManager is a singleton
 SCameraOverlaysManager.getInstance().activate(myOverlay);
@@ -88,7 +209,179 @@ targetCameras[] = {"DayZPlayerCamera"};   // Camera typename on which the overla
 hidesWithIngameHUD = 0;                   // [0 = false, 1 = true] Determines if it must hides when the player hides the ingame HUD
 ```
 
+<br>
+<br>
 
+# Configurations interfaces
+
+## SUserConfig
+
+`SUserConfig` has the purpose to help in creating user (client) settings in just few lines of code.
+
+Implement the `SUserConfigBase` as follows:
+```csharp
+class MySUserConfig : SUserConfigBase {
+
+    // Configuration options (and their default values) you want to store
+    float myFloatValue = 0.69;
+    //int myIntValue = 69;
+    //bool myBooleanValue = true;
+    //float myArray[4] = {0.69, 42.0, 420.69, 0.42069};
+    //any other options 
+
+    /**
+    *   Where the config will be saved
+    */
+    override string getPath(){
+		return "$saves:\\path\\to\\my\\config.json";
+	}
+	
+    /**
+    *   Where the config with default values will be saved
+    */    
+	override string getDefaultPath(){
+		return "$profile:\\path\\to\\my\\config_default.json";
+	}
+
+    /**
+    *   Implement the deserialization
+    */
+    override void deserialize(string data, out string error){
+		MySUserConfig cfg = this;
+		m_serializer.ReadFromString(cfg, data, error);
+	}
+	
+    /**
+    *   Implement the serialization
+    */
+	override string serialize(bool serializeDefault = false){
+		string result;		
+		MySUserConfig cfg;
+		if(serializeDefault) {
+			cfg = new MySUserConfig();
+		}else{
+			cfg = this;
+		}
+		m_serializer.WriteToString(cfg, true, result);
+		return result;
+	}
+}
+```
+
+you can now save it, load it and more with few lines
+```csharp
+MyUserConfig myCfg = new MyUserConfig();
+myCfg.save();
+myCfg.load();
+//myCfg.isValid()
+// etc.
+```
+
+## SGameConfig
+
+`SGameConfig` contains just a set of utilities to read the game `config.cpp` more easily
+
+<br>
+<br>
+
+# Utilities
+
+## SColor
+
+`SColor` helps you defining and using colors. A few examples:
+```csharp
+//hex values, like in CSS
+SColor.rgb(0xFF0000);    //red
+SColor.rgba(0xFF000055); //red slightly transparent
+SColor.argb(0x55FF0000); //red slightly transparent
+
+//separated rgb channels
+SColor.rgb(60, 97, 178);      //blueish
+SColor.rgba(60, 97, 178, 0);  //blueish
+SColor.argb(0, 60, 97, 178);  //blueish
+
+// hue saturation and brightness
+SColor.hsb(0.60, 0.65, 0.87); //yellowish
+
+// presets (taken from https://www.w3schools.com/cssref/css_colors.asp)
+SColor.rgb(RGBColors.RED);
+SColor.rgb(RGBColors.AQUAMARINE);
+SColor.rgb(RGBColors.YELLOW_GREEN);
+```
+
+## SSpawnable
+
+`SSpawnable` helps you in quickly spawn items with a lot of attachments:
+```csharp
+// Build an M4A1 with multiple attachments
+SSpawnable m4 = SSpawnable.build("M4A1").withAttachments({
+    "M4_Suppressor",
+    "M4_OEBttstck",
+    "M4_RISHndgrd"
+});
+
+// Build an M16A2 with no attachments
+SSpawnable m16 = SSpawnable.build("M16A2");
+
+// Build an AK101 with multiple attachments (and they attachments too)
+SSpawnable ak = SSpawnable.build("AK101").withAttachments({
+    "AK_Suppressor",
+    "AK_PlasticBttstck",
+    "AK_RailHndgrd"
+}).withSpawnableAttachments(
+    (new SSpawnable("PSO11Optic")).withAttachment("Battery9V"),
+    (new SSpawnable("UniversalLight")).withAttachment("Battery9V"));
+
+// Actually spawn the items
+m4.spawn(position);
+m16.spawn(position);
+ak.spawn(position);
+```
+
+## SRaycast
+
+`SRaycast` helps you launching raycasts with more flexibility:
+```csharp
+SRaycast ray = new SRaycast(/**...*/);
+vector contactPositon = ray
+    .from(thisPosition)
+    .to(thisOtherPosition)
+    .ignore(thisItem, thisOtherItem)
+    .launch()
+    .getContactPosition();
+
+if (ray.hasHit()){
+    SLog.d("Raycast has hit at this position" + contactPositon);
+}
+```
+
+## SFlagOperator
+
+`SFlagOperator` helps you in bitwise operations, especially when working with flags, hence the name.
+```csharp
+enum MyFlags {
+    A = 1,
+    B = 2,
+    C = 4,
+    D = 8,
+    E = 16
+}
+
+SFlagOperator fop = new SFlagOperator(MyFlags.A | MyFlags.C);
+SLog.d("Result : " + fop.collectBinaryString());
+// Result : 0000 00101
+
+fop.set(MyFlags.B);
+fop.reset(MyFlags.A)
+SLog.d("Result : " + fop.collectBinaryString());
+// Result : 0000 00110
+
+SLog.d("A is set : " + fop.check(MyFlags.A));
+//A is set : false
+
+SLog.d("B is set : " + fop.check(MyFlags.B));
+//B is set : true
+```
 <br>
 <br>
 

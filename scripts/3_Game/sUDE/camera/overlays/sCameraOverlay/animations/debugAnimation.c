@@ -66,7 +66,6 @@ class SCOAnimationLogo : SCameraOverlayAnimated {
 	}
 	
 	override void onAnimate(float deltaTime){
-		setImage("MyMODS/sFramework/GUI/icons/logo/sUDE.paa");
 		setRotation(Math.Sin(getTime()) * 360, 0, 0);
 	}
 	

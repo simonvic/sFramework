@@ -27,12 +27,17 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	
 	
 		
-	protected void lockOption(SSliderWidget slider){
-		lockOption(slider.getSliderWidget());
+	protected void lockOption(SSliderWidget slider, string suffix = " ( #STR_SUDE_LAYOUT_OPTIONS_LOCKED )"){
+		slider.getSliderWidget().Enable(false);
 		
 		TextWidget txtWidget = slider.getTextWidget();
-		txtWidget.SetText("" + slider.getValue() + " ( #STR_SUDE_LAYOUT_OPTIONS_LOCKED )");
-		lockOption(txtWidget);
+		txtWidget.SetText("" + slider.getValue() + suffix);
+		txtWidget.Enable(false);
+	}
+	
+	protected void lockOption(CheckBoxWidget widget, string suffix = " ( #STR_SUDE_LAYOUT_OPTIONS_LOCKED )") {
+		widget.SetText(suffix);
+		widget.Enable(false);
 	}
 	
 	protected void lockOption(Widget widget){

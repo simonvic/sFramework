@@ -1,5 +1,5 @@
 ButtonWidgetClass btn {
- color 0 0 0 1
+ color 0 0 0 0.549
  size 130 1
  halign center_ref
  valign center_ref

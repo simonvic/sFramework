@@ -117,7 +117,60 @@ class SGameConfig {
 			if(t.ToType()) value.Insert(t.ToType());
 		}
 		return value;
-	}	
+	}
+	
+	/**
+	*	@brief Get the child name at index position
+	*	 @param path \p string - Path to read
+	*	 @param index \p int -
+	*	 @return string name of child
+	*/
+	static string getChildName(string path, int index) {
+		string name;
+		GetGame().ConfigGetChildName(path, index, name);
+		return name;
+	}
+	
+	/**
+	*	@brief Get the children names, one level deep
+	*	 @param path \p string - Path to read
+	*	 @return array<string> - array of children names
+	*/
+	static TStringArray getChildrenNames(string path) {
+		TStringArray children = new TStringArray();
+		int count = GetGame().ConfigGetChildrenCount(path);
+		for (int i=0; i<count; i++) {
+			children.InsertAt(getChildName(path, i), 0);
+		}
+		return children;
+	}
+	
+	/**
+	*	@brief Get a tree representation of the config.cpp
+	*	 @param path \p string - root path to read
+	*	 @return STreeNode<string> - root node of tree
+	*/
+	static STreeNode<string> getTree(string path) {
+		TStringArray pathWords = new TStringArray;
+		path.Split(" ", pathWords);
+		auto root = new STreeNode<string>(pathWords.Get(pathWords.Count() - 1));
+		
+		int count = GetGame().ConfigGetChildrenCount(path);
+		for (int i=0; i<count; i++) {
+			root.addChild(getTree(path + " " + getChildName(path, i)));
+		}
+		
+		return root;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	static void get(string path, out int value){
 		value = GetGame().ConfigGetInt(path);

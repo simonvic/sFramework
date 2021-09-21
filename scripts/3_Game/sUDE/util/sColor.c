@@ -83,6 +83,43 @@ class SColor {
 	}
 	
 	/**
+	*	@brief Set alpha value
+	*	 @param alpha \p int - Alpha
+	*/
+	SColor setAlpha(int alpha) {
+		argbValue = (argbValue & 0x00ffffff) | (alpha << 24);
+		return this;
+	}
+	
+	/**
+	*	@brief Set red value
+	*	 @param red \p int - Red
+	*/
+	SColor setRed(int red) {
+		argbValue = (argbValue & 0xff00ffff) | (red << 16);
+		return this;
+	}
+	
+	/**
+	*	@brief Set green value
+	*	 @param green \p int - Alpha
+	*/
+	SColor setGreen(int green) {
+		argbValue = (argbValue & 0xffff00ff) | (green << 8);
+		return this;
+	}
+	
+	/**
+	*	@brief Set blue value
+	*	 @param blue \p int - Alpha
+	*/
+	SColor setBlue(int blue) {
+		argbValue = (argbValue & 0xffffff00) | blue;
+		return this;
+	}
+	
+		
+	/**
 	*	@brief Brighten the current color
 	*	 @param factor \p float - Factor of brightening [0 - 1]
 	*/

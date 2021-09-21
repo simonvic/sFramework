@@ -36,7 +36,7 @@ class SDebug {
 			printLayoutTree(root.GetChildren(), depth + 1);
 		}
 		
-		if(root.GetSibling()){
+		if( depth > 0 && root.GetSibling()){
 			printLayoutTree(root.GetSibling(), depth);
 		}
 	}

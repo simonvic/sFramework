@@ -33,4 +33,8 @@ class SCameraManager : Managed {
 		return m_player.IsCameraBlending();
 	}
 	
+	bool canUpdateFrom(DayZPlayerCameraBase camera) {
+		return m_camera == camera;
+	}
+	
 }

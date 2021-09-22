@@ -19,7 +19,9 @@ modded class DayZPlayerCameraBase{
 	
 	override void OnUpdate(float pDt, out DayZPlayerCameraResult pOutResult){
 		super.OnUpdate(pDt, pOutResult);
-		m_camManager.onUpdate(pDt, pOutResult);  
+		if (m_camManager.canUpdateFrom(this)) {
+			m_camManager.onUpdate(pDt, pOutResult);
+		}
 	}
 	
 	float getTransitionTime(){

@@ -1,6 +1,0 @@
-/*
-*	@Singleton
-*/
-class SServerConfig{
-	
-}

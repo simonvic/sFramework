@@ -1,5 +1,8 @@
 class SJSONSerializable : Managed {
 	
+	#ifndef DEVELOPER
+	[NonSerialized()]
+	#endif
 	protected static ref JsonSerializer m_serializer = new JsonSerializer();
 	
 	/**

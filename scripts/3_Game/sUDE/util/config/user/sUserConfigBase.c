@@ -20,13 +20,26 @@ class SUserConfigBase : SJSONSerializable{
 		
 	TStringArray getFields(){
 		TStringArray fields = new TStringArray;
+		TStringArray nonSerializedFields = new TStringArray;
+		getNonSerializedFields().Split(";",nonSerializedFields);
+		
 		for (int i = 0; i<Type().GetVariableCount(); i++) {
-			if (Type().GetVariableName(i) != "m_serializer") { //@todo lol... find a solution for [NonSerialized()]
+			if (nonSerializedFields.Find(Type().GetVariableName(i)) == -1) { 
 				fields.Insert(Type().GetVariableName(i));
 			}
 		}
+		
 		return fields;
 	}
+		
+	/**
+	*	@brief Get a semicolon separated list of fields that must not be serialized. Little hacky to circumvent NonSerialized() attribute
+	*	 @return string - list of fields not to serialize
+	*/
+	//@todo lol... find a solution for [NonSerialized()]
+	string getNonSerializedFields() {
+		return "m_serializer";
+	}	
 	
 	bool isValid(){
 		return SUserConfigValidator.isValid(getPath(), getFields());

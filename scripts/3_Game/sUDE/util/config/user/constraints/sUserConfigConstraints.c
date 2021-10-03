@@ -22,6 +22,11 @@ class SUserConfigConstraints{
 	*/
 	void load(typename moduleType, bool reload = false){
 		
+		if (GetGame().IsClient()) {
+			SLog.w("Trying to load user config constraints from client!, Ignoring...","SUserConfigConstraints::load");
+			return;
+		}
+		
 		if (isModuleLoaded(moduleType) && !reload) return;
 		
 		//Check if correct typename

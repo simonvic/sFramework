@@ -1,5 +1,9 @@
 class STest {
 
+	static void testUserConfigs() {
+	
+	}
+	
 	static void testTrees() {
 		SLog.d("==============================");
 		SLog.d("DUMB TREE");

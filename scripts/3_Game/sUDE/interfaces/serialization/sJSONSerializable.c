@@ -24,7 +24,7 @@ class SJSONSerializable : Managed {
 	*	       It's needed because of how Enforce handles script variables
 	*	 @code
 	*	 	override void deserialize(string data, out string error){
-	*			YourClassName cfg = this;
+	*			auto cfg = this;
 	*			getSerializer().ReadFromString(cfg, data, error);
 	*		}
 	*/
@@ -37,7 +37,7 @@ class SJSONSerializable : Managed {
 	*	 @code
 	*	 	override string serialize(){
 	*	 		string result;
-	*	 		YourClassName cfg = this;
+	*	 		auto cfg = this;
 	*	 		getSerializer().WriteToString(cfg, true, result);
 	*	 		return result;
 	*	 	}

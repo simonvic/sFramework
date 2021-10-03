@@ -1,0 +1,3 @@
+enum sUDE_RPC : ERPCs {
+	SUDE_DEBUG
+}

@@ -9,6 +9,8 @@ class SConstraintSimple<Class T> : SConstraintBase {
 	T getValue() {
 		return value;
 	}
+	
+	override string toString() {
+		return "#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_SIMPLE : " + getValue();
+	}
 }
-
-typedef SConstraintSimple<bool> SConstraintSwitch;

@@ -2,15 +2,49 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	
 	string getName();
 	string getLayout();
+	string getInfoBoxRootContainer();
+	
+	string getInfoBoxLayout() {
+		return "MyMODS/sFramework/GUI/layouts/user_config_description_box.layout";
+	}
+	
+	protected ref map<ref Widget, ref SUserConfigInfo> m_descriptions = new map<ref Widget, ref SUserConfigInfo>;
 	
 	protected Widget m_root;
+	protected Widget m_infoBoxRoot;
+	protected Widget m_infoBoxWarning;
+	
 	void setRoot(Widget root){
 		m_root = root;
 		m_root.SetHandler(this);
 	}
 	
-	void onBuild();
+	void onBuild() {
+		m_infoBoxRoot = m_root.FindAnyWidget(getInfoBoxRootContainer());
+		if (m_infoBoxRoot) {
+			GetGame().GetWorkspace().CreateWidgets(getInfoBoxLayout(), m_infoBoxRoot);
+			m_infoBoxWarning = m_infoBoxRoot.FindAnyWidget("c_warning");
+			hideInfoBoxWarning();
+		}
+	}
 	
+	protected void initOptionInfo(Widget widget, SUserConfigInfo info) {
+		m_descriptions.Set(widget, info);
+	}
+	
+	protected void initInfoBox(SUserConfigInfo info) {
+		if (!m_infoBoxRoot) return;
+		TextWidget.Cast(m_infoBoxRoot.FindAnyWidget("title")).SetText(info.getTitle());
+		RichTextWidget.Cast(m_infoBoxRoot.FindAnyWidget("description_body")).SetText(info.getDescription());
+		
+		
+		if (info.isConstrained()) {
+			showInfoBoxWarning();			
+			RichTextWidget.Cast(m_infoBoxWarning.FindAnyWidget("warning_body")).SetText(info.getWarningMessage());
+		} else {
+			hideInfoBoxWarning();
+		}
+	}
 	
 	
 	
@@ -46,7 +80,19 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		
 	
 	
-	
+	override bool OnMouseEnter(Widget w, int x, int y) {
+		if (!m_infoBoxRoot) return true;
+		
+		SUserConfigInfo info = m_descriptions.Get(w);
+		if (!info) {
+			hideInfoBox();
+			return true;
+		}
+		
+		initInfoBox(info);
+		showInfoBox();
+		return true;
+	}
 		
 	override bool OnChange(Widget w, int x, int y, bool finished){
 		if(!w) return false;
@@ -63,6 +109,22 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	
 	void hide(){
 		m_root.Show(false);	
+	}
+	
+	void showInfoBox(){
+		m_infoBoxRoot.Show(true);
+	}
+	
+	void hideInfoBox(){
+		m_infoBoxRoot.Show(false);	
+	}
+	
+	void showInfoBoxWarning(){
+		m_infoBoxWarning.Show(true);
+	}
+	
+	void hideInfoBoxWarning(){
+		m_infoBoxWarning.Show(false);	
 	}
 	
 	protected bool onChange(SliderWidget w);

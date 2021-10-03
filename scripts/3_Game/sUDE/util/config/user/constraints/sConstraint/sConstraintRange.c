@@ -14,4 +14,7 @@ class SConstraintRange : SConstraintMinMax<float> {
 		step = stepSize;
 	}
 	
+	override string toString() {
+		return super.toString() + "\n#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_STEP : " + getStep();
+	}
 }

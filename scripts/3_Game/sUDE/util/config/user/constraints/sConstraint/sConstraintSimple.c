@@ -10,6 +10,15 @@ class SConstraintSimple<Class T> : SConstraintBase {
 		return value;
 	}
 	
+	T constrain(T toConstrain) {
+		if (!isEnabled()) return toConstrain;
+		return value;
+	}
+	
+	bool isValid(T toValidate) {
+		return toValidate == value;
+	}
+	
 	override string toString() {
 		return "#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_SIMPLE : " + getValue();
 	}

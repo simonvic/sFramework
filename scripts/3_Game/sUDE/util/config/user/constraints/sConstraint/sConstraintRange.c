@@ -14,6 +14,11 @@ class SConstraintRange : SConstraintMinMax<float> {
 		step = stepSize;
 	}
 	
+	override float constrain(float toConstrain) {
+		if (!isEnabled()) return toConstrain;
+		return Math.Clamp(toConstrain, getMin(), getMax());
+	}
+		
 	override string toString() {
 		return super.toString() + "\n#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_STEP : " + getStep();
 	}

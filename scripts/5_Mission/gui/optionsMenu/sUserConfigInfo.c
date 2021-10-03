@@ -35,9 +35,9 @@ class SUserConfigInfo : Managed {
 	}
 	
 	string getWarningMessage() {
-		if (m_constraints) return m_constraints.getMessage() + "\n\n" + m_constraints.toString();
+		if (!m_constraints) return string.Empty;
 		
-		return string.Empty;
+		return m_constraints.getMessage() + "\n\n" + m_constraints.toString();
 	}
 	
 	bool isConstrained() {

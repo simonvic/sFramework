@@ -15,6 +15,13 @@ class SConstraintMinMax<Class T> : SConstraintBase {
 	T getMax() {
 		return max;
 	}
+	
+	T constrain(T toConstrain);
+	
+	bool isValid(T toValidate) {
+		//return Math.IsInRange(toValidate, getMin(), getMax()); //yikes...
+		return toValidate >= getMin() && toValidate <= getMax();
+	}
 
 	override string toString() {
 		return string.Format(

@@ -5,7 +5,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	string getInfoBoxRootContainer();
 	
 	string getInfoBoxLayout() {
-		return "MyMODS/sFramework/GUI/layouts/user_config_description_box.layout";
+		return "MyMODS/sFramework/GUI/layouts/user_config_info_box.layout";
 	}
 	
 	protected ref map<ref Widget, ref SUserConfigInfo> m_descriptions = new map<ref Widget, ref SUserConfigInfo>;
@@ -78,31 +78,21 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		widget.Enable(false);
 	}
 		
-	
-	
 	override bool OnMouseEnter(Widget w, int x, int y) {
-		if (!m_infoBoxRoot) return true;
-		
-		SUserConfigInfo info = m_descriptions.Get(w);
+		updateInfoBox(m_descriptions.Get(w));
+		return true;
+	}
+	
+	protected void updateInfoBox(SUserConfigInfo info) {
+		if (!m_infoBoxRoot) return;
 		if (!info) {
 			hideInfoBox();
-			return true;
+		} else {
+			initInfoBox(info);
+			showInfoBox();
 		}
-		
-		initInfoBox(info);
-		showInfoBox();
-		return true;
 	}
-		
-	override bool OnChange(Widget w, int x, int y, bool finished){
-		if(!w) return false;
-		
-		if(w.IsInherited( SliderWidget ))   return onChange(SliderWidget.Cast(w));
-		if(w.IsInherited( CheckBoxWidget )) return onChange(CheckBoxWidget.Cast(w));		
 
-		return true;
-	}
-	
 	void show(){
 		m_root.Show(true);
 	}
@@ -125,6 +115,17 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	
 	void hideInfoBoxWarning(){
 		m_infoBoxWarning.Show(false);	
+	}
+	
+	override bool OnChange(Widget w, int x, int y, bool finished){
+		if(!w) return false;
+		
+		switch (w.Type()) {
+			case SliderWidget:   return onChange(SliderWidget.Cast(w));
+			case CheckBoxWidget: return onChange(CheckBoxWidget.Cast(w));
+		}
+		
+		return true;
 	}
 	
 	protected bool onChange(SliderWidget w);

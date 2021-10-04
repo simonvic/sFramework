@@ -1,16 +1,17 @@
 
 class SUserConfigBase : SJSONSerializable{
+	//protected float serialVersionUID = 69; //@todo use serialVersionUID instead of checking the fields
 	
 	void SUserConfigBase() {
 		DayZGame.Event_OnRPC.Insert(this.onRPC);
 	}
 	
-	void onRPC(PlayerIdentity sender, Object target, int rpc_type, ParamsReadContext ctx);
-	
-	//protected float serialVersionUID = 69; //@todo use serialVersionUID instead of checking the fields
-	
 	string getDefaultPath();
 	string serializeDefault();
+	void onRPC(PlayerIdentity sender, Object target, int rpc_type, ParamsReadContext ctx);
+	void applyConstraints(SUserConfigConstraintsBase constraints);
+	void updateConstraints();
+	
 	
 	void createDefault(){
 		SFileHelper.touch(getDefaultPath());

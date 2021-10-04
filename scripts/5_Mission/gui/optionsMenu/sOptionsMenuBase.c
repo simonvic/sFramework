@@ -28,7 +28,23 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		}
 	}
 	
+	
+	protected void initOption(out SSliderWidget slider, string name, float value, SUserConfigInfo info = null){
+		slider = new SSliderWidget(m_root, name, value, this);
+		initOptionInfo(slider.getSliderWidget(), info);
+	}
+	
+	protected void initOption(out CheckBoxWidget checkbox, string name, bool value, SUserConfigInfo info = null){
+		checkbox = CheckBoxWidget.Cast(m_root.FindAnyWidget( name ));
+		checkbox.SetChecked(value);
+		checkbox.SetHandler(this);
+		initOptionInfo(checkbox, info);
+	}
+
+	
 	protected void initOptionInfo(Widget widget, SUserConfigInfo info) {
+		if (!widget || !info) return;
+		
 		m_descriptions.Set(widget, info);
 	}
 	
@@ -45,20 +61,6 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 			hideInfoBoxWarning();
 		}
 	}
-	
-	
-	
-	
-	protected void initOption(out SSliderWidget slider, string name, float value){
-		slider = new SSliderWidget(m_root, name, value, this);
-	}
-	
-	protected void initOption(out CheckBoxWidget checkbox, string name, bool value){
-		checkbox = CheckBoxWidget.Cast(m_root.FindAnyWidget( name ));
-		checkbox.SetChecked(value);
-		checkbox.SetHandler(this);
-	}
-	
 	
 		
 	protected void lockOption(SSliderWidget slider, string suffix = " ( #STR_SUDE_LAYOUT_OPTIONS_LOCKED )"){

@@ -20,6 +20,6 @@ class SConstraintRange : SConstraintMinMax<float> {
 	}
 		
 	override string toString() {
-		return super.toString() + "\n#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_STEP : " + getStep();
+		return super.toString() + "\n<b>#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_STEP : <i>" + getStep() + "</i></b>";
 	}
 }

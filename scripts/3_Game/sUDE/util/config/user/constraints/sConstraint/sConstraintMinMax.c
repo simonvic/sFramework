@@ -25,7 +25,7 @@ class SConstraintMinMax<Class T> : SConstraintBase {
 
 	override string toString() {
 		return string.Format(
-			"#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_MIN : %1\n#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_MAX : %2",
+			"<b>#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_MIN : <i>%1</i>\n#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_MAX : <i>%2</i></b>",
 			getMin(),
 			getMax());
 	}

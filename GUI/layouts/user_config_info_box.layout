@@ -8,42 +8,6 @@ WrapSpacerWidgetClass root {
  Margin 0
  content_halign center
  {
-  GridSpacerWidgetClass c_title {
-   visible 1
-   ignorepointer 1
-   color 0 0 0 0.9608
-   size 0.06 1
-   hexactpos 0
-   vexactpos 0
-   hexactsize 0
-   vexactsize 0
-   style DayZDefaultPanelTop
-   Padding 0
-   Margin 10
-   "Size To Content V" 1
-   content_halign center
-   content_valign center
-   Columns 1
-   Rows 1
-   {
-    TextWidgetClass title {
-     visible 1
-     ignorepointer 1
-     position 0 0
-     size 1 36
-     hexactpos 0
-     vexactpos 0
-     hexactsize 0
-     vexactsize 1
-     text "Dummy title"
-     "exact text" 1
-     "size to text h" 1
-     "size to text v" 0
-     "text halign" center
-     "text valign" center
-    }
-   }
-  }
   GridSpacerWidgetClass c_description {
    visible 1
    ignorepointer 1
@@ -61,7 +25,7 @@ WrapSpacerWidgetClass root {
    Columns 1
    Rows 2
    {
-    WrapSpacerWidgetClass c_description_header {
+    WrapSpacerWidgetClass c_title {
      visible 1
      ignorepointer 1
      color 0 0 0 0.8824
@@ -75,18 +39,19 @@ WrapSpacerWidgetClass root {
      Margin 10
      "Size To Content H" 1
      "Size To Content V" 1
+     content_halign center
      content_valign center
      {
-      TextWidgetClass description_header {
+      TextWidgetClass title {
        visible 1
        ignorepointer 1
-       position 0 0
        size 1 26
+       halign center_ref
        hexactpos 0
        vexactpos 0
        hexactsize 0
        vexactsize 1
-       text "#STR_SUDE_LAYOUT_OPTIONS_DESCRIPTION"
+       text "This is a dummy title"
        font "gui/fonts/metronlight22"
        "exact text" 1
        "size to text h" 1
@@ -123,9 +88,12 @@ WrapSpacerWidgetClass root {
        vexactpos 0
        hexactsize 0
        vexactsize 0
-       text "This is a dummy description"
-       font "gui/fonts/metronlight16"
+       text "Hello! <p>This is a paragraph</p> Hello world! <br/> <b>bold</b> <br/> <i>italic</i> <br/> <font>font</font>"
+       font "gui/fonts/sdf_metronlight24"
+       "italic text" 0
+       "bold text" 0
        "exact text" 1
+       "exact text size" 16
        "size to text h" 1
        "size to text v" 1
        wrap 1
@@ -213,8 +181,10 @@ WrapSpacerWidgetClass root {
        hexactsize 0
        vexactsize 0
        text "This is a dummy warning"
-       font "gui/fonts/metronlight16"
+       font "gui/fonts/sdf_metronlight24"
+       "italic text" 0
        "exact text" 1
+       "exact text size" 16
        "size to text h" 1
        "size to text v" 1
        wrap 1

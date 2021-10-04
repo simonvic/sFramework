@@ -20,6 +20,6 @@ class SConstraintSimple<Class T> : SConstraintBase {
 	}
 	
 	override string toString() {
-		return "#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_SIMPLE : " + getValue();
+		return "<b>#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_SIMPLE : <i>" + getValue() + "</i></b>";
 	}
 }

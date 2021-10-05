@@ -2,12 +2,12 @@ class SUserConfigInfo : Managed {
 	
 	protected string m_title;
 	protected string m_description;
-	protected SConstraintBase m_constraints;
+	protected SConstraintBase m_constraint;
 		
-	void SUserConfigInfo(string title, string description, SConstraintBase constraints = null) {
+	void SUserConfigInfo(string title, string description, SConstraintBase constraint = null) {
 		m_title = title;
 		m_description = description;
-		m_constraints = constraints;				
+		m_constraint = constraint;				
 	}
 	
 	string getTitle() {
@@ -26,22 +26,22 @@ class SUserConfigInfo : Managed {
 		m_description = description;
 	}
 	
-	void setConstraints(SConstraintBase constraints) {
-		m_constraints = constraints;
+	void setConstraints(SConstraintBase constraint) {
+		m_constraint = constraint;
 	}
 	
 	void removeConstraints() {
-		delete m_constraints;
+		delete m_constraint;
 	}
 	
 	string getWarningMessage() {
-		if (!m_constraints) return string.Empty;
+		if (!m_constraint) return string.Empty;
 		
-		return m_constraints.getMessage() + "\n\n" + m_constraints.toString();
+		return m_constraint.getMessage() + "\n\n" + m_constraint.toString();
 	}
 	
 	bool isConstrained() {
-		return m_constraints && m_constraints.isEnabled();
+		return m_constraint && m_constraint.isEnabled();
 	}
 	
 	

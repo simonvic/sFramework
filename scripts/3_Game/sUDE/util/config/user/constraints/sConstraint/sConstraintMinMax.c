@@ -16,12 +16,24 @@ class SConstraintMinMax<Class T> : SConstraintBase {
 		return max;
 	}
 	
-	T constrain(T toConstrain);
-	
-	bool isValid(T toValidate) {
-		//return Math.IsInRange(toValidate, getMin(), getMax()); //yikes...
-		return toValidate >= getMin() && toValidate <= getMax();
+	/**
+	*	@brief A wrapper for the base constrain method, in order to expose a simpler method signature
+	*	 @param toConstrain \p T - Generic value to constrain
+	*	 @return T - constrained value
+	*/
+	T constrain(T toConstrain) {
+		return Param1<T>.Cast(constrain(new Param1<T>(toConstrain))).param1;
 	}
+	
+	/**
+	*	@brief A wrapper for the base isValid method, in order to expose a simpler method signature
+	*	 @param toValidate \p T - Generic value to validate
+	*	 @return bool - if the value respects the constraint
+	*/
+	bool isValid(T toValidate) {
+		return isValid(new Param1<T>(toValidate));
+	}
+	
 
 	override string toString() {
 		return string.Format(

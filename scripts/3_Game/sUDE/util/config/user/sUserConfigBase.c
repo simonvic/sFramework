@@ -9,8 +9,6 @@ class SUserConfigBase : SJSONSerializable{
 	string getDefaultPath();
 	string serializeDefault();
 	void onRPC(PlayerIdentity sender, Object target, int rpc_type, ParamsReadContext ctx);
-	void applyConstraints(SUserConfigConstraintsBase constraints);
-	void updateConstraints();
 	
 	
 	void createDefault(){

@@ -15,9 +15,7 @@ class SUserConfigOptionBase : Managed {
 	} 
 	
 	void updateConstraint() {
-		if (isConstrained()) {
-			getConstraint().constrain(getParam());
-		}
+		setParam(getParam()); //@todo change this?
 	}
 	
 	SConstraintBase getConstraint() {
@@ -28,22 +26,27 @@ class SUserConfigOptionBase : Managed {
 		if (!hasConstraint()) return;
 		getConstraint().enable();
 		updateConstraint();
+		onConstraintEnable();
 	}
 	
 	void disableConstraint() {
 		if (!hasConstraint()) return;
 		getConstraint().disable();
 		updateConstraint();
+		onConstraintDisable();
 	}
 	
 	void setConstraint(SConstraintBase constraint) {
+		if (m_constraint == constraint) return;
 		m_constraint = constraint;
 		updateConstraint();
+		onConstraintChange();
 	}
 	
 	void removeConstraint() {
 		m_constraint = null;
 		updateConstraint();
+		onConstraintRemove();
 	}
 	
 	bool isConstrained() {
@@ -54,5 +57,8 @@ class SUserConfigOptionBase : Managed {
 		return getConstraint() != null;
 	}
 	
-	void onValueChange();
+	protected void onConstraintChange();
+	protected void onConstraintEnable();
+	protected void onConstraintDisable();
+	protected void onConstraintRemove();
 }

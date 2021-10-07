@@ -276,17 +276,5 @@ class STest {
 		SLog.d(message, "", 1);
 	}
 	
-	void constrain(Param param){
-		Print(param);
-		Param1<float> temp = Param1<float>.Cast(param);
-		Print(temp == param);
-		if (temp) temp.param1 = 69;
-	}
-	
-	Param constrained(Param param) {
-		if (!Param1<float>.Cast(param)) return param;
-		return new Param1<float>(69);
-	}
-
 }
 

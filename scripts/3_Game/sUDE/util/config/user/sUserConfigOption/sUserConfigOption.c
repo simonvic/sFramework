@@ -2,8 +2,8 @@ class SUserConfigOption<Class T> : SUserConfigOptionBase {
 	
 	
 	void SUserConfigOption(T value, SConstraintBase constraint = null) {
+		super.setParam(new Param1<T>(value));
 		setConstraint(constraint);
-		setParam(new Param1<T>(value));
 	}
 	
 	T get() {
@@ -11,11 +11,18 @@ class SUserConfigOption<Class T> : SUserConfigOptionBase {
 	}
 	
 	void set(T value) {
-		super.setParam(new Param1<T>(value));
+		setParam(new Param1<T>(value));
 	}
 	
-	override void onValueChange() {
-		super.onValueChange();
+	override void setParam(Param param) {
+		T previousValue = get();
+		super.setParam(param);
+		if (get() != previousValue) {
+			onValueChange();
+		}
+	} 
+	
+	protected void onValueChange() {
 		//SLog.d("Value has changed to " + get(),""+this,1);
 	}
 }

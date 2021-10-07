@@ -10,9 +10,12 @@ class SConstraintSimple<Class T> : SConstraintBase {
 		return value;
 	}
 	
-	override Param performConstrain(Param param) {
-		if (!Param1<T>.Cast(param)) return param;
-		return new Param1<T>(value);
+	override void performConstrain(Param param) {
+		Param1<T> constrainedParam = Param1<T>.Cast(param);
+		if (constrainedParam) {
+			constrainedParam.param1 = value;
+		}
+		
 	}
 	
 	override bool performValidation(Param param) {
@@ -24,8 +27,10 @@ class SConstraintSimple<Class T> : SConstraintBase {
 	*	 @param toConstrain \p T - Generic value to constrain
 	*	 @return T - constrained value
 	*/
-	T constrain(T toConstrain) {
-		return Param1<T>.Cast(constrain(new Param1<T>(toConstrain))).param1;
+	T constrained(T toConstrain) {
+		Param1<T> p = new Param1<T>(toConstrain);
+		constrain(p);
+		return p.param1;
 	}
 	
 	/**

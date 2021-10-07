@@ -1,18 +1,60 @@
 class STest {
 
-	static string PASSED_OUTPUT = "PASSED | got: %1 | expected: %2";
-	static string FAILED_OUTPUT = "FAILED | got: %1 | expected: %2";
+	static string PASSED_OUTPUT = "[ ✓ ] PASSED | expected: %1 | got: %2";
+	static string FAILED_OUTPUT = "[ × ] FAILED | expected: %1 | got: %2";
+	static bool SHOW_PASSED = true;
 	
-	//@ maybe make a proper testing framework? oof...
+	//@todo maybe make a proper testing framework? oof...
 	static void all() {
 		testTrees();
 		testSColor();
-		testUserConfigs();
 		testConstraints();
+		testUserConfigs();
 	}
 	
 	static void testUserConfigs() {
-	
+		SLog.d("==============================");
+		
+		SLog.d("-----------------------------","float");
+		auto f_constraint = new SConstraintMinMaxNumeric<float>(0, 1);
+		assertEqual(false, f_constraint.isEnabled());
+		
+		auto f_option = new SUserConfigOption<float>(0.69, f_constraint);
+		assertEqual(true, f_option.hasConstraint());
+		assertEqual(false, f_option.isConstrained());
+		
+		f_option.removeConstraint();
+		assertEqual(false, f_option.hasConstraint());
+		assertEqual(false, f_option.isConstrained());
+		
+		f_option.setConstraint(f_constraint);
+		assertEqual(true, f_option.hasConstraint());
+		assertEqual(false, f_option.isConstrained());
+		
+		assertEqual(0.69, f_option.get());
+		
+		
+		f_option.set(2.0);
+		assertEqual(2.0, f_option.get());
+		
+		f_option.enableConstraint();
+		assertEqual(1.0, f_option.get());
+		
+		f_constraint.disable();
+		f_option.set(-2.0);
+		assertEqual(-2.0, f_option.get());
+		
+		f_constraint.enable();
+		assertEqual(-2.0, f_option.get());
+		
+		f_option.updateConstraint();
+		assertEqual(0.0, f_option.get());
+				
+		/*
+		SUserConfigOption<bool> boolOption = new SUserConfigOption<bool>(true);
+		SUserConfigOption<string> stringOption = new SUserConfigOption<string>("Hello world");
+		*/
+				
 	}
 	
 	static void testConstraints() {
@@ -22,47 +64,47 @@ class STest {
 		string stringConstrained = "I've been constrained";
 		auto simpleConstrainerString = new SConstraintSimple<string>(stringConstrained);
 		simpleConstrainerString.setEnabled(true);
-		assertEqual(simpleConstrainerString.constrain("I need to be constrained"), stringConstrained);
+		assertEqual(stringConstrained, simpleConstrainerString.constrained("I need to be constrained"));
 		
 		bool boolConstrained = false;
 		auto simpleConstrainerBool = new SConstraintSimple<bool>(boolConstrained);
 		simpleConstrainerBool.setEnabled(true);
-		assertEqual(simpleConstrainerBool.constrain(true), boolConstrained);
+		assertEqual(boolConstrained, simpleConstrainerBool.constrained(true));
 		
 		bool boolConstrained2 = true;
 		auto simpleConstrainerBool2 = new SConstraintSwitch(boolConstrained2);
 		simpleConstrainerBool2.setEnabled(true);
-		assertEqual(simpleConstrainerBool2.constrain(false), boolConstrained2);
+		assertEqual(boolConstrained2, simpleConstrainerBool2.constrained(false));
 		
 		int intConstrained = 3;
 		auto simpleConstrainerInt = new SConstraintSimple<int>(intConstrained);
 		simpleConstrainerInt.setEnabled(true);
-		assertEqual(simpleConstrainerInt.constrain(69), intConstrained);
+		assertEqual(intConstrained, simpleConstrainerInt.constrained(69));
 				
 		float floatConstrained = 0.420;
 		auto simpleConstrainerFloat = new SConstraintSimple<float>(floatConstrained);
 		simpleConstrainerFloat.setEnabled(true);
-		assertEqual(simpleConstrainerFloat.constrain(6.9), floatConstrained);
+		assertEqual(floatConstrained, simpleConstrainerFloat.constrained(6.9));
 		
 		
 		SLog.d("-----------------------------","minmax");
 		auto s_minmaxConstrainer = new SConstraintMinMaxDictionary("F","U");
 		s_minmaxConstrainer.setEnabled(true);
-		assertEqual(s_minmaxConstrainer.constrain("A"), "F");
-		assertEqual(s_minmaxConstrainer.constrain("Z"), "U");
-		assertEqual(s_minmaxConstrainer.constrain("G"), "G");
+		assertEqual("F", s_minmaxConstrainer.constrained("A"));
+		assertEqual("U", s_minmaxConstrainer.constrained("Z"));
+		assertEqual("G", s_minmaxConstrainer.constrained("G"));
 		
 		auto s_minmaxConstrainer2 = new SConstraintMinMaxDictionary("FFFFFF","UUU");
 		s_minmaxConstrainer2.setEnabled(true);
-		assertEqual(s_minmaxConstrainer2.constrain("FF"), "FFFFFF");
-		assertEqual(s_minmaxConstrainer2.constrain("UUUUU"), "UUU");
-		assertEqual(s_minmaxConstrainer2.constrain("G"), "G");
+		assertEqual("FFFFFF", s_minmaxConstrainer2.constrained("FF"));
+		assertEqual("UUU", s_minmaxConstrainer2.constrained("UUUUU"));
+		assertEqual("G", s_minmaxConstrainer2.constrained("G"));
 		
 		auto f_minmaxConstrainer = new SConstraintMinMaxNumeric(0.0, 1.0);
 		f_minmaxConstrainer.setEnabled(true);
-		assertEqual(f_minmaxConstrainer.constrain(-1.0), 0.0);
-		assertEqual(f_minmaxConstrainer.constrain(2.0), 1.0);
-		assertEqual(f_minmaxConstrainer.constrain(0.5), 0.5);
+		assertEqual(0.0, f_minmaxConstrainer.constrained(-1.0));
+		assertEqual(1.0, f_minmaxConstrainer.constrained(2.0));
+		assertEqual(0.5, f_minmaxConstrainer.constrained(0.5));
 		
 		
 	}
@@ -107,11 +149,11 @@ class STest {
 		};
 		
 		SLog.d("-----------------------------","argb()");
-		testSColorValues(SColor.argb(0xAA112233), expected);
+		testSColorValues(expected, SColor.argb(0xAA112233));
 		
 		
 		SLog.d("-----------------------------","rgba()");
-		testSColorValues(SColor.rgba(0x112233AA), expected);
+		testSColorValues(expected, SColor.rgba(0x112233AA));
 		
 		
 		
@@ -125,7 +167,7 @@ class STest {
 			0x22,
 			0x33
 		};
-		testSColorValues(SColor.rgb(0x112233), expected);
+		testSColorValues(expected, SColor.rgb(0x112233));
 		
 		
 		
@@ -140,7 +182,7 @@ class STest {
 			0x22,
 			0x33
 		};
-		testSColorValues(SColor.rgba(0x112233AA).setAlpha(0xCC), expected);
+		testSColorValues(expected, SColor.rgba(0x112233AA).setAlpha(0xCC));
 		
 		
 		
@@ -154,7 +196,7 @@ class STest {
 			0x22,
 			0x33
 		};
-		testSColorValues(SColor.rgba(0x112233AA).setRed(0x99), expected);
+		testSColorValues(expected, SColor.rgba(0x112233AA).setRed(0x99));
 		
 		
 		
@@ -168,7 +210,7 @@ class STest {
 			0x99,
 			0x33
 		};
-		testSColorValues(SColor.rgba(0x112233AA).setGreen(0x99), expected);
+		testSColorValues(expected, SColor.rgba(0x112233AA).setGreen(0x99));
 		
 		SLog.d("-----------------------------","setBlue()");
 		expected = {
@@ -180,50 +222,71 @@ class STest {
 			0x22,
 			0x99
 		};
-		testSColorValues(SColor.rgba(0x112233AA).setBlue(0x99), expected);
+		testSColorValues(expected, SColor.rgba(0x112233AA).setBlue(0x99));
 	}
 	
 	
-	static void testSColorValues(SColor color, int expected[7]){
-		assertEqual(color.getARGB(),  expected[0]);
-		assertEqual(color.getRGBA(),  expected[1]);
-		assertEqual(color.getRGB(),   expected[2]);
-		assertEqual(color.getAlpha(), expected[3]);
-		assertEqual(color.getRed(),   expected[4]);
-		assertEqual(color.getGreen(), expected[5]);
-		assertEqual(color.getBlue(),  expected[6]);
+	static void testSColorValues(int expected[7], SColor color){
+		assertEqual(expected[0], color.getARGB());
+		assertEqual(expected[1], color.getRGBA());
+		assertEqual(expected[2], color.getRGB());
+		assertEqual(expected[3], color.getAlpha());
+		assertEqual(expected[4], color.getRed());
+		assertEqual(expected[5], color.getGreen());
+		assertEqual(expected[6], color.getBlue());
 	}
 	
-	static void assertEqual(float got, float expected) {
-		if (SMath.equal(got,expected)) {
-			SLog.d(string.Format(PASSED_OUTPUT, got, expected), "", 1);
+	static void assertEqual(float expected, float got) {
+		if (SMath.equal(expected, got)) {
+			pass(string.Format(PASSED_OUTPUT, expected, got));
 		} else {
-			SLog.d(string.Format(FAILED_OUTPUT, got, expected), "", 1);
+			fail(string.Format(FAILED_OUTPUT, expected, got));
 		}
 	}
 	
-	static void assertEqual(int got, int expected) {
-		if (got == expected) {
-			SLog.d(string.Format(PASSED_OUTPUT, got, expected), "", 1);
+	static void assertEqual(int expected, int got) {
+		if (expected == got) {
+			pass(string.Format(PASSED_OUTPUT, expected, got));
 		} else {
-			SLog.d(string.Format(FAILED_OUTPUT, got, expected), "", 1);
+			fail(string.Format(PASSED_OUTPUT, expected, got));
 		}
 	}
 	
-	static void assertEqual(string got, string expected) {
-		if (got == expected) {
-			SLog.d(string.Format(PASSED_OUTPUT, got, expected), "", 1);
+	static void assertEqual(string expected, string got) {
+		if (expected == got) {
+			pass(string.Format(PASSED_OUTPUT, expected, got));
 		} else {
-			SLog.d(string.Format(FAILED_OUTPUT, got, expected), "", 1);
+			fail(string.Format(PASSED_OUTPUT, expected, got));
 		}
 	}
 	
-	static void assertEqual(bool got, bool expected) {
-		if (got == expected) {
-			SLog.d(string.Format(PASSED_OUTPUT, got, expected), "", 1);
+	static void assertEqual(bool expected, bool got) {
+		if (expected == got) {
+			pass(string.Format(PASSED_OUTPUT, expected, got));
 		} else {
-			SLog.d(string.Format(FAILED_OUTPUT, got, expected), "", 1);
+			fail(string.Format(PASSED_OUTPUT, expected, got));
 		}
+	}
+	
+	static void pass(string message) {
+		SLog.d(message, "", 1, SHOW_PASSED);
+	}
+	
+	static void fail(string message) {
+		SLog.d(message, "", 1);
+	}
+	
+	void constrain(Param param){
+		Print(param);
+		Param1<float> temp = Param1<float>.Cast(param);
+		Print(temp == param);
+		if (temp) temp.param1 = 69;
+	}
+	
+	Param constrained(Param param) {
+		if (!Param1<float>.Cast(param)) return param;
+		return new Param1<float>(69);
 	}
 
 }
+

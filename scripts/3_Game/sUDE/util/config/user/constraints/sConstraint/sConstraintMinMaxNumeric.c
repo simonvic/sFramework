@@ -1,11 +1,10 @@
 class SConstraintMinMaxNumeric : SConstraintMinMax<float> {
 		
-	override Param performConstrain(Param param) {
+	override void performConstrain(Param param) {
 		Param1<float> constrainedParam = Param1<float>.Cast(param);
-		if (!constrainedParam) return param;
-		
-		constrainedParam.param1 = Math.Clamp(constrainedParam.param1, getMin(), getMax());
-		return constrainedParam;
+		if (constrainedParam) {
+			constrainedParam.param1 = Math.Clamp(constrainedParam.param1, getMin(), getMax());
+		}
 	}
 	
 	override bool performValidation(Param param) {

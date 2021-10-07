@@ -21,8 +21,10 @@ class SConstraintMinMax<Class T> : SConstraintBase {
 	*	 @param toConstrain \p T - Generic value to constrain
 	*	 @return T - constrained value
 	*/
-	T constrain(T toConstrain) {
-		return Param1<T>.Cast(constrain(new Param1<T>(toConstrain))).param1;
+	T constrained(T toConstrain) {
+		Param1<T> p = new Param1<T>(toConstrain);
+		constrain(p);
+		return p.param1;
 	}
 	
 	/**

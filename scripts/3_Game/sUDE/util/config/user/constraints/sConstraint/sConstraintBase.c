@@ -16,6 +16,14 @@ class SConstraintBase : Managed {
 		enabled = enable;
 	}
 	
+	void enable() {
+		setEnabled(true);
+	}
+	
+	void disable() {
+		setEnabled(false);
+	}
+	
 	string getMessage() {
 		return message;
 	}
@@ -27,22 +35,22 @@ class SConstraintBase : Managed {
 		message = msg;
 	}
 	
+	
 	/**
-	*	@brief Get the constrained value
+	*	@brief If the constraint is enabled, constrain the given value
 	*	 @param param \p Param - A generic param holding the value to constrain
-	*	 @return Param - Param containing constrained value, or non-constrained value if the constraint is disabled
 	*/
-	Param constrain(Param param) {
-		if (!isEnabled()) return param;	
-		return performConstrain(param);
+	void constrain(Param toConstrain) {
+		if (isEnabled()) {
+			performConstrain(toConstrain);
+		}
 	}
-
+	
 	/**
 	*	@brief Abstract. Perform the actual constrain.
 	*	 @param param \p Param - A generic param holding the value to constrain
-	*	 @return Param - Param containing constrained value
 	*/
-	Param performConstrain(Param param);
+	void performConstrain(Param param);
 	
 	/**
 	*	@brief Check if a value respects the constraint

@@ -2,11 +2,16 @@ class SUserConfigOptionBase : Managed {
 	
 	protected ref Param m_param;
 	protected ref SConstraintBase m_constraint;
+	protected ref SUserConfigOptionInfo m_info;
 	
 	Param getParam() {
 		return m_param;
 	}
 	
+	/**
+	*	@brief Set the option value and constrain it, if the option is being constrained
+	*	 @param param \p Param - generic Param which holds the option value
+	*/
 	void setParam(Param param) {
 		if (isConstrained()) {
 			getConstraint().constrain(param);
@@ -14,14 +19,22 @@ class SUserConfigOptionBase : Managed {
 		m_param = param;
 	} 
 	
+	/**
+	*	@brief If a constraint is enabled, update the current option value based on it
+	*/
 	void updateConstraint() {
-		setParam(getParam()); //@todo change this?
+		if (!isConstrained()) return;
+		getConstraint().constrain(getParam());
 	}
 	
 	SConstraintBase getConstraint() {
 		return m_constraint;
 	}
 	
+	
+	/**
+	*	@brief If a constraint is set, enable it and update the option value based on it
+	*/
 	void enableConstraint() {
 		if (!hasConstraint()) return;
 		getConstraint().enable();
@@ -29,10 +42,12 @@ class SUserConfigOptionBase : Managed {
 		onConstraintEnable();
 	}
 	
+	/**
+	*	@brief If a constraint is set, disable it
+	*/
 	void disableConstraint() {
 		if (!hasConstraint()) return;
 		getConstraint().disable();
-		updateConstraint();
 		onConstraintDisable();
 	}
 	
@@ -45,7 +60,6 @@ class SUserConfigOptionBase : Managed {
 	
 	void removeConstraint() {
 		m_constraint = null;
-		updateConstraint();
 		onConstraintRemove();
 	}
 	
@@ -55,6 +69,19 @@ class SUserConfigOptionBase : Managed {
 	
 	bool hasConstraint() {
 		return getConstraint() != null;
+	}
+	
+	void setInfo(SUserConfigOptionInfo info) {
+		m_info = info;
+	}
+	
+	SUserConfigOptionInfo getInfo() {
+		return m_info;
+	}
+	
+	string getWarningMessage() {
+		if (!hasConstraint()) return string.Empty;
+		return getConstraint().getMessage() + "\n\n" + getConstraint().toString();
 	}
 	
 	protected void onConstraintChange();

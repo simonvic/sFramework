@@ -8,11 +8,11 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		return "MyMODS/sFramework/GUI/layouts/user_config_info_box.layout";
 	}
 	
-	protected ref map<ref Widget, ref SUserConfigInfo> m_descriptions = new map<ref Widget, ref SUserConfigInfo>;
+	protected ref map<Widget, SUserConfigOptionBase> m_optionsWidgets = new map<Widget, SUserConfigOptionBase>;
 	
 	protected Widget m_root;
-	protected Widget m_infoBoxRoot;
-	protected Widget m_infoBoxWarning;
+	protected ref Widget m_infoBoxRoot;
+	protected ref Widget m_infoBoxWarning;
 	
 	void setRoot(Widget root){
 		m_root = root;
@@ -29,69 +29,46 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	}
 	
 	
-	protected void initOption(out SSliderWidget slider, string name, float value, SUserConfigInfo info = null){
-		slider = new SSliderWidget(m_root, name, value, this);
-		initOptionInfo(slider.getSliderWidget(), info);
+	protected void initOptionWidget(out SSliderWidget slider, string name, SUserConfigOption<float> option){
+		slider = new SSliderWidget(m_root, name, option.get(), this);
+		
+		m_optionsWidgets.Set(slider.getSliderWidget(), option);
 	}
 	
-	protected void initOption(out CheckBoxWidget checkbox, string name, bool value, SUserConfigInfo info = null){
+	protected void initOptionWidget(out CheckBoxWidget checkbox, string name, SUserConfigOption<bool> option){
 		checkbox = CheckBoxWidget.Cast(m_root.FindAnyWidget( name ));
-		checkbox.SetChecked(value);
+		checkbox.SetChecked(option.get());
 		checkbox.SetHandler(this);
-		initOptionInfo(checkbox, info);
+		
+		m_optionsWidgets.Set(checkbox, option);
 	}
 
-	
-	protected void initOptionInfo(Widget widget, SUserConfigInfo info) {
-		if (!widget || !info) return;
-		
-		m_descriptions.Set(widget, info);
-	}
-	
-	protected void initInfoBox(SUserConfigInfo info) {
-		if (!m_infoBoxRoot) return;
-		TextWidget.Cast(m_infoBoxRoot.FindAnyWidget("title")).SetText(info.getTitle());
-		RichTextWidget.Cast(m_infoBoxRoot.FindAnyWidget("description_body")).SetText(info.getDescription());
-		
-		
-		if (info.isConstrained()) {
-			showInfoBoxWarning();			
-			RichTextWidget.Cast(m_infoBoxWarning.FindAnyWidget("warning_body")).SetText(info.getWarningMessage());
-		} else {
-			hideInfoBoxWarning();
-		}
-	}
-	
-		
-	protected void lockOption(SSliderWidget slider, string suffix = " ( #STR_SUDE_LAYOUT_OPTIONS_LOCKED )"){
-		slider.getSliderWidget().Enable(false);
-		
-		TextWidget txtWidget = slider.getTextWidget();
-		txtWidget.SetText("" + slider.getValue() + suffix);
-		txtWidget.Enable(false);
-	}
-	
-	protected void lockOption(CheckBoxWidget widget, string suffix = " ( #STR_SUDE_LAYOUT_OPTIONS_LOCKED )") {
-		widget.SetText(suffix);
-		widget.Enable(false);
-	}
-	
-	protected void lockOption(Widget widget){
-		widget.Enable(false);
-	}
-		
 	override bool OnMouseEnter(Widget w, int x, int y) {
-		updateInfoBox(m_descriptions.Get(w));
+		updateInfoBox(m_optionsWidgets.Get(w));
 		return true;
 	}
 	
-	protected void updateInfoBox(SUserConfigInfo info) {
-		if (!m_infoBoxRoot) return;
-		if (!info) {
-			hideInfoBox();
-		} else {
-			initInfoBox(info);
+	protected void updateInfoBox(SUserConfigOptionBase option) {
+		if (!m_infoBoxRoot || !option) return;
+		if (option.getInfo()) {
+			initInfoBox(option);
 			showInfoBox();
+		} else {
+			hideInfoBox();
+		}
+	}
+	
+	protected void initInfoBox(SUserConfigOptionBase option) {
+		if (!m_infoBoxRoot) return;
+		TextWidget.Cast(m_infoBoxRoot.FindAnyWidget("title")).SetText(option.getInfo().getTitle());
+		RichTextWidget.Cast(m_infoBoxRoot.FindAnyWidget("description_body")).SetText(option.getInfo().getDescription());
+		
+		
+		if (option.isConstrained()) {
+			showInfoBoxWarning();			
+			RichTextWidget.Cast(m_infoBoxWarning.FindAnyWidget("warning_body")).SetText(option.getWarningMessage());
+		} else {
+			hideInfoBoxWarning();
 		}
 	}
 

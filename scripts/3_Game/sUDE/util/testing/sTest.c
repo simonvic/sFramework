@@ -1,4 +1,4 @@
-class STest {
+class "STest" {
 
 	static string PASSED_OUTPUT = "[ ✓ ] PASSED | expected: %1 | got: %2";
 	static string FAILED_OUTPUT = "[ × ] FAILED | expected: %1 | got: %2";
@@ -9,10 +9,15 @@ class STest {
 		testTrees();
 		testSColor();
 		testConstraints();
+		testUserConfigsOptions();
 		testUserConfigs();
 	}
 	
 	static void testUserConfigs() {
+				
+	}
+	
+	static void testUserConfigsOptions() {
 		SLog.d("==============================");
 		
 		SLog.d("-----------------------------","float");

@@ -47,6 +47,15 @@ class SUserConfigBase : SJSONSerializable{
 	*/
 	void applyConstraints(SUserConfigConstraintsBase constraints);
 	
+	/**
+	*	@brief Remove all constraints from all options
+	*/
+	void removeConstraints() {
+		foreach (SUserConfigOptionBase option : m_options) {
+			option.removeConstraint();
+		}
+	}
+	
 	void createDefault() {
 		SFileHelper.touch(getDefaultPath());
 		SFileHelper.echo(serializeDefault(), getDefaultPath());

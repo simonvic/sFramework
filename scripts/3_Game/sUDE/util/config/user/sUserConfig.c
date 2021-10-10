@@ -92,4 +92,8 @@ class SUserConfig{
 		}
 	}
 	
+	TSUserConfigModules getLoadedModules() {
+		return modulesConfigs;
+	}
+	
 }

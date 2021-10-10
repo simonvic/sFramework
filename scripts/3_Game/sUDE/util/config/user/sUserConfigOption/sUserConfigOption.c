@@ -18,12 +18,11 @@ class SUserConfigOption<Class T> : SUserConfigOptionBase {
 	override void setParam(Param param) {
 		T previousValue = get();
 		super.setParam(param);
-		if (get() != previousValue) {
-			onValueChange();
+		T newValue = get();
+		if (newValue != previousValue) {
+			onValueChange(previousValue, newValue);
 		}
 	} 
 	
-	protected void onValueChange() {
-		//SLog.d("Value has changed to " + get(),""+this,1);
-	}
+	protected void onValueChange(T previousValue, T newValue);
 }

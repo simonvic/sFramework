@@ -8,11 +8,23 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		return "MyMODS/sFramework/GUI/layouts/user_config_info_box.layout";
 	}
 	
+	protected SUserConfigBase m_sUserConfig;
 	protected ref map<Widget, SUserConfigOptionBase> m_optionsWidgets = new map<Widget, SUserConfigOptionBase>;
 	
-	protected Widget m_root;
+	protected ref Widget m_root;
 	protected ref Widget m_infoBoxRoot;
 	protected ref Widget m_infoBoxWarning;
+	
+	void SOptionsMenuBase() {
+		onInit();
+	}
+	
+	protected void onInit() {
+	}
+	
+	void setUserConfig(SUserConfigBase userConfig) {
+		m_sUserConfig = userConfig;
+	}
 	
 	void setRoot(Widget root){
 		m_root = root;
@@ -29,10 +41,17 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	}
 	
 	
-	protected void initOptionWidget(out SSliderWidget slider, string name, SUserConfigOption<float> option){
-		slider = new SSliderWidget(m_root, name, option.get(), this);
+	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOption<float> option){		
+		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
+		slider.SetCurrent(option.get());
+		slider.SetHandler(this);
 		
-		m_optionsWidgets.Set(slider.getSliderWidget(), option);
+		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name+"_value")); //@todo hardcode goes brrrr. Change this
+		if (!txt) return;
+		txt.SetText(slider.GetCurrent().ToString());
+		txt.SetHandler(this);
+		
+		m_optionsWidgets.Set(slider, option);
 	}
 	
 	protected void initOptionWidget(out CheckBoxWidget checkbox, string name, SUserConfigOption<bool> option){
@@ -96,6 +115,17 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		m_infoBoxWarning.Show(false);	
 	}
 	
+	override bool OnMouseButtonUp(Widget w, int x, int y, int button) {
+		if ( button == MouseState.LEFT ) {
+			onConfigChange();
+		}
+		return true;
+	}
+	
+	protected void onConfigChange(){ //@todo lol change this shit
+		m_sUserConfig.save();
+	}
+	
 	override bool OnChange(Widget w, int x, int y, bool finished){
 		if(!w) return false;
 		
@@ -106,8 +136,29 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		
 		return true;
 	}
+
+	protected bool onChange(SliderWidget w) {
+		
+		SUserConfigOption<float> option = SUserConfigOption<float>.Cast(m_optionsWidgets.Get(w));
+		if (!option) return true;
+		
+		option.set(w.GetCurrent());
+		w.SetCurrent(option.get());
+		
+		TextWidget txt = TextWidget.Cast(w.FindAnyWidget(w.GetName()+"_value"));
+		if (txt) txt.SetText(w.GetCurrent().ToString());
+		return true;
+	}
+		
 	
-	protected bool onChange(SliderWidget w);
-	protected bool onChange(CheckBoxWidget w);
+	protected bool onChange(CheckBoxWidget w) {
+		SUserConfigOption<bool> option = SUserConfigOption<bool>.Cast(m_optionsWidgets.Get(w));
+		if (!option) return true;
+		
+		option.set(w.IsChecked());
+		w.SetChecked(option.get());
+		return true;
+	}
+	
 
 }

@@ -10,10 +10,10 @@ class SUserConfigBase : SJSONSerializable{
 	void SUserConfigBase() {
 		DayZGame.Event_OnRPC.Insert(this.onRPC);
 		m_options = new	map<string, ref SUserConfigOptionBase>();
-		onInit();
 	}
 	
-	protected void onInit() {
+	override void load() {
+		super.load();
 		registerOptions();
 	}
 	

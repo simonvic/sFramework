@@ -23,8 +23,7 @@ class SUserConfigOptionBase : Managed {
 	*	@brief If a constraint is enabled, update the current option value based on it
 	*/
 	void updateConstraint() {
-		if (!isConstrained()) return;
-		getConstraint().constrain(getParam());
+		setParam(getParam()); //@todo little hack to ensure that the onValueChanged gets called properly. Change this
 	}
 	
 	SConstraintBase getConstraint() {

@@ -1,16 +1,92 @@
-class "STest" {
+class STest {
 
 	static string PASSED_OUTPUT = "[ ✓ ] PASSED | expected: %1 | got: %2";
 	static string FAILED_OUTPUT = "[ × ] FAILED | expected: %1 | got: %2";
 	static bool SHOW_PASSED = true;
 	
 	//@todo maybe make a proper testing framework? oof...
-	static void all() {
+	static void all(bool showPassed = false) {
+		SHOW_PASSED = showPassed;
+		SLog.d("====================================================================================");
+		SLog.d("=== TESTING ALL ===");
+		SLog.d("------------------------------------------------------------------------------------");
+		
+		testSMath();
 		testTrees();
 		testSColor();
 		testConstraints();
 		testUserConfigsOptions();
 		testUserConfigs();
+		SLog.d("====================================================================================");
+	}
+	
+	static void testSMath() {
+		assertEqual(true, SMath.equal(0.1, 0.1));
+		assertEqual(false, SMath.equal(0.5, 0.1));
+		assertEqual(true, SMath.equal(0.00000001, 0.00000001));
+		assertEqual(false, SMath.equal(0.000000000000001, 0.000000000000002));
+		assertEqual(true, SMath.equal(0.000000000000001, 0.000000000000002, 0.0001));
+		
+		assertEqual(true, SMath.isInRange(0.5, 0.0, 1.0));
+		assertEqual(false, SMath.isInRange(-100, 0.0, 1.0));
+		assertEqual(false, SMath.isInRange(100, 0.0, 1.0));
+		
+		TFloatArray a1;
+		TFloatArray a2;
+		
+		a1 = {0, 1, 2, 3};
+		a2 = {0, 1, 2, 3};
+		assertEqual(true, SMath.equal(a1, a2));
+		
+		a1 = {0, 0, 0, 0};
+		a2 = {0, 1, 2, 3};
+		assertEqual(false, SMath.equal(a1, a2));
+		
+		a1 = {0, 1, 2};
+		a2 = {0, 1, 2, 3};
+		assertEqual(false, SMath.equal(a1, a2));
+		
+		a1 = {0, 1, 2, 3};
+		a2 = {0, 1, 2};
+		assertEqual(false, SMath.equal(a1, a2));
+		
+		a1 = {0, 1, 2, 3};
+		a2 = {0, 1, 2};
+		assertEqual(false, SMath.equal(a1, a2));
+		
+		a1 = {0, 1, 2, 3};
+		a2 = {0, 1, 2};
+		assertEqual(false, SMath.equal(a1, a2));
+		
+		TFloatArray toClamp;
+		TFloatArray min;
+		TFloatArray max;
+		TFloatArray expected;
+		TFloatArray result;
+		
+		min      = {0,   1,  10,  100};
+		toClamp  = {0.5, 5,  50,  500};
+		max      = {1,   10, 100, 1000};
+		expected = toClamp;
+		result   = SMath.clamp(toClamp, min, max);
+		assertEqual(true, SMath.equal(expected, result));
+		assertEqual(true, SMath.isInRange(result, min, max));
+		
+		min      = {0,   1,  10,  100};
+		toClamp  = {2,   5,  50,  500};
+		max      = {1,   10, 100, 1000};
+		expected = {1,   5,  50,  500};
+		result   = SMath.clamp(toClamp, min, max);
+		assertEqual(true, SMath.equal(expected, result));
+		assertEqual(true, SMath.isInRange(result, min, max));
+		
+		min      = {0,   1,  10,  100};
+		toClamp  = {2,   5,  5000,  0.1};
+		max      = {1,   10, 100, 1000};
+		expected = {1,   5,  100,  100};
+		result   = SMath.clamp(toClamp, min, max);
+		assertEqual(true, SMath.equal(expected, result));
+		assertEqual(true, SMath.isInRange(result, min, max));
 	}
 	
 	static void testUserConfigs() {
@@ -137,7 +213,7 @@ class "STest" {
 		
 		SLog.d("==============================");
 		
-		SGameConfig.getTree("cfg_sUDE").debugPrint();
+		//SGameConfig.getTree("cfg_sUDE").debugPrint();
 	}
 	
 	
@@ -253,7 +329,7 @@ class "STest" {
 		if (expected == got) {
 			pass(string.Format(PASSED_OUTPUT, expected, got));
 		} else {
-			fail(string.Format(PASSED_OUTPUT, expected, got));
+			fail(string.Format(FAILED_OUTPUT, expected, got));
 		}
 	}
 	
@@ -261,15 +337,15 @@ class "STest" {
 		if (expected == got) {
 			pass(string.Format(PASSED_OUTPUT, expected, got));
 		} else {
-			fail(string.Format(PASSED_OUTPUT, expected, got));
+			fail(string.Format(FAILED_OUTPUT, expected, got));
 		}
 	}
 	
 	static void assertEqual(bool expected, bool got) {
 		if (expected == got) {
-			pass(string.Format(PASSED_OUTPUT, expected, got));
+			pass(string.Format(PASSED_OUTPUT, expected.ToString(), got.ToString()));
 		} else {
-			fail(string.Format(PASSED_OUTPUT, expected, got));
+			fail(string.Format(FAILED_OUTPUT, expected.ToString(), got.ToString()));
 		}
 	}
 	

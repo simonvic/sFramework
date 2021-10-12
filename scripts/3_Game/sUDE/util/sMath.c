@@ -76,12 +76,12 @@ class SMath {
 	*/
 	static bool equal(array<float> x, array<float> y, float epsilon = 1e-32){
 		int xCount = x.Count();
-		if(xCount != y.Count()){
+		if (xCount != y.Count()) {
 			return false;
 		}
 		
-		for(int i = 0; i < xCount; i++){
-			if( !SMath.equal(x[i], y[i], epsilon) ){
+		for (int i = 0; i < xCount; i++) {
+			if (!SMath.equal(x[i], y[i], epsilon)) {
 				return false;			
 			}
 		}
@@ -114,6 +114,56 @@ class SMath {
 		return (float)((int) (value * digits)) / digits;
 	}
 	
+	
+	/**
+	*	@brief Clamp a float array given two arrays containing the minimum and maximum values.
+	*	       The min and max array MUST have an equal or greater count than the array to clamp, unclamped array will be returned otherwise
+	*	 @param toClamp \p array<float> - array to clamp
+	*	 @param min \p array<float> - array of minimums
+	*	 @param max \p array<float> - array of maximums
+	*	 @return array<float> - new array containing clamped values
+	*/
+	static array<float> clamp(array<float> toClamp, array<float> min, array<float> max) {
+		int toClampCount = toClamp.Count();
+		if (min.Count() < toClampCount || max.Count() < toClampCount) return toClamp;
+		
+		array<float> clamped = {};
+		for (int i = 0; i < toClampCount; i++) {
+			clamped.Insert(Math.Clamp(toClamp[i], min[i], max[i]));
+		}
+		
+		return clamped;
+	}
+
+	/**
+	*	@brief Check if every float array is in range of the given minium and maximum
+	*	       The min and max array MUST have an equal or greater count than the array to verify, false will be returned otherwise
+	*	 @param values \p array<float> - array to verify
+	*	 @param min \p array<float> - array of minimums
+	*	 @param max \p array<float> - array of maximums
+	*	 @return bool - if all values are in range
+	*/
+	static bool isInRange(array<float> values, array<float> min, array<float> max) {
+		int valuesCount = values.Count();
+		if (min.Count() < valuesCount || max.Count() < valuesCount) return false;
+		
+		for (int i = 0; i < valuesCount; i++) {
+			if (!SMath.isInRange(values[i], min[i], max[i])) return false;
+		}
+		
+		return true;
+	}
+	
+	/**
+	*	@brief Check if a float value is in range of the given minium and maximum [ INCLUSIVE ]
+	*	 @param value \p float - value to verify
+	*	 @param min \p float - minimum
+	*	 @param max \p float - maximum
+	*	 @return bool - if value is in range
+	*/
+	static bool isInRange(float value, float min, float max) {
+		return value >= min && value <= max;
+	}
 	
 	
 }

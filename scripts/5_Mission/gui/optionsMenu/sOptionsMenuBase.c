@@ -62,7 +62,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		m_optionsWidgets.Set(checkbox, option);
 	}
 	
-	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOption<TFloatArray> option, TIntArray indices = null){		
+	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, TIntArray indices = null){		
 		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
 		
 		if (indices && indices.Count() > 0) {
@@ -159,22 +159,25 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 
 	protected bool onChange(SliderWidget w) {
 		onChangeFloat(w, SUserConfigOption<float>.Cast(m_optionsWidgets.Get(w)));
-		
-		
-		onChangeArrayFloat(w, SUserConfigOption<array<float>>.Cast(m_optionsWidgets.Get(w)));
+		onChangeArrayFloat(w, SUserConfigOptionArray<float>.Cast(m_optionsWidgets.Get(w)));
 		return true;
 	}
 	
-	protected bool onChangeArrayFloat(SliderWidget w, SUserConfigOption<array<float>> option) {
+	// this is the most unsafe code of the history of unsafe code, forgive me
+	protected bool onChangeArrayFloat(SliderWidget w, SUserConfigOptionArray<float> option) {
 		if (!option) return true;
+		
 		TIntArray indices;
 		w.GetUserData(indices);
 		if (!indices) return true;
 		
 		float current = w.GetCurrent();
+		array<float> temp = option.get();
 		foreach (int i : indices) {
-			option.get().Set(i, current);
+			temp.Set(i, current);
 		}
+		option.set(temp);
+		w.SetCurrent(option.get()[indices[0]]);
 		
 		TextWidget txt = TextWidget.Cast(w.FindAnyWidget(w.GetName()+"_value"));
 		if (txt) txt.SetText(w.GetCurrent().ToString());

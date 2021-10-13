@@ -161,11 +161,11 @@ class SUserConfigBase : SJSONSerializable{
 	*	 @param optionName \p string - Name of the option
 	*	 @return SUserConfigOption<TFloatArray> - option found, NULL otherwise
 	*/
-	SUserConfigOption<TFloatArray> getOptionArrayFloat(string optionName) {
-		return SUserConfigOption<TFloatArray>.Cast(m_options.Get(optionName));
+	SUserConfigOptionArray<float> getOptionArrayFloat(string optionName) {
+		return SUserConfigOptionArray<float>.Cast(m_options.Get(optionName));
 	}
 	
-	void getOption(string optionName, out SUserConfigOption<TFloatArray> option) {
+	void getOption(string optionName, out SUserConfigOptionArray<float> option) {
 		option = getOptionArrayFloat(optionName);
 	}
 	

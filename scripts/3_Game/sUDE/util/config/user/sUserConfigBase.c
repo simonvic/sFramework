@@ -39,7 +39,14 @@ class SUserConfigBase : SJSONSerializable{
 	string serializeDefault();
 	
 	
-	void onRPC(PlayerIdentity sender, Object target, int rpc_type, ParamsReadContext ctx);	
+	void onRPC(PlayerIdentity sender, Object target, int rpc_type, ParamsReadContext ctx) {
+		switch (rpc_type) {
+			//case sUDE_RPC.DEBUG: onRPCSyncUserConfigConstraint(ctx); break;
+			case SRPCIDs.SYNC_USER_CONFIG_CONSTRAINTS: onConstraintsReceive(ctx); break;
+		}
+	}
+	
+	protected void onConstraintsReceive(ParamsReadContext ctx);
 	
 	/**
 	*	@brief Abstract. Apply a set of constraints to the options
@@ -147,6 +154,19 @@ class SUserConfigBase : SJSONSerializable{
 	
 	void getOption(string optionName, out SUserConfigOption<bool> option) {
 		option = getOptionBool(optionName);
+	}
+	
+	/**
+	*	@brief Get a float array option based on its name.
+	*	 @param optionName \p string - Name of the option
+	*	 @return SUserConfigOption<TFloatArray> - option found, NULL otherwise
+	*/
+	SUserConfigOption<TFloatArray> getOptionArrayFloat(string optionName) {
+		return SUserConfigOption<TFloatArray>.Cast(m_options.Get(optionName));
+	}
+	
+	void getOption(string optionName, out SUserConfigOption<TFloatArray> option) {
+		option = getOptionArrayFloat(optionName);
 	}
 	
 	

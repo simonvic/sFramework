@@ -61,6 +61,25 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		
 		m_optionsWidgets.Set(checkbox, option);
 	}
+	
+	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOption<TFloatArray> option, TIntArray indices = null){		
+		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
+		
+		if (indices && indices.Count() > 0) {
+			slider.SetCurrent(option.get()[indices[0]]);
+		} else {
+			slider.SetCurrent(option.get()[0]);
+		}
+		slider.SetUserData(indices);
+		slider.SetHandler(this);
+				
+		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name+"_value")); //@todo hardcode goes brrrr. Change this
+		if (!txt) return;
+		txt.SetText(slider.GetCurrent().ToString());
+		txt.SetHandler(this);
+		
+		m_optionsWidgets.Set(slider, option);
+	}
 
 	override bool OnMouseEnter(Widget w, int x, int y) {
 		updateInfoBox(m_optionsWidgets.Get(w));
@@ -97,6 +116,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	
 	void hide(){
 		m_root.Show(false);	
+		hideInfoBox();
 	}
 	
 	void showInfoBox(){
@@ -138,8 +158,31 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	}
 
 	protected bool onChange(SliderWidget w) {
+		onChangeFloat(w, SUserConfigOption<float>.Cast(m_optionsWidgets.Get(w)));
 		
-		SUserConfigOption<float> option = SUserConfigOption<float>.Cast(m_optionsWidgets.Get(w));
+		
+		onChangeArrayFloat(w, SUserConfigOption<array<float>>.Cast(m_optionsWidgets.Get(w)));
+		return true;
+	}
+	
+	protected bool onChangeArrayFloat(SliderWidget w, SUserConfigOption<array<float>> option) {
+		if (!option) return true;
+		TIntArray indices;
+		w.GetUserData(indices);
+		if (!indices) return true;
+		
+		float current = w.GetCurrent();
+		foreach (int i : indices) {
+			option.get().Set(i, current);
+		}
+		
+		TextWidget txt = TextWidget.Cast(w.FindAnyWidget(w.GetName()+"_value"));
+		if (txt) txt.SetText(w.GetCurrent().ToString());
+		
+		return true;
+	}
+	
+	protected bool onChangeFloat(SliderWidget w, SUserConfigOption<float> option) {
 		if (!option) return true;
 		
 		option.set(w.GetCurrent());

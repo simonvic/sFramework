@@ -1,3 +1,7 @@
+class SRPCIDs {
+	const int SYNC_USER_CONFIG_CONSTRAINTS = 0x79B78296;
+}
+
 enum PPEMergeFlags {
 	DEFAULT = 0,
 	COPY = 1,

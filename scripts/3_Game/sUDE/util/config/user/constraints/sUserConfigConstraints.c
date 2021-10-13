@@ -5,15 +5,20 @@ typedef map<typename, ref SUserConfigConstraintsBase> TSUserConfigConstraintsMod
 /*
 *	@Singleton
 */
-class SUserConfigConstraints{
+class SUserConfigConstraints : Managed {
 	
 	private static ref SUserConfigConstraints INSTANCE = new SUserConfigConstraints();
-	private void SUserConfigConstraints(){}
 	static SUserConfigConstraints getInstance(){
 		return INSTANCE;
 	}
+	private void SUserConfigConstraints() {
+		modulesCfgConstraints = new TSUserConfigConstraintsModules;
+		m_syncRPC = new SyncSUserConfigConstraintsRPC();
+	}
 	
-	protected ref TSUserConfigConstraintsModules modulesCfgConstraints = new TSUserConfigConstraintsModules;	
+
+	protected ref TSUserConfigConstraintsModules modulesCfgConstraints;
+	protected ref SyncSUserConfigConstraintsRPC m_syncRPC;
 	
 	/**
 	*	@brief Load a module config constraint file
@@ -75,15 +80,30 @@ class SUserConfigConstraints{
 	
 	
 	bool isValid(){
-		foreach(SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints){
+		foreach (SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints){
 			if(!moduleCfgConstraints.isValid()) return false;
 		}
 		return true;
 	}
 	
 	void printLoadedModules(){
-		foreach(SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints){
+		foreach (SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints){
 			SLog.d(moduleCfgConstraints);
 		}
 	}
+	
+	TSUserConfigConstraintsModules getLoadedModules() {
+		return modulesCfgConstraints;
+	}
+	
+	
+	void syncWithEverybody() {
+		syncWith(null);
+	}
+	
+	void syncWith(PlayerIdentity playerIdentity) {
+		m_syncRPC.setup();
+		m_syncRPC.sendTo(playerIdentity);
+	}
+	
 }

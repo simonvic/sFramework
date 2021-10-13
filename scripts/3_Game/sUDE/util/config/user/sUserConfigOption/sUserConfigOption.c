@@ -2,7 +2,7 @@ class SUserConfigOption<Class T> : SUserConfigOptionBase {
 	
 	
 	void SUserConfigOption(T value, SConstraintBase constraint = null, SUserConfigOptionInfo info = null) {
-		setConstraint(constraint);
+		m_constraint = constraint;
 		super.setParam(new Param1<T>(value));
 		m_info = info;
 	}

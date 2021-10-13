@@ -62,31 +62,31 @@ class STest {
 		TFloatArray min;
 		TFloatArray max;
 		TFloatArray expected;
-		TFloatArray result;
 		
 		min      = {0,   1,  10,  100};
 		toClamp  = {0.5, 5,  50,  500};
 		max      = {1,   10, 100, 1000};
 		expected = toClamp;
-		result   = SMath.clamp(toClamp, min, max);
-		assertEqual(true, SMath.equal(expected, result));
-		assertEqual(true, SMath.isInRange(result, min, max));
+		SMath.clamp(toClamp, min, max);
+		assertEqual(true, SMath.equal(expected, toClamp));
+		assertEqual(true, SMath.isInRange(toClamp, min, max));
 		
 		min      = {0,   1,  10,  100};
 		toClamp  = {2,   5,  50,  500};
 		max      = {1,   10, 100, 1000};
 		expected = {1,   5,  50,  500};
-		result   = SMath.clamp(toClamp, min, max);
-		assertEqual(true, SMath.equal(expected, result));
-		assertEqual(true, SMath.isInRange(result, min, max));
+		SMath.clamp(toClamp, min, max);
+		assertEqual(true, SMath.equal(expected, toClamp));
+		assertEqual(true, SMath.isInRange(toClamp, min, max));
 		
 		min      = {0,   1,  10,  100};
 		toClamp  = {2,   5,  5000,  0.1};
 		max      = {1,   10, 100, 1000};
 		expected = {1,   5,  100,  100};
-		result   = SMath.clamp(toClamp, min, max);
-		assertEqual(true, SMath.equal(expected, result));
-		assertEqual(true, SMath.isInRange(result, min, max));
+		SMath.clamp(toClamp, min, max);
+		assertEqual(true, SMath.equal(expected, toClamp));
+		assertEqual(true, SMath.isInRange(toClamp, min, max));
+		
 	}
 	
 	static void testUserConfigs() {
@@ -188,6 +188,46 @@ class STest {
 		assertEqual(0.5, f_minmaxConstrainer.constrained(0.5));
 		
 		
+		TFloatArray min = {};
+		TFloatArray max = {};
+		TFloatArray expected = {};
+		
+		min = {0,0,0,0};
+		max = {1,1,1,1};
+		auto f_minmaxArrayConstrainer = new SConstraintMinMaxArrayNumeric({0,0,0,0}, {1,1,1,1});
+		f_minmaxArrayConstrainer.setEnabled(true);
+		assertEqual(min, f_minmaxArrayConstrainer.getMin());
+		assertEqual(max, f_minmaxArrayConstrainer.getMax());
+		
+				
+		TFloatArray s_toConstrain = {};
+		s_toConstrain = {0.5, 0.5, 0.5, 0.5};
+		assertEqual(true, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+		assertEqual(s_toConstrain, f_minmaxArrayConstrainer.constrained(s_toConstrain));
+		assertEqual(true, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+		
+		s_toConstrain = {-1, -1, -1, -1};
+		assertEqual(false, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+		assertEqual(min, f_minmaxArrayConstrainer.constrained(s_toConstrain));
+		assertEqual(true, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+		
+		s_toConstrain = {10, 10, 10, 10};
+		assertEqual(false, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+		assertEqual(max, f_minmaxArrayConstrainer.constrained(s_toConstrain));
+		assertEqual(true, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+		
+		s_toConstrain = {-1, 10, -1, 10};
+		expected      = {0,   1,  0,  1};
+		assertEqual(false, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+		assertEqual(expected, f_minmaxArrayConstrainer.constrained(s_toConstrain));
+		assertEqual(true, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+		
+		s_toConstrain = {-1, 10};
+		expected      = {0,   1};
+		assertEqual(false, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+		assertEqual(expected, f_minmaxArrayConstrainer.constrained(s_toConstrain));
+		assertEqual(true, f_minmaxArrayConstrainer.isValid(s_toConstrain));
+			
 	}
 	
 	static void testTrees() {
@@ -315,6 +355,14 @@ class STest {
 		assertEqual(expected[4], color.getRed());
 		assertEqual(expected[5], color.getGreen());
 		assertEqual(expected[6], color.getBlue());
+	}
+	
+	static void assertEqual(array<float> expected, array<float> got) {
+		if (SMath.equal(expected, got)) {
+			pass(string.Format(PASSED_OUTPUT, expected, got));
+		} else {
+			fail(string.Format(FAILED_OUTPUT, expected, got));
+		}
 	}
 	
 	static void assertEqual(float expected, float got) {

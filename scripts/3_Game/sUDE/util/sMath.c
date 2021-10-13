@@ -75,6 +75,8 @@ class SMath {
 	* 	@return \p bool - if are equals
 	*/
 	static bool equal(array<float> x, array<float> y, float epsilon = 1e-32){
+		if (!x || !y) return false;
+		
 		int xCount = x.Count();
 		if (xCount != y.Count()) {
 			return false;
@@ -121,18 +123,16 @@ class SMath {
 	*	 @param toClamp \p array<float> - array to clamp
 	*	 @param min \p array<float> - array of minimums
 	*	 @param max \p array<float> - array of maximums
-	*	 @return array<float> - new array containing clamped values
 	*/
-	static array<float> clamp(array<float> toClamp, array<float> min, array<float> max) {
+	static void clamp(array<float> toClamp, array<float> min, array<float> max) {
+		if (!toClamp || !min || !max) return;
+		
 		int toClampCount = toClamp.Count();
-		if (min.Count() < toClampCount || max.Count() < toClampCount) return toClamp;
+		if (min.Count() < toClampCount || max.Count() < toClampCount) return;
 		
-		array<float> clamped = {};
 		for (int i = 0; i < toClampCount; i++) {
-			clamped.Insert(Math.Clamp(toClamp[i], min[i], max[i]));
+			toClamp[i] = (Math.Clamp(toClamp[i], min[i], max[i]));
 		}
-		
-		return clamped;
 	}
 
 	/**
@@ -144,6 +144,8 @@ class SMath {
 	*	 @return bool - if all values are in range
 	*/
 	static bool isInRange(array<float> values, array<float> min, array<float> max) {
+		if (!values || !min || !max) return false;
+		
 		int valuesCount = values.Count();
 		if (min.Count() < valuesCount || max.Count() < valuesCount) return false;
 		

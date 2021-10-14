@@ -17,6 +17,7 @@ class STest {
 		testConstraints();
 		testUserConfigsOptions();
 		testUserConfigs();
+		
 		SLog.d("====================================================================================");
 	}
 	
@@ -97,7 +98,7 @@ class STest {
 		SLog.d("==============================");
 		
 		SLog.d("-----------------------------","float");
-		auto f_constraint = new SConstraintMinMaxNumeric<float>(0, 1);
+		auto f_constraint = new SConstraintPrimitiveMinMaxNumeric<float>(0, 1);
 		assertEqual(false, f_constraint.isEnabled());
 		
 		auto f_option = new SUserConfigOption<float>(0.69, f_constraint);
@@ -143,12 +144,12 @@ class STest {
 		
 		SLog.d("-----------------------------","simple");
 		string stringConstrained = "I've been constrained";
-		auto simpleConstrainerString = new SConstraintSimple<string>(stringConstrained);
+		auto simpleConstrainerString = new SConstraintPrimitiveSimple<string>(stringConstrained);
 		simpleConstrainerString.setEnabled(true);
 		assertEqual(stringConstrained, simpleConstrainerString.constrained("I need to be constrained"));
 		
 		bool boolConstrained = false;
-		auto simpleConstrainerBool = new SConstraintSimple<bool>(boolConstrained);
+		auto simpleConstrainerBool = new SConstraintPrimitiveSimple<bool>(boolConstrained);
 		simpleConstrainerBool.setEnabled(true);
 		assertEqual(boolConstrained, simpleConstrainerBool.constrained(true));
 		
@@ -158,30 +159,30 @@ class STest {
 		assertEqual(boolConstrained2, simpleConstrainerBool2.constrained(false));
 		
 		int intConstrained = 3;
-		auto simpleConstrainerInt = new SConstraintSimple<int>(intConstrained);
+		auto simpleConstrainerInt = new SConstraintPrimitiveSimple<int>(intConstrained);
 		simpleConstrainerInt.setEnabled(true);
 		assertEqual(intConstrained, simpleConstrainerInt.constrained(69));
 				
 		float floatConstrained = 0.420;
-		auto simpleConstrainerFloat = new SConstraintSimple<float>(floatConstrained);
+		auto simpleConstrainerFloat = new SConstraintPrimitiveSimple<float>(floatConstrained);
 		simpleConstrainerFloat.setEnabled(true);
 		assertEqual(floatConstrained, simpleConstrainerFloat.constrained(6.9));
 		
 		
 		SLog.d("-----------------------------","minmax");
-		auto s_minmaxConstrainer = new SConstraintMinMaxDictionary("F","U");
+		auto s_minmaxConstrainer = new SConstraintPrimitiveMinMaxDictionary("F","U");
 		s_minmaxConstrainer.setEnabled(true);
 		assertEqual("F", s_minmaxConstrainer.constrained("A"));
 		assertEqual("U", s_minmaxConstrainer.constrained("Z"));
 		assertEqual("G", s_minmaxConstrainer.constrained("G"));
 		
-		auto s_minmaxConstrainer2 = new SConstraintMinMaxDictionary("FFFFFF","UUU");
+		auto s_minmaxConstrainer2 = new SConstraintPrimitiveMinMaxDictionary("FFFFFF","UUU");
 		s_minmaxConstrainer2.setEnabled(true);
 		assertEqual("FFFFFF", s_minmaxConstrainer2.constrained("FF"));
 		assertEqual("UUU", s_minmaxConstrainer2.constrained("UUUUU"));
 		assertEqual("G", s_minmaxConstrainer2.constrained("G"));
 		
-		auto f_minmaxConstrainer = new SConstraintMinMaxNumeric(0.0, 1.0);
+		auto f_minmaxConstrainer = new SConstraintPrimitiveMinMaxNumeric(0.0, 1.0);
 		f_minmaxConstrainer.setEnabled(true);
 		assertEqual(0.0, f_minmaxConstrainer.constrained(-1.0));
 		assertEqual(1.0, f_minmaxConstrainer.constrained(2.0));

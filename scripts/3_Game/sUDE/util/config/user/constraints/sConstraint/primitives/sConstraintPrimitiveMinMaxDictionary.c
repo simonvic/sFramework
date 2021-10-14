@@ -1,4 +1,4 @@
-class SConstraintMinMaxDictionary : SConstraintMinMax<string> {
+class SConstraintPrimitiveMinMaxDictionary : SConstraintPrimitiveMinMax<string> {
 	
 	override void performConstrain(Param param) {
 		Param1<string> constrainedParam = Param1<string>.Cast(param);

@@ -1,18 +1,18 @@
-class SConstraintMinMaxArray<Class T> : SConstraintBase {
+class SConstraintPrimitiveMinMax<Class T> : SConstraintPrimitiveBase {
 	
-	protected ref array<T> min;
-	protected ref array<T> max;
+	protected T min;
+	protected T max;
 	
-	void SConstraintMinMaxArray(array<T> minimum, array<T> maximum) {
+	void SConstraintPrimitiveMinMax(T minimum, T maximum) {
 		min = minimum;
 		max = maximum;
 	}
 	
-	array<T> getMin() {
+	T getMin() {
 		return min;
 	}
 	
-	array<T> getMax() {
+	T getMax() {
 		return max;
 	}
 	
@@ -21,8 +21,8 @@ class SConstraintMinMaxArray<Class T> : SConstraintBase {
 	*	 @param toConstrain \p T - Generic value to constrain
 	*	 @return T - constrained value
 	*/
-	array<T> constrained(array<T> toConstrain) {
-		Param1<ref array<T>> p = new Param1<ref array<T>>(toConstrain);
+	T constrained(T toConstrain) {
+		Param1<T> p = new Param1<T>(toConstrain);
 		constrain(p);
 		return p.param1;
 	}
@@ -32,8 +32,8 @@ class SConstraintMinMaxArray<Class T> : SConstraintBase {
 	*	 @param toValidate \p T - Generic value to validate
 	*	 @return bool - if the value respects the constraint
 	*/
-	bool isValid(array<T> toValidate) {
-		return isValid(new Param1<ref array<T>>(toValidate));
+	bool isValid(T toValidate) {
+		return isValid(new Param1<T>(toValidate));
 	}
 	
 

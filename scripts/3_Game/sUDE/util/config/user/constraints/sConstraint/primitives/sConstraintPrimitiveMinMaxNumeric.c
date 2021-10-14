@@ -1,4 +1,4 @@
-class SConstraintMinMaxNumeric : SConstraintMinMax<float> {
+class SConstraintPrimitiveMinMaxNumeric : SConstraintPrimitiveMinMax<float> {
 		
 	override void performConstrain(Param param) {
 		Param1<float> constrainedParam = Param1<float>.Cast(param);

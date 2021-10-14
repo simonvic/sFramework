@@ -1,8 +1,8 @@
-class SConstraintSimple<Class T> : SConstraintBase {
+class SConstraintSimple<Class T> : SConstraintNonPrimitiveBase {
 	
-	protected T value;
+	protected ref T value;
 	
-	void SConstraintSimple(T val) {
+	void SConstraintPrimitiveSimple(T val) {
 		value = val;
 	}
 	
@@ -11,7 +11,7 @@ class SConstraintSimple<Class T> : SConstraintBase {
 	}
 	
 	override void performConstrain(Param param) {
-		Param1<T> constrainedParam = Param1<T>.Cast(param);
+		Param1<ref T> constrainedParam = Param1<ref T>.Cast(param);
 		if (constrainedParam) {
 			constrainedParam.param1 = value;
 		}
@@ -19,7 +19,7 @@ class SConstraintSimple<Class T> : SConstraintBase {
 	}
 	
 	override bool performValidation(Param param) {
-		return Param1<T>.Cast(param) && Param1<T>.Cast(param).param1 == value;
+		return Param1<ref T>.Cast(param) && Param1<ref T>.Cast(param).param1 == value;
 	}
 	
 	/**
@@ -28,7 +28,7 @@ class SConstraintSimple<Class T> : SConstraintBase {
 	*	 @return T - constrained value
 	*/
 	T constrained(T toConstrain) {
-		Param1<T> p = new Param1<T>(toConstrain);
+		Param1<ref T> p = new Param1<ref T>(toConstrain);
 		constrain(p);
 		return p.param1;
 	}
@@ -39,10 +39,11 @@ class SConstraintSimple<Class T> : SConstraintBase {
 	*	 @return bool - if the value respects the constraint
 	*/
 	bool isValid(T toValidate) {
-		return isValid(new Param1<T>(toValidate));
+		return isValid(new Param1<ref T>(toValidate));
 	}
 	
 	override string toString() {
 		return "<b>#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_SIMPLE : <i>" + getValue() + "</i></b>";
 	}
+
 }

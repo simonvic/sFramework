@@ -1,19 +1,25 @@
-class SConstraintMinMax<Class T> : SConstraintBase {
+class SConstraintPrimitiveSimple<Class T> : SConstraintPrimitiveBase {
 	
-	protected T min;
-	protected T max;
+	protected T value;
 	
-	void SConstraintMinMax(T minimum, T maximum) {
-		min = minimum;
-		max = maximum;
+	void SConstraintPrimitiveSimple(T val) {
+		value = val;
 	}
 	
-	T getMin() {
-		return min;
+	T getValue() {
+		return value;
 	}
 	
-	T getMax() {
-		return max;
+	override void performConstrain(Param param) {
+		Param1<T> constrainedParam = Param1<T>.Cast(param);
+		if (constrainedParam) {
+			constrainedParam.param1 = value;
+		}
+		
+	}
+	
+	override bool performValidation(Param param) {
+		return Param1<T>.Cast(param) && Param1<T>.Cast(param).param1 == value;
 	}
 	
 	/**
@@ -36,12 +42,7 @@ class SConstraintMinMax<Class T> : SConstraintBase {
 		return isValid(new Param1<T>(toValidate));
 	}
 	
-
 	override string toString() {
-		return string.Format(
-			"<b>#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_MIN : <i>%1</i>\n#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_MAX : <i>%2</i></b>",
-			getMin(),
-			getMax());
+		return "<b>#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED_SIMPLE : <i>" + getValue() + "</i></b>";
 	}
-	
 }

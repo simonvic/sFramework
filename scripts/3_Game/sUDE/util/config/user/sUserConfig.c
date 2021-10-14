@@ -5,13 +5,17 @@ typedef map<typename, ref SUserConfigBase> TSUserConfigModules;
 */
 class SUserConfig{
 	
-	private static ref SUserConfig INSTANCE = new SUserConfig();
-	private void SUserConfig(){}
+	private static ref SUserConfig INSTANCE;
 	static SUserConfig getInstance(){
+		if (!INSTANCE) INSTANCE = new SUserConfig();
 		return INSTANCE;
 	}
+
+	private void SUserConfig(){
+		modulesConfigs = new TSUserConfigModules;
+	}
 	
-	protected ref TSUserConfigModules modulesConfigs = new TSUserConfigModules;
+	protected ref TSUserConfigModules modulesConfigs;
 		
 	/**
 	*	@brief Load a module config file

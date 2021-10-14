@@ -5,12 +5,14 @@ typedef map<typename, ref SUserConfigConstraintsBase> TSUserConfigConstraintsMod
 /*
 *	@Singleton
 */
-class SUserConfigConstraints : Managed {
+class SUserConfigConstraints {
 	
-	private static ref SUserConfigConstraints INSTANCE = new SUserConfigConstraints();
+	private static ref SUserConfigConstraints INSTANCE;
 	static SUserConfigConstraints getInstance(){
+		if (!INSTANCE) INSTANCE = new SUserConfigConstraints();
 		return INSTANCE;
 	}
+
 	private void SUserConfigConstraints() {
 		modulesCfgConstraints = new TSUserConfigConstraintsModules;
 		m_syncRPC = new SyncSUserConfigConstraintsRPC();

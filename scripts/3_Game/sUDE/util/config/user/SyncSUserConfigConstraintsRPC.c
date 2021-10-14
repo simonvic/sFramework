@@ -4,7 +4,6 @@ class SyncSUserConfigConstraintsRPC : Managed {
 	
 	void SyncSUserConfigConstraintsRPC() {
 		m_rpc = new ScriptRPC();
-		setup();
 	}
 	
 	void setup() {

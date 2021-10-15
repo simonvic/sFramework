@@ -26,6 +26,10 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		m_sUserConfig = userConfig;
 	}
 	
+	protected SUserConfigBase getUserConfig() {
+		return m_sUserConfig;
+	}
+	
 	void setRoot(Widget root){
 		m_root = root;
 		m_root.SetHandler(this);

@@ -46,7 +46,7 @@ class SLog{
 	*	%1 : typename
 	*	%2 : variable value
 	*/
-	static const string VARIABLE_PRINT_FORMAT = "< %1 > %2";
+	static const string VARIABLE_PRINT_FORMAT = "<%1> %2";
 	
 	/**
 	* @brief Print a debug message to script log

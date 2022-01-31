@@ -1,3 +1,4 @@
+/*
 modded class PluginManager{
 	
 	override void Init(){
@@ -13,3 +14,4 @@ modded class PluginManager{
 		//RegisterPlugin( "PluginSDebug",						true, 	true ); //server false?
 	}
 }
+*/

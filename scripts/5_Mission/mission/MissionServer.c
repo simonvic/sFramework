@@ -1,26 +1,18 @@
 modded class MissionServer {
 	
-	override void OnEvent(EventType eventTypeId, Param params) {
-		super.OnEvent(eventTypeId, params);	
-			
-		switch (eventTypeId) {
-			
-			case ClientNewEventTypeID:						
-			case ClientReadyEventTypeID:
-			
-			ClientReadyEventParams readyParams = ClientReadyEventParams.Cast(params);
-			PlayerBase player;
-			if (readyParams && Class.CastTo(player, readyParams.param2)) {
-				syncSUserConfigConstraints(player);
-			}
-			
-			break;
-			
-		}
+	override PlayerBase OnClientNewEvent(PlayerIdentity identity, vector pos, ParamsReadContext ctx) {
+		PlayerBase player = super.OnClientNewEvent(identity, pos, ctx);
+		syncSUserConfigConstraints(identity);
+		return player;
 	}
 	
-	protected void syncSUserConfigConstraints(PlayerBase player) {
-		SUserConfigConstraints.getInstance().syncWith(player.GetIdentity());
+	override void OnClientReadyEvent(PlayerIdentity identity, PlayerBase player) {
+		super.OnClientReadyEvent(identity, player);
+		syncSUserConfigConstraints(identity);
+	}
+	
+	protected void syncSUserConfigConstraints(PlayerIdentity playerIdentity) {
+		SUserConfigConstraints.getInstance().syncWith(playerIdentity);
 	}
 	
 }

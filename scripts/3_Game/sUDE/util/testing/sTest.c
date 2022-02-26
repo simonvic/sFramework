@@ -38,14 +38,15 @@ class STest : Managed {
 	void run() {
 		clearResults();
 		
-		SLog.d("===================================");
+		SLog.d("=======================================================================");
 		SLog.d("Running tests...");
+		
 		foreach (STestUnit unit : toTest) {
 			unit.run();
 		}
 		
-		SLog.d("-----------------------------------");
-		SLog.d("------------ RESULTS --------------");
+		SLog.d("-----------------------------------------------------------------------");
+		SLog.d("------------------------------- RESULTS -------------------------------");
 		foreach (STestUnit unit2 : toTest) {
 			SLog.d(unit2.ClassName());
 			array<ref STestCase> testCases = unit2.getTestCases();
@@ -57,11 +58,11 @@ class STest : Managed {
 				}
 			}
 		}
-		SLog.d("-----------------------------------");
+		SLog.d("-----------------------------------------------------------------------");
 		SLog.d("PASSED:  " + results.Get(eSTestCaseStatus.PASSED));
 		SLog.d("FAILED:  " + results.Get(eSTestCaseStatus.FAILED));
 		SLog.d("SKIPPED: " + results.Get(eSTestCaseStatus.SKIPPED));
-		SLog.d("===================================");
+		SLog.d("=======================================================================");
 	}
 	
 	protected void passed(STestCase testCase) {

@@ -8,7 +8,7 @@ class STestCase : Managed {
 	
 	protected Class clazz;
 	protected string function;
-	protected eSTestCaseStatus status = eSTestCaseStatus.PASSED;
+	protected eSTestCaseStatus status = eSTestCaseStatus.SKIPPED;
 	protected string expected;
 	protected string actual;
 	protected string message;
@@ -25,6 +25,10 @@ class STestCase : Managed {
 	
 	string getFunction() {
 		return function;
+	}
+	
+	void setPassed() {
+		status = eSTestCaseStatus.PASSED;
 	}
 	
 	void setFailed() {

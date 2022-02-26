@@ -1,6 +1,7 @@
 class STestUnit : Managed {	
 	
 	protected bool skipAfterFail;
+	protected bool hasFailed;
 	
 	protected ref array<ref STestCase> m_testCases = new array<ref STestCase>();
 	
@@ -24,10 +25,14 @@ class STestUnit : Managed {
 		return m_testCases;
 	}
 	
+	bool hasFailed() {
+		return hasFailed;
+	}
+	
 	void run() {
 		foreach (STestCase testCase : m_testCases) {
 			m_currentTestCaseTested = testCase;
-			if (shouldSkipAfterFail()) {
+			if (hasFailed && skipAfterFail) {
 				skip();
 			} else {
 				GetGame().GameScript.CallFunctionParams( testCase.getClass(), testCase.getFunction(), null, null);
@@ -37,11 +42,7 @@ class STestUnit : Managed {
 		m_currentTestCaseTested = null;
 		m_lastTestCaseTested = null;
 	}
-	
-	protected bool shouldSkipAfterFail() {
-		return skipAfterFail && m_lastTestCaseTested && (m_lastTestCaseTested.getStatus() == eSTestCaseStatus.FAILED || m_lastTestCaseTested.getStatus() == eSTestCaseStatus.SKIPPED);
-	}
-	
+
 	protected void assertEqual(array<float> expected, array<float> actual) {
 		if (SMath.equal(expected, actual)) {
 			pass(string.Format("%1", expected), string.Format("%1", actual));
@@ -115,11 +116,13 @@ class STestUnit : Managed {
 	}
 	
 	protected void pass(string expected, string actual) {
+		m_currentTestCaseTested.setPassed();
 		m_currentTestCaseTested.setExpected(expected);
 		m_currentTestCaseTested.setActual(actual);
 	}
 	
 	protected void fail(string expected, string actual, string message = string.Empty) {
+		hasFailed = true;
 		m_currentTestCaseTested.setFailed();
 		m_currentTestCaseTested.setExpected(expected);
 		m_currentTestCaseTested.setActual(actual);

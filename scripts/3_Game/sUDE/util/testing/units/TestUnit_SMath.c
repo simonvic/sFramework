@@ -6,6 +6,7 @@ class TestUnit_SMath : STestUnit {
 			"floatsShouldNotBeEqual",
 			"smallFloatsShouldBeEqual",
 			"smallerFloatsShouldNotBeEqual",
+			//"shouldSkip",
 			"smallFloatsWithReducedEpsilonShouldBeEqual",
 			"testIsInRange1",
 			"testIsInRange2",
@@ -124,5 +125,9 @@ class TestUnit_SMath : STestUnit {
 	
 	void shouldFail() {
 		assertEqual(0, 1);
+	}
+
+	void shouldSkip() {
+		// do nothing
 	}
 }

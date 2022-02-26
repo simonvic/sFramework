@@ -11,6 +11,7 @@ class STestCase : Managed {
 	protected eSTestCaseStatus status = eSTestCaseStatus.PASSED;
 	protected string expected;
 	protected string actual;
+	protected string message;
 	
 	
 	void STestCase(Class classInstance, string functionName) {
@@ -52,6 +53,14 @@ class STestCase : Managed {
 	
 	void setActual(string value) {
 		actual = value;
+	}
+	
+	string getMessage() {
+		return message;
+	}
+	
+	void setMessage(string cause) {
+		message = cause;
 	}
 
 }

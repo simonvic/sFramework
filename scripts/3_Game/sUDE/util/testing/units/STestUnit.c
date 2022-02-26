@@ -44,54 +44,88 @@ class STestUnit : Managed {
 	
 	protected void assertEqual(array<float> expected, array<float> actual) {
 		if (SMath.equal(expected, actual)) {
-			passed(string.Format("%1", expected), string.Format("%1", actual));
+			pass(string.Format("%1", expected), string.Format("%1", actual));
 		} else {
-			failed(string.Format("%1", expected), string.Format("%1", actual));
+			fail(string.Format("%1", expected), string.Format("%1", actual));
 		}
 	}
 	
 	protected void assertEqual(float expected, float actual) {
 		if (SMath.equal(expected, actual)) {
-			passed(expected.ToString(), actual.ToString());
+			pass(expected.ToString(), actual.ToString());
 		} else {
-			failed(expected.ToString(), actual.ToString());
+			fail(expected.ToString(), actual.ToString());
 		}
 	}
 	
 	protected void assertEqual(int expected, int actual) {
 		if (expected == actual) {
-			passed(expected.ToString(), actual.ToString());
+			pass(expected.ToString(), actual.ToString());
 		} else {
-			failed(expected.ToString(), actual.ToString());
+			fail(expected.ToString(), actual.ToString());
 		}
 	}
 	
 	protected void assertEqual(string expected, string actual) {
 		if (expected == actual) {
-			passed(expected, actual);
+			pass(expected, actual);
 		} else {
-			failed(expected, actual);
+			fail(expected, actual);
 		}
 	}
 	
 	protected void assertEqual(bool expected, bool actual) {
 		if (expected == actual) {
-			passed(expected.ToString(), actual.ToString());
+			pass(expected.ToString(), actual.ToString());
 		} else {
-			failed(expected.ToString(), actual.ToString());
+			fail(expected.ToString(), actual.ToString());
 		}
 	}
 	
-	protected void passed(string expected, string actual) {
+	protected void assertTrue(bool actual) {
+		if (actual) {
+			pass("true", actual.ToString());
+		} else {
+			fail("true", actual.ToString());
+		}
+	}
+	
+	protected void assertFalse(bool actual) {
+		if (!actual) {
+			pass("true", actual.ToString());
+		} else {
+			fail("true", actual.ToString());
+		}
+	}
+	
+	protected void assertNull(Class actual) {
+		if (actual == null) {
+			pass("null", actual.ToString());
+		} else {
+			fail("null", actual.ToString());
+		}
+	}
+	
+	protected void assertNotNull(Class actual) {
+		if (actual != null) {
+			pass("null", actual.ToString());
+		} else {
+			fail("null", actual.ToString());
+		}
+	}
+	
+	protected void pass(string expected, string actual) {
 		m_currentTestCaseTested.setExpected(expected);
 		m_currentTestCaseTested.setActual(actual);
 	}
 	
-	protected void failed(string expected, string actual) {
+	protected void fail(string expected, string actual, string message = string.Empty) {
 		m_currentTestCaseTested.setFailed();
 		m_currentTestCaseTested.setExpected(expected);
 		m_currentTestCaseTested.setActual(actual);
-	}
+		m_currentTestCaseTested.setMessage(message);
+		
+	}	
 	
 	protected void skip() {
 		m_currentTestCaseTested.setSkipped();

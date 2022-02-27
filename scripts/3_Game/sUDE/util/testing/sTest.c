@@ -1,6 +1,7 @@
 class STest : Managed {
 
 	static int verbosity = 3;
+	static bool skipAtFail = true;
 	static string PASSED_OUTPUT  = "[ ✓ ] PASSED  - %1";
 	static string FAILED_OUTPUT  = "[ × ] FAILED  - %1";
 	static string SKIPPED_OUTPUT = "[ - ] SKIPPED - %1";
@@ -43,10 +44,10 @@ class STest : Managed {
 		
 		foreach (STestUnit unit : toTest) {
 			unit.run();
+			if (skipAtFail && unit.hasFailed()) break;
 		}
 		
 		SLog.d("-----------------------------------------------------------------------");
-		SLog.d("------------------------------- RESULTS -------------------------------");
 		foreach (STestUnit unit2 : toTest) {
 			SLog.d(unit2.ClassName());
 			array<ref STestCase> testCases = unit2.getTestCases();
@@ -59,9 +60,8 @@ class STest : Managed {
 			}
 		}
 		SLog.d("-----------------------------------------------------------------------");
-		SLog.d("PASSED:  " + results.Get(eSTestCaseStatus.PASSED));
-		SLog.d("FAILED:  " + results.Get(eSTestCaseStatus.FAILED));
-		SLog.d("SKIPPED: " + results.Get(eSTestCaseStatus.SKIPPED));
+		SLog.d("                   PASSED    |    FAILED    |    SKIPPED");
+		SLog.d("                     "+results.Get(eSTestCaseStatus.PASSED) + "              " + results.Get(eSTestCaseStatus.FAILED) + "               " + results.Get(eSTestCaseStatus.SKIPPED));
 		SLog.d("=======================================================================");
 	}
 	

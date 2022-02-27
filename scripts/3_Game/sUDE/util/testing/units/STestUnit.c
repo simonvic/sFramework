@@ -70,13 +70,13 @@ class STestUnit : Managed {
 		executeBeforeClassCallbacks();
 		foreach (STestCase testCase : m_testCases) {
 			m_currentTestCaseTested = testCase;
-			executeBeforeCallbacks();
+			executeBeforeCallbacks(testCase);
 			if (hasFailed && !shouldContinueAfterFail) {
 				skip();
 			} else {
 				executeTestCase(testCase);
 			}
-			executeAfterCallbacks();
+			executeAfterCallbacks(testCase);
 			m_lastTestCaseTested = testCase;
 		}
 		executeAfterClassCallbacks();
@@ -90,9 +90,9 @@ class STestUnit : Managed {
 		}
 	}
 	
-	protected void executeBeforeCallbacks() {
+	protected void executeBeforeCallbacks(STestCase nextTestCase) {
 		foreach (STestBeforeCallback beforeCallback : m_beforeCallbacks) {
-			GetGame().GameScript.CallFunctionParams( beforeCallback.param1, beforeCallback.param2, null, null);
+			GetGame().GameScript.CallFunction( beforeCallback.param1, beforeCallback.param2, null, nextTestCase);
 		}
 	}
 	
@@ -100,9 +100,9 @@ class STestUnit : Managed {
 		GetGame().GameScript.CallFunctionParams( testCase.getClass(), testCase.getFunction(), null, null);
 	}
 	
-	protected void executeAfterCallbacks() {
+	protected void executeAfterCallbacks(STestCase lastTestCase) {
 		foreach (STestAfterCallback afterCallback : m_afterCallbacks) {
-			GetGame().GameScript.CallFunctionParams( afterCallback.param1, afterCallback.param2, null, null);
+			GetGame().GameScript.CallFunction( afterCallback.param1, afterCallback.param2, null, lastTestCase);
 		}
 	}
 	

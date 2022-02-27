@@ -18,7 +18,7 @@ class TestUnit_STest : STestUnit {
 			"testAssertTrue",
 			"shouldFail",
 			"testAssertFalse",
-			"testMultipleAssertion",
+			//"testMultipleAssertion",
 			"shouldSkip",
 			"testAssertNull",
 			"testAssertNotNull"
@@ -34,19 +34,19 @@ class TestUnit_STest : STestUnit {
 	}
 	
 	void beforeClass() {
-		SLog.d("before class",""+this);
+		SLog.d("Executed before " + ClassName());
 	}
 	
-	void before() {
-		SLog.d("before",""+this);
+	void before(STestCase nextTestCase) {
+		SLog.d("    Executed before '" + nextTestCase.getFunction() + "'");
 	}
 	
-	void after() {
-		SLog.d("after",""+this);
+	void after(STestCase lastTestCase) {
+		SLog.d("    Executed after '" + lastTestCase.getFunction() + "'");
 	}
 	
 	void afterClass() {
-		SLog.d("after class",""+this);
+		SLog.d("Executed after " + ClassName());
 	}
 	
 	void shouldFail() {

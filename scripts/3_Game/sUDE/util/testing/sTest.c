@@ -1,7 +1,7 @@
 class STest : Managed {
 
 	static int verbosity = 3;
-	static bool skipAtFail = true;
+	static bool shouldContinueAtFail = false;
 	static string PASSED_OUTPUT  = "[ ✓ ] PASSED  - %1";
 	static string FAILED_OUTPUT  = "[ × ] FAILED  - %1";
 	static string SKIPPED_OUTPUT = "[ - ] SKIPPED - %1";
@@ -44,7 +44,7 @@ class STest : Managed {
 		
 		foreach (STestUnit unit : toTest) {
 			unit.run();
-			if (skipAtFail && unit.hasFailed()) break;
+			if (unit.hasFailed() && !shouldContinueAtFail) break;
 		}
 		
 		SLog.d("-----------------------------------------------------------------------");

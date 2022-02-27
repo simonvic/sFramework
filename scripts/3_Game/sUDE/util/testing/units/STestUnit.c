@@ -1,15 +1,24 @@
-class STestUnit : Managed {	
+typedef Param2<Class, string> STestBeforeCallback;
+typedef Param2<Class, string> STestBeforeClassCallback;
+typedef Param2<Class, string> STestAfterCallback;
+typedef Param2<Class, string> STestAfterClassCallback;
+
+class STestUnit : Managed {
 	
-	protected bool skipAfterFail;
+	protected bool shouldContinueAfterFail;
 	protected bool hasFailed;
 	
 	protected ref array<ref STestCase> m_testCases = new array<ref STestCase>();
+	protected ref array<ref STestBeforeCallback> m_beforeCallbacks = new array<ref STestBeforeCallback>();
+	protected ref array<ref STestBeforeClassCallback> m_beforeClassCallbacks = new array<ref STestBeforeClassCallback>();
+	protected ref array<ref STestAfterCallback> m_afterCallbacks = new array<ref STestAfterCallback>();
+	protected ref array<ref STestAfterClassCallback> m_afterClassCallbacks = new array<ref STestAfterClassCallback>();
 	
 	protected STestCase m_currentTestCaseTested;
 	protected STestCase m_lastTestCaseTested;
 	
-	void STestUnit(bool shouldSkipAfterFail = true) {
-		skipAfterFail = shouldSkipAfterFail;
+	void STestUnit(bool shouldContinue = true) {
+		shouldContinueAfterFail = shouldContinue;
 		init();
 	}
 		
@@ -21,6 +30,30 @@ class STestUnit : Managed {
 		}
 	}
 	
+	protected void registerBeforeCallbacks(TStringArray functionsNames) {
+		foreach (string functionName : functionsNames) {
+			m_beforeCallbacks.Insert(new STestBeforeCallback(this, functionName));
+		}
+	}
+	
+	protected void registerBeforeClassCallbacks(TStringArray functionsNames) {
+		foreach (string functionName : functionsNames) {
+			m_beforeClassCallbacks.Insert(new STestBeforeClassCallback(this, functionName));
+		}
+	}
+	
+	protected void registerAfterCallbacks(TStringArray functionsNames) {
+		foreach (string functionName : functionsNames) {
+			m_afterCallbacks.Insert(new STestAfterCallback(this, functionName));
+		}
+	}
+	
+	protected void registerAfterClassCallbacks(TStringArray functionsNames) {
+		foreach (string functionName : functionsNames) {
+			m_afterClassCallbacks.Insert(new STestAfterClassCallback(this, functionName));
+		}
+	}
+	
 	array<ref STestCase> getTestCases() {
 		return m_testCases;
 	}
@@ -29,18 +62,54 @@ class STestUnit : Managed {
 		return hasFailed;
 	}
 	
+	protected void continueAfterFail(bool shouldContinue) {
+		shouldContinueAfterFail = shouldContinue;
+	}
+	
 	void run() {
+		executeBeforeClassCallbacks();
 		foreach (STestCase testCase : m_testCases) {
 			m_currentTestCaseTested = testCase;
-			if (hasFailed && skipAfterFail) {
+			executeBeforeCallbacks();
+			if (hasFailed && !shouldContinueAfterFail) {
 				skip();
 			} else {
-				GetGame().GameScript.CallFunctionParams( testCase.getClass(), testCase.getFunction(), null, null);
+				executeTestCase(testCase);
 			}
+			executeAfterCallbacks();
 			m_lastTestCaseTested = testCase;
 		}
+		executeAfterClassCallbacks();
 		m_currentTestCaseTested = null;
 		m_lastTestCaseTested = null;
+	}
+	
+	protected void executeBeforeClassCallbacks() {
+		foreach (STestBeforeClassCallback beforeClassCallback : m_beforeClassCallbacks) {
+			GetGame().GameScript.CallFunctionParams( beforeClassCallback.param1, beforeClassCallback.param2, null, null);
+		}
+	}
+	
+	protected void executeBeforeCallbacks() {
+		foreach (STestBeforeCallback beforeCallback : m_beforeCallbacks) {
+			GetGame().GameScript.CallFunctionParams( beforeCallback.param1, beforeCallback.param2, null, null);
+		}
+	}
+	
+	protected void executeTestCase(STestCase testCase) {
+		GetGame().GameScript.CallFunctionParams( testCase.getClass(), testCase.getFunction(), null, null);
+	}
+	
+	protected void executeAfterCallbacks() {
+		foreach (STestAfterCallback afterCallback : m_afterCallbacks) {
+			GetGame().GameScript.CallFunctionParams( afterCallback.param1, afterCallback.param2, null, null);
+		}
+	}
+	
+	protected void executeAfterClassCallbacks() {
+		foreach (STestAfterClassCallback afterClassCallback : m_afterClassCallbacks) {
+			GetGame().GameScript.CallFunctionParams( afterClassCallback.param1, afterClassCallback.param2, null, null);
+		}
 	}
 
 	protected void assertEqual(array<float> expected, array<float> actual) {

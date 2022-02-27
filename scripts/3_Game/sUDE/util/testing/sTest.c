@@ -63,6 +63,7 @@ class STest : Managed {
 		SLog.d("                   PASSED    |    FAILED    |    SKIPPED");
 		SLog.d("                     "+results.Get(eSTestCaseStatus.PASSED) + "              " + results.Get(eSTestCaseStatus.FAILED) + "               " + results.Get(eSTestCaseStatus.SKIPPED));
 		SLog.d("=======================================================================");
+		SLog.c("| NICE! |", "", 0, verbosity == 69);
 	}
 	
 	protected void passed(STestCase testCase) {

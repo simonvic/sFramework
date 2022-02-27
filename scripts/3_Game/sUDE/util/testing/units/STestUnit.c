@@ -162,9 +162,9 @@ class STestUnit : Managed {
 	
 	protected void assertFalse(bool actual) {
 		if (!actual) {
-			pass("true", actual.ToString());
+			pass("false", actual.ToString());
 		} else {
-			fail("true", actual.ToString());
+			fail("false", actual.ToString());
 		}
 	}
 	
@@ -178,9 +178,9 @@ class STestUnit : Managed {
 	
 	protected void assertNotNull(Class actual) {
 		if (actual != null) {
-			pass("null", actual.ToString());
+			pass("(non-null class)", actual.ToString());
 		} else {
-			fail("null", actual.ToString());
+			fail("(non-null class)", actual.ToString());
 		}
 	}
 	

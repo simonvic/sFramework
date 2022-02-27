@@ -12,9 +12,9 @@ class TestUnit_SConstraints : STestUnit {
 			"minMaxDictionary_constrained_shouldReturnConstrainedValue4",
 			"minMaxDictionary_constrained_shouldReturnConstrainedValue5",
 			"minMaxDictionary_constrained_shouldReturnConstrainedValue6",
-			"minMaxNumeric_costrained_shouldReturnCostrainedValue",
-			"minMaxNumeric_costrained_shouldReturnCostrainedValue2",
-			"minMaxNumeric_costrained_shouldReturnCostrainedValue3",
+			"minMaxNumeric_costrained_shouldReturnConstrainedValue",
+			"minMaxNumeric_costrained_shouldReturnConstrainedValue2",
+			"minMaxNumeric_costrained_shouldReturnConstrainedValue3",
 			"minMaxArrayNumeric_shouldBeValidValue",
 			"minMaxArrayNumeric_costrained_shouldReturnConstrainedValue",
 			"minMaxArrayNumeric_costrained_shouldReturnConstrainedValue2",
@@ -87,19 +87,19 @@ class TestUnit_SConstraints : STestUnit {
 		assertEqual("G", constraint.constrained("G"));
 	}
 	
-	void minMaxNumeric_costrained_shouldReturnCostrainedValue() {
+	void minMaxNumeric_costrained_shouldReturnConstrainedValue() {
 		auto constraint = new SConstraintPrimitiveMinMaxNumeric(0.0, 1.0);
 		constraint.enable();
 		assertEqual(0.0, constraint.constrained(-1.0));
 	}
 	
-	void minMaxNumeric_costrained_shouldReturnCostrainedValue2() {
+	void minMaxNumeric_costrained_shouldReturnConstrainedValue2() {
 		auto constraint = new SConstraintPrimitiveMinMaxNumeric(0.0, 1.0);
 		constraint.enable();
 		assertEqual(1.0, constraint.constrained(2.0));
 	}
 	
-	void minMaxNumeric_costrained_shouldReturnCostrainedValue3() {
+	void minMaxNumeric_costrained_shouldReturnConstrainedValue3() {
 		auto constraint = new SConstraintPrimitiveMinMaxNumeric(0.0, 1.0);
 		constraint.enable();
 		assertEqual(0.5, constraint.constrained(0.5));

@@ -1,12 +1,10 @@
 class TestUnit_SUserConfig : STestUnit {
 	
 	override void init() {
-		registerTestCases({
-			"testConstraints",
-			"testOptionsValuesWithConstraints"
-		});
+		
 	}
 	
+	/*
 	private void testConstraints() {
 		auto f_constraint = new SConstraintPrimitiveMinMaxNumeric<float>(0, 1);
 		assertEqual(false, f_constraint.isEnabled());
@@ -48,5 +46,7 @@ class TestUnit_SUserConfig : STestUnit {
 		assertEqual(0.0, f_option.get());
 		
 	}
+	
+	*/
 	
 }

@@ -5,7 +5,11 @@ typedef Param2<Class, string> STestAfterClassCallback;
 
 class STestUnit : Managed {
 	
+	/**
+	*	@brief If set to true, next TestCase will be run
+	*/
 	protected bool shouldContinueAfterFail;
+	
 	protected bool hasFailed;
 	
 	protected ref array<ref STestCase> m_testCases = new array<ref STestCase>();
@@ -23,31 +27,51 @@ class STestUnit : Managed {
 	}
 		
 	protected void init();
-		
+	
+	/**
+	*	@brief Register a list of TestCases to be run
+	*	@param functionsName \p array<string> - array of function name of the test case
+	*/
 	protected void registerTestCases(TStringArray functionsNames) {
 		foreach (string functionName : functionsNames) {
 			m_testCases.Insert(new STestCase(this, functionName));
 		}
 	}
 	
-	protected void registerBeforeCallbacks(TStringArray functionsNames) {
-		foreach (string functionName : functionsNames) {
-			m_beforeCallbacks.Insert(new STestBeforeCallback(this, functionName));
-		}
-	}
-	
+	/**
+	*	@brief Register a list of callbacks to be executed before the TestUnit
+	*	@param functionsName \p array<string> - array of function name of the callbacks
+	*/
 	protected void registerBeforeClassCallbacks(TStringArray functionsNames) {
 		foreach (string functionName : functionsNames) {
 			m_beforeClassCallbacks.Insert(new STestBeforeClassCallback(this, functionName));
 		}
 	}
 	
+	/**
+	*	@brief Register a list of callbacks to be executed before each TestCase
+	*	@param functionsName \p array<string> - array of function name of the callbacks
+	*/
+	protected void registerBeforeCallbacks(TStringArray functionsNames) {
+		foreach (string functionName : functionsNames) {
+			m_beforeCallbacks.Insert(new STestBeforeCallback(this, functionName));
+		}
+	}
+	
+	/**
+	*	@brief Register a list of callbacks to be executed after each TestCase
+	*	@param functionsName \p array<string> - array of function name of the callbacks
+	*/
 	protected void registerAfterCallbacks(TStringArray functionsNames) {
 		foreach (string functionName : functionsNames) {
 			m_afterCallbacks.Insert(new STestAfterCallback(this, functionName));
 		}
 	}
 	
+	/**
+	*	@brief Register a list of callbacks to be executed after the TestUnit
+	*	@param functionsName \p array<string> - array of function name of the callbacks
+	*/
 	protected void registerAfterClassCallbacks(TStringArray functionsNames) {
 		foreach (string functionName : functionsNames) {
 			m_afterClassCallbacks.Insert(new STestAfterClassCallback(this, functionName));
@@ -58,10 +82,18 @@ class STestUnit : Managed {
 		return m_testCases;
 	}
 	
+	/**
+	*	@brief If one or more TestCases have failed
+	*	@return bool
+	*/
 	bool hasFailed() {
 		return hasFailed;
 	}
 	
+	/**
+	*	@brief Specify if next TestCases should be run after a failed one
+	*	@param shouldContinue \p bool
+	*/
 	protected void continueAfterFail(bool shouldContinue) {
 		shouldContinueAfterFail = shouldContinue;
 	}
@@ -112,6 +144,12 @@ class STestUnit : Managed {
 		}
 	}
 
+	
+	/**
+	*	@brief Assert if the actual value is equal to the expected
+	*	@param expected \p array<float>
+	*	@param actual \p array<float>
+	*/
 	protected void assertEqual(array<float> expected, array<float> actual) {
 		if (SMath.equal(expected, actual)) {
 			pass(string.Format("%1", expected), string.Format("%1", actual));
@@ -120,6 +158,11 @@ class STestUnit : Managed {
 		}
 	}
 	
+	/**
+	*	@brief Assert if the actual value is equal to the expected
+	*	@param expected \p float
+	*	@param actual \p float
+	*/
 	protected void assertEqual(float expected, float actual) {
 		if (SMath.equal(expected, actual)) {
 			pass(expected.ToString(), actual.ToString());
@@ -128,6 +171,11 @@ class STestUnit : Managed {
 		}
 	}
 	
+	/**
+	*	@brief Assert if the actual value is equal to the expected
+	*	@param expected \p int
+	*	@param actual \p int
+	*/
 	protected void assertEqual(int expected, int actual) {
 		if (expected == actual) {
 			pass(expected.ToString(), actual.ToString());
@@ -136,6 +184,11 @@ class STestUnit : Managed {
 		}
 	}
 	
+	/**
+	*	@brief Assert if the actual value is equal to the expected
+	*	@param expected \p string
+	*	@param actual \p string
+	*/
 	protected void assertEqual(string expected, string actual) {
 		if (expected == actual) {
 			pass(expected, actual);
@@ -144,6 +197,11 @@ class STestUnit : Managed {
 		}
 	}
 	
+	/**
+	*	@brief Assert if the actual value is equal to the expected
+	*	@param expected \p bool
+	*	@param actual \p bool
+	*/
 	protected void assertEqual(bool expected, bool actual) {
 		if (expected == actual) {
 			pass(expected.ToString(), actual.ToString());
@@ -152,6 +210,10 @@ class STestUnit : Managed {
 		}
 	}
 	
+	/**
+	*	@brief Assert if the actual value is true
+	*	@param actual \p bool
+	*/
 	protected void assertTrue(bool actual) {
 		if (actual) {
 			pass("true", actual.ToString());
@@ -160,6 +222,10 @@ class STestUnit : Managed {
 		}
 	}
 	
+	/**
+	*	@brief Assert if the actual value is false
+	*	@param actual \p bool
+	*/
 	protected void assertFalse(bool actual) {
 		if (!actual) {
 			pass("false", actual.ToString());
@@ -168,6 +234,10 @@ class STestUnit : Managed {
 		}
 	}
 	
+	/**
+	*	@brief Assert if the actual value is null
+	*	@param actual \p Class
+	*/
 	protected void assertNull(Class actual) {
 		if (actual == null) {
 			pass("null", actual.ToString());
@@ -176,6 +246,10 @@ class STestUnit : Managed {
 		}
 	}
 	
+	/**
+	*	@brief Assert if the actual value is not null
+	*	@param actual \p Class
+	*/
 	protected void assertNotNull(Class actual) {
 		if (actual != null) {
 			pass("(non-null class)", actual.ToString());
@@ -184,12 +258,24 @@ class STestUnit : Managed {
 		}
 	}
 	
+	
+	/**
+	*	@brief Pass the current TestCase
+	*	@param expected \p string
+	*	@param actual \p string
+	*/
 	protected void pass(string expected, string actual) {
 		m_currentTestCaseTested.setPassed();
 		m_currentTestCaseTested.setExpected(expected);
 		m_currentTestCaseTested.setActual(actual);
 	}
 	
+	/**
+	*	@brief Fail the current TestCase
+	*	@param expected \p string
+	*	@param actual \p string
+	*	@param message \p string - Message to optionally display; useful when manually failing a TestCase
+	*/
 	protected void fail(string expected, string actual, string message = string.Empty) {
 		hasFailed = true;
 		m_currentTestCaseTested.setFailed();
@@ -199,6 +285,9 @@ class STestUnit : Managed {
 		
 	}	
 	
+	/**
+	*	@brief Skip the current TestCase
+	*/
 	protected void skip() {
 		m_currentTestCaseTested.setSkipped();
 	}

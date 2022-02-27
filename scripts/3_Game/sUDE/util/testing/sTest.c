@@ -1,7 +1,15 @@
 class STest : Managed {
 
+	/**
+	*	@brief Higher values will means more verbosity in logging
+	*/
 	static int verbosity = 3;
+	
+	/**
+	*	@brief If set to true, next TestUnits will be run
+	*/
 	static bool shouldContinueAtFail = false;
+	
 	static string PASSED_OUTPUT  = "[ ✓ ] PASSED  - %1";
 	static string FAILED_OUTPUT  = "[ × ] FAILED  - %1";
 	static string SKIPPED_OUTPUT = "[ - ] SKIPPED - %1";
@@ -9,12 +17,36 @@ class STest : Managed {
 	protected ref array<ref STestUnit> toTest = new array<ref STestUnit>();
 	protected ref map<eSTestCaseStatus, int> results = new map<eSTestCaseStatus, int>();
 	
+	/**
+	*	@brief Run predefined set of tests, meant for sUDE mods
+	*/
+	static void runSUDE() {
+		STest.shouldContinueAtFail = true;
+		STest.verbosity = 3;
+		array<typename> tests = {
+			TestUnit_STest,
+			TestUnit_SMath,
+			TestUnit_SConstraints,
+			TestUnit_SUserConfigOption,
+			TestUnit_SUserConfig
+		};
+		STest.run(tests);
+	}
+	
+	/**
+	*	@brief Run a single TestUnit
+	*	@param testUnit \p typename - Typename of TestUnit to run
+	*/
 	static void run(typename testUnit) {
 		STest t = new STest();
 		t.addTestUnit(testUnit);
 		t.run();
 	}
 	
+	/**
+	*	@brief Run a single TestUnit
+	*	@param testUnits \p array<typename> - array of typenames of TestUnits to run
+	*/
 	static void run(array<typename> testUnits) {
 		STest t = new STest();
 		t.addTestUnits(testUnits);
@@ -66,6 +98,11 @@ class STest : Managed {
 		SLog.c("| NICE! |", "", 0, verbosity == 69);
 	}
 	
+	
+	/**
+	*	@brief Update results and log the output when a TestCase has passed
+	*	@param testCase \p STestCase - test case that has passed
+	*/
 	protected void passed(STestCase testCase) {
 		results.Set(eSTestCaseStatus.PASSED, results.Get(eSTestCaseStatus.PASSED) + 1);
 		if (verbosity >= 2) {
@@ -77,6 +114,10 @@ class STest : Managed {
 		}
 	}
 	
+	/**
+	*	@brief Update results and log the output when a TestCase has failed
+	*	@param testCase \p STestCase - test case that has failed
+	*/
 	protected void failed(STestCase testCase) {
 		results.Set(eSTestCaseStatus.FAILED, results.Get(eSTestCaseStatus.FAILED) + 1);
 		SLog.d(string.Format(FAILED_OUTPUT, testCase.getFunction()), "", 1);
@@ -85,6 +126,10 @@ class STest : Managed {
 		SLog.d("Message:  " + testCase.getMessage(), "", 2, testCase.getMessage() != string.Empty);
 	}
 	
+	/**
+	*	@brief Update results and log the output when a TestCase has been skipped
+	*	@param testCase \p STestCase - test case that has been skipped
+	*/
 	protected void skipped(STestCase testCase) {
 		results.Set(eSTestCaseStatus.SKIPPED, results.Get(eSTestCaseStatus.SKIPPED) + 1);
 		if (verbosity >= 1) {

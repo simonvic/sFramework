@@ -95,7 +95,7 @@ class TestUnit_SUserConfigOption : STestUnit {
 	void optionValue_shouldBeConstrainedAfterEnablingConstraint() {
 		option.set(4.20);
 		option.setConstraint(constraint);
-		//option.enableConstraint();
+		option.enableConstraint();
 		assertEqual(1.0, option.get());
 	}
 	

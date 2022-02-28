@@ -21,14 +21,13 @@ class STest : Managed {
 	*	@brief Run predefined set of tests, meant for sUDE mods
 	*/
 	static void runSUDE() {
-		STest.shouldContinueAtFail = true;
-		STest.verbosity = 3;
 		array<typename> tests = {
 			TestUnit_STest,
 			TestUnit_SMath,
 			TestUnit_SConstraints,
 			TestUnit_SUserConfigOption,
-			TestUnit_SUserConfig
+			TestUnit_SUserConfig,
+			TestUnit_SObservableArray
 		};
 		STest.run(tests);
 	}
@@ -81,7 +80,11 @@ class STest : Managed {
 		
 		SLog.d("-----------------------------------------------------------------------");
 		foreach (STestUnit unit2 : toTest) {
-			SLog.d(unit2.ClassName());
+			if (unit2.hasFailed()) {
+				SLog.d(string.Format(FAILED_OUTPUT, unit2.ClassName()));
+			} else {
+				SLog.d(string.Format(PASSED_OUTPUT, unit2.ClassName()));
+			}
 			array<ref STestCase> testCases = unit2.getTestCases();
 			foreach (STestCase testCase : testCases) {
 				switch (testCase.getStatus()) {

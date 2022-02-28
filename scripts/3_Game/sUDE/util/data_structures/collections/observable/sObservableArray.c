@@ -6,7 +6,6 @@ class SObservableArray<Class T> : Managed {
 	protected ref array<ref SArrayInsertListener> m_onInsertListeners;
 	protected ref array<ref SArrayPreRemoveListener> m_onPreRemoveListeners;
 	protected ref array<ref SArrayClearListener> m_onClearListeners;
-	protected ref array<ref SArraySetListener> m_onSetListeners;
 	
 	void SObservableArrayList(array<T> init = null) {
 		if (!init) {
@@ -18,9 +17,8 @@ class SObservableArray<Class T> : Managed {
 		m_onInsertListeners = new array<ref SArrayInsertListener>();
 		m_onPreRemoveListeners = new array<ref SArrayPreRemoveListener>();
 		m_onClearListeners = new array<ref SArrayClearListener>();
-		m_onSetListeners = new array<ref SArraySetListener>();
 	}
-		
+	
 	void addOnChangeListener(SArrayChangeListener listener) {
 		m_onChangeListeners.Insert(listener);
 	}
@@ -36,17 +34,24 @@ class SObservableArray<Class T> : Managed {
 	void addOnClearListener(SArrayClearListener listener) {
 		m_onClearListeners.Insert(listener);
 	}
-	
-	void addOnSetListener(SArraySetListener listener) {
-		m_onSetListeners.Insert(listener);
-	}
-	
+		
+	/**
+	*	@brief Execute all SArrayChangeListeners.
+	*		Called when the state of the array has changed (e.g. insertions,
+	*		removal, value change, sort, shuffle etc.)
+	*/
 	protected void onChange() {
 		foreach (SArrayChangeListener listener : m_onChangeListeners) {
 			GetGame().GameScript.CallFunction(listener.param1, listener.param2, null, null);
 		}
 	}
 	
+	/**
+	*	@brief Execute all SArrayInsertListeners.
+	*		Called when a new item as been inserted
+	*	 @param value \p T - item inserted
+	*	 @param insertPosition \p int - index of the new item
+	*/
 	protected void onInsert(T value, int insertPosition) {
 		onChange();
 		foreach (SArrayInsertListener listener : m_onInsertListeners) {
@@ -54,13 +59,22 @@ class SObservableArray<Class T> : Managed {
 		}
 	}
 	
-	protected void onPreRemove(T index) {
+	/**
+	*	@brief Execute all SArrayInsertListeners.
+	*		Called when a new item is going to be removed.
+	*	 @param index \p int - position of item to be removed
+	*/
+	protected void onPreRemove(int index) {
 		onChange();
 		foreach (SArrayPreRemoveListener listener : m_onPreRemoveListeners) {
 			GetGame().GameScript.CallFunctionParams(listener.param1, listener.param2, null, new Param1<int>(index));
 		}
 	}
 	
+	/**
+	*	@brief Execute all SArrayClearListeners.
+	*		Called when clearing array (SObservableArray::clear)
+	*/
 	protected void onClear() {
 		onChange();
 		foreach (SArrayClearListener listener : m_onClearListeners) {
@@ -68,16 +82,13 @@ class SObservableArray<Class T> : Managed {
 		}
 	}
 	
-	protected void onSet(int index, T value) {
-		onChange();
-		foreach (SArraySetListener listener : m_onSetListeners) {
-			GetGame().GameScript.CallFunctionParams(listener.param1, listener.param2, null, new Param2<int,T>(index,value));
-		}
-	}
 	
 	
 	
-	
+	/**
+	*	The following methods are just wrappers for vanilla methods
+	*	@see array
+	*/
 	
 		
 	int init(T init[]) {
@@ -87,7 +98,7 @@ class SObservableArray<Class T> : Managed {
 	void set(int index, T value) {
 		m_list.Set(index, value);
 		if (index >= 0 && index < m_list.Count()) {
-			onSet(index, value);
+			onInsert(value, index);
 		}
 	}
 	
@@ -177,10 +188,6 @@ class SObservableArray<Class T> : Managed {
 			}
 		}
 	}
-	
-	
-	
-	//////////////////////////////////////////////////////
 	
 	
 	int count() {

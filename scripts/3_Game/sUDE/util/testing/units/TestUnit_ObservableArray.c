@@ -6,7 +6,6 @@ class TestUnit_SObservableArray : STestUnit {
 	bool onInsertCalled;
 	bool onPreRemoveCalled;
 	bool onClearCalled;
-	bool onSetCalled;
 	ref Param argumentsReceived;
 	
 	override void init() {
@@ -18,8 +17,6 @@ class TestUnit_SObservableArray : STestUnit {
 		
 		registerTestCases({
 			"clear_testCallbacks",
-			"set_testCallbacks",
-			"set_testArgumentsReceived",
 			"insert_testCallbacks",
 			"insert_testArgumentsReceived",
 			"insertAt_testCallbacks",
@@ -36,7 +33,6 @@ class TestUnit_SObservableArray : STestUnit {
 		onInsertCalled = false;
 		onPreRemoveCalled = false;
 		onClearCalled = false;
-		onSetCalled = false;
 		argumentsReceived = null;
 		a = new SObservableArray<int>({0, 1, 2, 3, 4});
 	}
@@ -46,7 +42,6 @@ class TestUnit_SObservableArray : STestUnit {
 		a.addOnInsertListener(new SArrayInsertListener(this, "onInsertListener"));
 		a.addOnPreRemoveListener(new SArrayPreRemoveListener(this, "onPreRemoveListener"));
 		a.addOnClearListener(new SArrayClearListener(this, "onClearListener"));
-		a.addOnSetListener(new SArraySetListener(this, "onSetListener"));
 	}
 	
 	
@@ -69,40 +64,17 @@ class TestUnit_SObservableArray : STestUnit {
 	void onClearListener() {
 		onClearCalled = true;
 	}
-	
-	void onSetListener(int index) {
-		onSetCalled = true;
-		argumentsReceived = new Param1<int>(index);
-	}
-	
-	
+		
 	
 	void clear_testCallbacks() {
 		a.clear();
-		bool otherCallbacksCalled = onInsertCalled || onPreRemoveCalled || onSetCalled ;
+		bool otherCallbacksCalled = onInsertCalled || onPreRemoveCalled ;
 		assertTrue(onChangeCalled && onClearCalled && !otherCallbacksCalled);
 	}
-	
-	void set_testCallbacks() {
-		a.set(1, 69);
-		bool otherCallbacksCalled = onInsertCalled || onPreRemoveCalled || onClearCalled ;
-		assertTrue(onChangeCalled && onSetCalled && !otherCallbacksCalled);
-	}
-	
-	void set_testArgumentsReceived() {
-		a.set(1, 69);
-		Param1<int> arguments = Param1<int>.Cast(argumentsReceived);
-		if (!arguments) {
-			fail("int", string.Format("%1", argumentsReceived));
-			return;
-		}
-		
-		assertEqual(1, arguments.param1);
-	}
-	
+
 	void insert_testCallbacks() {
 		a.insert(69);
-		bool otherCallbacksCalled = onSetCalled || onPreRemoveCalled || onClearCalled ;
+		bool otherCallbacksCalled = onPreRemoveCalled || onClearCalled ;
 		assertTrue(onChangeCalled && onInsertCalled && !otherCallbacksCalled);
 	}
 	
@@ -131,13 +103,13 @@ class TestUnit_SObservableArray : STestUnit {
 	
 	void insertAt_testCallbacks() {
 		a.insertAt(2, 2);
-		bool otherCallbacksCalled = onSetCalled || onPreRemoveCalled || onClearCalled ;
+		bool otherCallbacksCalled = onPreRemoveCalled || onClearCalled ;
 		assertTrue(onChangeCalled && onInsertCalled && !otherCallbacksCalled);
 	}
 	
 	void remove_testCallbacks() {
 		a.remove(1);
-		bool otherCallbacksCalled = onSetCalled || onInsertCalled || onClearCalled ;
+		bool otherCallbacksCalled = onInsertCalled || onClearCalled ;
 		assertTrue(onChangeCalled && onPreRemoveCalled && !otherCallbacksCalled);
 	}
 	

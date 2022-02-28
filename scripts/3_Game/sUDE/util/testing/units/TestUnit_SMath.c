@@ -1,3 +1,5 @@
+#ifdef DIAG_DEVELOPER
+
 class TestUnit_SMath : STestUnit {
 	
 	override void init() {
@@ -131,3 +133,5 @@ class TestUnit_SMath : STestUnit {
 		// do nothing
 	}
 }
+
+#endif

@@ -1,3 +1,5 @@
+#ifdef DIAG_DEVELOPER
+
 class STest : Managed {
 
 	/**
@@ -24,6 +26,9 @@ class STest : Managed {
 		array<typename> tests = {
 			//TestUnit_STest,
 			TestUnit_SMath,
+			TestUnit_SFlagOperator,
+			TestUnit_SColor,
+			TestUnit_SFileHelper,
 			TestUnit_SConstraints,
 			TestUnit_SUserConfigOption,
 			TestUnit_SUserConfig,
@@ -151,3 +156,6 @@ class STest : Managed {
 	
 }
 
+
+
+#endif

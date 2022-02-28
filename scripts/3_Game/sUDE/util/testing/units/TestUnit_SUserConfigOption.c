@@ -1,3 +1,5 @@
+#ifdef DIAG_DEVELOPER
+
 class TestUnit_SUserConfigOption : STestUnit {
 	
 	ref SUserConfigOption<float> option;
@@ -115,3 +117,6 @@ class TestUnit_SUserConfigOption : STestUnit {
 	}
 
 }
+
+
+#endif

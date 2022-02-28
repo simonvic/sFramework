@@ -1,3 +1,5 @@
+#ifdef DIAG_DEVELOPER
+
 enum eSTestCaseStatus {
 	PASSED,
 	FAILED,
@@ -69,3 +71,4 @@ class STestCase : Managed {
 
 }
 
+#endif

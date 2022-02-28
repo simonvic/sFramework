@@ -1,3 +1,5 @@
+#ifdef DIAG_DEVELOPER
+
 class TestUnit_SObservableArray : STestUnit {
 	
 	
@@ -148,3 +150,5 @@ class TestUnit_SObservableArray : STestUnit {
 	}
 	
 }
+
+#endif

@@ -1,3 +1,5 @@
+#ifdef DIAG_DEVELOPER
+
 typedef Param2<Class, string> STestBeforeCallback;
 typedef Param2<Class, string> STestBeforeClassCallback;
 typedef Param2<Class, string> STestAfterCallback;
@@ -295,3 +297,5 @@ class STestUnit : Managed {
 		
 	}
 }
+
+#endif

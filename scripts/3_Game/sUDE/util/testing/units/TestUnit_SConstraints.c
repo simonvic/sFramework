@@ -1,3 +1,5 @@
+#ifdef DIAG_DEVELOPER
+
 class TestUnit_SConstraints : STestUnit {
 	
 	override void init() {
@@ -152,3 +154,5 @@ class TestUnit_SConstraints : STestUnit {
 	}
 	
 }
+
+#endif

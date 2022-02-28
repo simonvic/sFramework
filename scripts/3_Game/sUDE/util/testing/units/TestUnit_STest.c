@@ -1,3 +1,5 @@
+#ifdef DIAG_DEVELOPER
+
 //lol :)
 class TestUnit_STest : STestUnit {
 	
@@ -85,3 +87,6 @@ class TestUnit_STest : STestUnit {
 		assertNotNull(new SColor());
 	}
 }
+
+
+#endif

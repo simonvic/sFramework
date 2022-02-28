@@ -111,8 +111,9 @@ class STest : Managed {
 		if (verbosity >= 2) {
 			SLog.d(string.Format(PASSED_OUTPUT, testCase.getFunction()),"", 1);
 			if (verbosity >= 3) {
-				SLog.d("Expected: " + testCase.getExpected(),"",2);
-				SLog.d("Actual:   " + testCase.getActual(),"",2);
+				SLog.d("Expected: " + testCase.getExpected(), "", 2, testCase.getExpected() != string.Empty);
+				SLog.d("Actual:   " + testCase.getActual(), "", 2, testCase.getActual() != string.Empty);
+				SLog.d("Message:  " + testCase.getMessage(), "", 2, testCase.getMessage() != string.Empty);
 			}
 		}
 	}
@@ -137,6 +138,7 @@ class STest : Managed {
 		results.Set(eSTestCaseStatus.SKIPPED, results.Get(eSTestCaseStatus.SKIPPED) + 1);
 		if (verbosity >= 1) {
 			SLog.d(string.Format(SKIPPED_OUTPUT, testCase.getFunction()),"", 1);
+			SLog.d("Message:  " + testCase.getMessage(),"",2, testCase.getMessage() != string.Empty);
 		}
 	}
 	

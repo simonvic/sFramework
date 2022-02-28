@@ -264,10 +264,11 @@ class STestUnit : Managed {
 	*	@param expected \p string
 	*	@param actual \p string
 	*/
-	protected void pass(string expected, string actual) {
+	protected void pass(string expected = string.Empty, string actual = string.Empty, string message = string.Empty) {
 		m_currentTestCaseTested.setPassed();
 		m_currentTestCaseTested.setExpected(expected);
 		m_currentTestCaseTested.setActual(actual);
+		m_currentTestCaseTested.setMessage(message);
 	}
 	
 	/**
@@ -288,7 +289,9 @@ class STestUnit : Managed {
 	/**
 	*	@brief Skip the current TestCase
 	*/
-	protected void skip() {
+	protected void skip(string message = string.Empty) {
 		m_currentTestCaseTested.setSkipped();
+		m_currentTestCaseTested.setMessage(message);
+		
 	}
 }

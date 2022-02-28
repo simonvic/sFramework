@@ -22,7 +22,7 @@ class STest : Managed {
 	*/
 	static void runSUDE() {
 		array<typename> tests = {
-			TestUnit_STest,
+			//TestUnit_STest,
 			TestUnit_SMath,
 			TestUnit_SConstraints,
 			TestUnit_SUserConfigOption,

@@ -3,9 +3,9 @@
 <p align="center">
         <img src="https://imgur.com/wHfyEnv.png" width="50%">
         <br>
-		<img src="https://img.shields.io/github/v/tag/simonvic/sFramework?color=F0544C&label=latest%20stable%20release&style=for-the-badge">
+        <img src="https://img.shields.io/github/v/tag/simonvic/sFramework?color=F0544C&label=latest%20stable%20release&style=for-the-badge">
         <br>
-		<img src="https://img.shields.io/github/license/simonvic/sFramework?color=F0544C&style=flat-square">
+        <img src="https://img.shields.io/github/license/simonvic/sFramework?color=F0544C&style=flat-square">
 </p>
 
 # Getting started
@@ -13,12 +13,13 @@
 sFramework is the core of the sUDE project.
 
 It ships many features and utilities used and/or implemented by sUDE modules :
-  - [Advanced PostProcessing](#PostProcessing-effects)
-  - [Cameras Overlays](#Camera-Overlays)
-  - [Game and User configuration interface](#Configurations-interfaces)
-  - [Helper classes and utilities for developing and debugging](#Utilities)
-  - Improvements to base game classes
-  - ...more
+
+- [Advanced PostProcessing](#PostProcessing-effects)
+- [Cameras Overlays](#Camera-Overlays)
+- [Game and User configuration interface](#Configurations-interfaces)
+- [Helper classes and utilities for developing and debugging](#Utilities)
+- Improvements to base game classes
+- ...more
 
 ---
 ---
@@ -33,11 +34,15 @@ sFramework ships a centralized post processing effects manager, with the goal of
 <br>
 
 ## SPPEffect
+
 `SPPEffect` is the "container" of any PostProcess Effect you wish to add to it (e.g. saturation, vignette, motion blur etc.).
+
 ```csharp
 SPPEffect myPPE = new SPPEffect();
 ```
+
 To add a parameter use the provided setters:
+
 ```csharp
 myPPE.setVignette(intensity, color);
 myPPE.setRadialBlur(powerX, powerY, offsetX, offsetY);
@@ -46,10 +51,13 @@ myPPE.setChromAber(powerX, powerY);
 ```
 
 To apply it, "hand it over" to the SPPEManager, which will calculate the correct value of all active SPPEffect and then apply it
+
 ```csharp
 SPPEManager.activate(myPPE);
 ```
+
 and to deactivate it:
+
 ```csharp
 SPPEManager.deactivate(myPPE);
 ```
@@ -57,6 +65,7 @@ SPPEManager.deactivate(myPPE);
 <br>
 
 ## SPPEffectAnimated
+
 A `SPPEffectAnimated` is just like a `SPPEffect`, but it has an animation mechanism which allows you to animate the values of a PostProcess effect.
 
 A `SPPEffectAnimated` is an *abstract* class. You need to implement it with your own class and override the `onAnimate()` method, which will be called on every frame.
@@ -64,32 +73,35 @@ A `SPPEffectAnimated` is an *abstract* class. You need to implement it with your
 There also is a timed variant `SPPEffectTimed`, which will be automatically deactivated once a certain amount has passed.
 
 To create your animation, simply extend either `SPPEffectAnimated` or `SPPEffectTimed`
+
 ```csharp
 class MyLoopAnimation : PPELoopedParams{
-	override void onAnimate(float deltaTime){
-		/* change PPE values here
-		setOverlay(...);
-		setChromAber(...);
-		setCameraEffects(...);
-		*/
-		setVignetteIntensity( Math.Sin(getTime()) );
-	}
+    override void onAnimate(float deltaTime){
+        /* change PPE values here
+        setOverlay(...);
+        setChromAber(...);
+        setCameraEffects(...);
+        */
+        setVignetteIntensity( Math.Sin(getTime()) );
+    }
 }
 
 class MyTimedAnimation : SPPEffectTimed{
-	override void onAnimate(float deltaTime){
-		setVignetteIntensity( Math.Cos(getTime()) );
-	}
+    override void onAnimate(float deltaTime){
+        setVignetteIntensity( Math.Cos(getTime()) );
+    }
 }
 ```
 
 A `SPPEffectTimed` also has a "duration" which can be set with the constructor, or the provided method:
+
 ```csharp
 MyTimedAnimation myTimedAnimation = new MyTimedAnimation(6); // the animation will last 6 seconds
 myTimedAnimation.setDuration(10.0); // the animation will last 10 seconds
 ```
 
 The activation of the animation is identical to any other `SPPEffect`
+
 ```csharp
 MyLoopAnimation myAnimation = new MyLoopAnimation();
 SPPEManager.activate(myAnimation);
@@ -97,7 +109,9 @@ SPPEManager.activate(myAnimation);
 MyTimedAnimation myTimedAnimation = new MyTimedAnimation(5.5);
 SPPEManager.activate(myTimedAnimation);
 ```
+
 If you want to manually manage the animation you can use the provided methods
+
 ```csharp
 myAnimation.start();  // Set the animation state to "Playing"
 myAnimation.stop();   // Reset the time and set the animation state to "Stopped"
@@ -106,6 +120,7 @@ myAnimation.resume(); // Resume the the animation and set the animation state to
 ```
 
 ## The insides of SPPEManager
+
 <h3 align="center">PostProcess Effect Manager</h3>
 The SPPEManager is in charge of managing the PostProcessing effects; this is a small diagram roughly showing how it works
 <img src="https://imgur.com/IKHcKQR.png">
@@ -128,20 +143,21 @@ As an animated UI :
 
 <img src="https://imgur.com/78gLf3X.gif" width="50%">
 
-or for emulating headgear damage: 
-
+or for emulating headgear damage:
 
 <img src="https://imgur.com/u4Sng17.gif" width="50%">
 
-##### (_from sVisual, MotoHelmet in various health state: Pristine, Worn, Damaged, BadlyDamaged and Ruined)_
+##### (*from sVisual, MotoHelmet in various health state: Pristine, Worn, Damaged, BadlyDamaged and Ruined)*
 
 <br>
 <br>
 
 Defining an overlay is very simple and very similar to SPPEffects, in fact there are three types as well and the logic is identical to the SPPEffects:
+
 - `SCameraOverlay`
 - `SCameraOverlayAnimated`
 - `SCameraOverlayTimed`
+
 ```csharp
 class MyAnimatedOverlay : SCameraOverlayAnimated {
 
@@ -160,42 +176,48 @@ class MyAnimatedOverlay : SCameraOverlayAnimated {
     }
 }
 ```
+
 To activate/deactivate an overlay, you use the `SCameraOverlayManager`:
+
 ```csharp
 // NOTE: SCameraOverlaysManager is a singleton
 SCameraOverlaysManager.getInstance().activate(myOverlay);
 ```
 
 ## Clothing overlays
+
 sFramework is capable of automatically activating/deactivating overlays when a clothing item is equipped/unequipped; making use of this feature is super easy. You just need to define a list of overlays inside your clothing item in your `config.cpp` as follows:
+
 ```cpp
 class YOUR_CLOTHING_ITEM_CLASSNAME{
-	class sUDE {
-		class CameraOverlays {
-			class overlay_0 : SCameraOverlay {
-				image="path/to/your/image/pristine.edds";
-			};
-			class overlay_1 : SCameraOverlay {
-				image="path/to/your/image/worn.edds";
-			};
-			class overlay_2 : SCameraOverlay {
-				image="path/to/your/image/damaged.edds";
-			};
-			class overlay_3 : SCameraOverlay {
-				image="path/to/your/image/badlydamaged.edds";
-			};
-			/*
-			class overlay_X : SCameraOverlay {
-				image="path/to/your/image/xxx.edds";
-			};
-			*/
-		};
-	};
+    class sUDE {
+        class CameraOverlays {
+            class overlay_0 : SCameraOverlay {
+                image="path/to/your/image/pristine.edds";
+            };
+            class overlay_1 : SCameraOverlay {
+                image="path/to/your/image/worn.edds";
+            };
+            class overlay_2 : SCameraOverlay {
+                image="path/to/your/image/damaged.edds";
+            };
+            class overlay_3 : SCameraOverlay {
+                image="path/to/your/image/badlydamaged.edds";
+            };
+            /*
+            class overlay_X : SCameraOverlay {
+                image="path/to/your/image/xxx.edds";
+            };
+            */
+        };
+    };
 };
 ```
+
 A `SCameraOverlay` has many attributes you can play with, which can be set either by scripts or in the config.
 Currently available attributes are:
-```
+
+```cpp
 image="";                                 // Resource image path, can be whatever an ImageWidget accepts texture
 alpha=1.0;                                // [0.0 - 1.0] Alpha value (transparency)
 mask="";                                  // Resource image path, can be whatever an ImageWidget accepts as mask
@@ -219,6 +241,7 @@ hidesWithIngameHUD = 0;                   // [0 = false, 1 = true] Determines if
 `SUserConfig` has the purpose to help in creating user (client) settings in just few lines of code.
 
 Implement the `SUserConfigBase` as follows:
+
 ```csharp
 class MySUserConfig : SUserConfigBase {
 
@@ -233,42 +256,43 @@ class MySUserConfig : SUserConfigBase {
     *   Where the config will be saved
     */
     override string getPath(){
-		return "$saves:\\path\\to\\my\\config.json";
-	}
-	
+        return "$saves:\\path\\to\\my\\config.json";
+    }
+    
     /**
     *   Where the config with default values will be saved
-    */    
-	override string getDefaultPath(){
-		return "$profile:\\path\\to\\my\\config_default.json";
-	}
+    */
+    override string getDefaultPath(){
+        return "$profile:\\path\\to\\my\\config_default.json";
+    }
 
     /**
     *   Implement the deserialization
     */
     override void deserialize(string data, out string error){
-		MySUserConfig cfg = this;
-		m_serializer.ReadFromString(cfg, data, error);
-	}
-	
+        MySUserConfig cfg = this;
+        m_serializer.ReadFromString(cfg, data, error);
+    }
+    
     /**
     *   Implement the serialization
     */
-	override string serialize(bool serializeDefault = false){
-		string result;		
-		MySUserConfig cfg;
-		if(serializeDefault) {
-			cfg = new MySUserConfig();
-		}else{
-			cfg = this;
-		}
-		m_serializer.WriteToString(cfg, true, result);
-		return result;
-	}
+    override string serialize(bool serializeDefault = false){
+        string result;
+        MySUserConfig cfg;
+        if (serializeDefault) {
+            cfg = new MySUserConfig();
+        } else {
+            cfg = this;
+        }
+        m_serializer.WriteToString(cfg, true, result);
+        return result;
+    }
 }
 ```
 
 you can now save it, load it and more with few lines
+
 ```csharp
 MyUserConfig myCfg = new MyUserConfig();
 myCfg.save();
@@ -284,11 +308,176 @@ myCfg.load();
 <br>
 <br>
 
+# sTest (UnitTesting framework)
+
+`sFramework` also ships `sTest`, a UnitTesting framework for Enforce scripts, based on industry standard frameworks such as JUnit for Java.
+
+Test units are super simple to define and use:
+
+1. Create a TestUnit class (extends `STestUnit`)
+2. Create some test cases function
+3. Register the test cases by passing the test case name (function name) to `registerTestCases` method
+
+```csharp
+class MyTestUnit : STestUnit {
+    
+    override void init() {
+        registerTestCases({
+            "testThisFeature",
+            "testThisOtherFeature",
+            "shouldFail"
+        });
+    }
+
+    void testThisFeature() {
+        // do something...
+        // assert something
+        assertEqual(10, 5 + 5);
+    }
+
+    void testThisOtherFeature() {
+        // do something...
+        // assert something
+        assertTrue(true);
+    }
+
+    void shouldFail() {
+        // this test case will fail!
+        Class someClass = null;
+        assertNotNull(someClass);
+    }
+}
+```
+
+You can now run the test unit by passing its name to `sTest`:
+
+TIP: you can execute the following in the workbench console
+
+```csharp
+STest.run(MyTestUnit);
+
+// optionally an array of test units can be used to run multiple test units
+STest.run({MyTestUnit, MyOtherTestUnit, MyLastTestUnit});
+```
+
+The result of the tests can be seen in the output window of the workbench or inside sUDE logs.
+
+```text
+=======================================================================
+Running tests...
+-----------------------------------------------------------------------
+MyTestUnit
+│    ├ [ ✓ ] PASSED  - testThisFeature
+│    ├ [ ✓ ] PASSED  - testThisOtherFeature
+│    ├ [ × ] FAILED  - shouldFail
+│    │    ├ Expected: true
+│    │    ├ Actual:   false
+-----------------------------------------------------------------------
+                   PASSED    |    FAILED    |    SKIPPED
+                     2              1               0
+=======================================================================
+```
+
+You can decide not to stop when a test fails:
+
+```csharp
+STest.shouldContinueAtFail = true; // default: false
+```
+
+or to change verbosity in logging:
+
+```csharp
+STest.verbosity = 3; // default: 1
+```
+
+<br>
+
+## Assertions
+
+You have access to multiple assertions:
+
+- `assertEqual(x, y)` with x and y of type `float`, `int`, `string`, `bool`, `array<float>`
+- `assertTrue(x)` with x of type `bool`
+- `assertFalse(x)` with x of type `bool`
+- `assertNull(x)` with x of type `Class`
+- `assertNotNull(x)` with x of type `Class`
+
+
+## Advanced TestUnit usage
+
+If you need to perform some actions before or after each test unit or test case you can define and register some callbacks:
+
+```csharp
+class MyTestUnit : STestUnit {
+    
+    override void init() {
+
+        registerBeforeClassCallbacks({
+            "doSomethingBeforeTestUnit"
+        });
+        
+        registerBeforeCallbacks({
+            "doSomethingBeforeEachTestCase"
+        });
+
+        registerAfterCallbacks({
+            "doSomethingAfterEachTestCase"
+        });
+
+        registerAfterClassCallbacks({
+            "doSomethingAfterTestUnit"
+        });
+
+        // registerTestCases({
+        //     ...
+        // });
+    }
+
+    void doSomethingBeforeTestUnit() {
+        // do something ...
+    }
+
+    void doSomethingBeforeEachTestCase() {
+        // do something ...
+    }
+
+    void doSomethingAfterEachTestCase() {
+        // do something ...
+    }
+
+    void doSomethingAfterTestUnit() {
+        // do something ...
+    }
+
+}
+```
+
+If you need to write some more complext test cases, you can also manually `fail()`, `pass()` or `skip()`. Example:
+
+```csharp
+void testSomethingComplex() {
+    int x = 2;
+    int y = 2;
+    int actual = x + y;
+    int expected = 4;
+
+    if ( x == y) {
+        fail("x and y not equal", "x and y are equal", "Failed during X and Y comparison");
+    } else {
+        assertEqual(expected, actual);
+    }
+}
+```
+
+<br>
+<br>
+
 # Utilities
 
 ## SColor
 
 `SColor` helps you defining and using colors. A few examples:
+
 ```csharp
 //hex values, like in CSS
 SColor.rgb(0xFF0000);    //red
@@ -309,9 +498,62 @@ SColor.rgb(RGBColors.AQUAMARINE);
 SColor.rgb(RGBColors.YELLOW_GREEN);
 ```
 
+## SObservableArray
+
+A list that allows listeners to track changes when they occur.
+
+```csharp
+class MyClass {
+    
+    ref SObservableArray<int> observableArray = new SObservableArray<int>();
+
+    void MyClass() {
+        observableArray.addOnChangeListener(new SArrayChangeListener(this, "onChange"));
+
+        // multiple listeners can be added
+        observableArray.addOnInsertListener(new SArrayInsertListener(this, "onInsert"));
+        observableArray.addOnInsertListener(new SArrayInsertListener(this, "onInsert2"));
+
+        observableArray.addOnPreRemoveListener(new SArrayPreRemoveListener(this, "onPreRemove"));
+        observableArray.addOnClearListener(new SArrayClearListener(this, "onClear"));
+    }
+
+    void onChange() {
+        SLog.d("Array has changed");
+    }
+
+    void onInsert(int value, int position) {
+        SLog.d("Value " + value + " has been inserted in position " + position);
+    }
+
+    void onInsert2(int value, int position) {
+        // do somehting... 
+    }
+
+    void onPreRemove(int indexToBeRemoved) {
+        SLog.d("Index " + indexToBeRemoved + " will be removed");
+    }
+
+    void onClear() {
+        SLog.d("Array has been cleared");
+    }
+
+}
+```
+
+```csharp
+observableArray.insert(69); // onChange, onInsert and onInsert2 will be called
+observableArray.insert(420); // onChange, onInsert and onInsert2 will be called
+
+observableArray.removeItem(69); // onPreRemove and onChange will be called
+observableArray.remove(0); // onPreRemove and onChange will be called
+observableArray.clear(); // onClear and onChange will be called
+```
+
 ## SSpawnable
 
 `SSpawnable` helps you in quickly spawn items with a lot of attachments:
+
 ```csharp
 // Build an M4A1 with multiple attachments
 SSpawnable m4 = SSpawnable.build("M4A1").withAttachments({
@@ -341,6 +583,7 @@ ak.spawn(position);
 ## SRaycast
 
 `SRaycast` helps you launching raycasts with more flexibility:
+
 ```csharp
 SRaycast ray = new SRaycast(/**...*/);
 vector contactPositon = ray
@@ -358,6 +601,7 @@ if (ray.hasHit()){
 ## SFlagOperator
 
 `SFlagOperator` helps you in bitwise operations, especially when working with flags, hence the name.
+
 ```csharp
 enum MyFlags {
     A = 1,
@@ -382,10 +626,12 @@ SLog.d("A is set : " + fop.check(MyFlags.A));
 SLog.d("B is set : " + fop.check(MyFlags.B));
 //B is set : true
 ```
+
 <br>
 <br>
 
 # Contact me
+
 <h2 align="center">Found a bug or want to give a suggestion? Feel free to contact me!</h2>
 <p align="center">
     <a style="margin: 0 10px" href = "mailto: simonvic.dev@gmail.com">

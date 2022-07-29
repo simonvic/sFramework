@@ -92,6 +92,17 @@ class SMath {
 	}
 	
 	/**
+	* @brief Normalize a value from a range to 0..1 range
+	* 	@param value \p float - Value to normalize
+	* 	@param min \p float - Value minimum range
+	* 	@param max \p float - Value maximum range
+	* 	@return \p float - normalized value
+	*/
+	static float normalize(float value, float min, float max){
+		return ((value - min) / (max - min));
+	}
+	
+	/**
 	* @brief Map a value from a range to another
 	* 	@param value \p float - Value to map
 	* 	@param min \p float - Value minimum range

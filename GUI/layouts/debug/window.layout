@@ -1,0 +1,119 @@
+GridSpacerWidgetClass root_window {
+ clipchildren 1
+ color 0 0 0 0.5529
+ position 0 0
+ size 923.56897 523.12402
+ hexactpos 0
+ vexactpos 0
+ hexactsize 1
+ vexactsize 1
+ style DayZDefaultPanel
+ Padding 0
+ Margin 0
+ "Size To Content V" 1
+ Columns 1
+ Rows 2
+ {
+  WrapSpacerWidgetClass c_header {
+   ignorepointer 1
+   color 0 0 0 0.5373
+   position 0 0
+   size 1 32
+   hexactpos 0
+   vexactpos 0
+   hexactsize 0
+   vexactsize 1
+   Padding 0
+   Margin 0
+   content_halign right
+   {
+    GridSpacerWidgetClass header {
+     ignorepointer 1
+     position 0 0
+     size 1 1
+     hexactpos 0
+     vexactpos 0
+     hexactsize 0
+     vexactsize 0
+     style Colorable
+     Padding 0
+     Margin 4
+     "Size To Content H" 1
+     Columns 2
+     Rows 1
+     {
+      TextWidgetClass title {
+       ignorepointer 1
+       size 1 1
+       hexactpos 0
+       vexactpos 0
+       hexactsize 0
+       vexactsize 0
+       text "title"
+       "exact text" 1
+       "size to text h" 0
+       "size to text v" 0
+       "text valign" center
+      }
+      GridSpacerWidgetClass buttons {
+       ignorepointer 1
+       size 64 32
+       hexactpos 0
+       vexactpos 0
+       hexactsize 1
+       vexactsize 1
+       Padding 8
+       "Size To Content H" 1
+       content_halign right
+       content_valign center
+       Rows 1
+       {
+        ButtonWidgetClass collapse {
+         position 0 0
+         size 32 32
+         hexactpos 0
+         vexactpos 0
+         hexactsize 1
+         vexactsize 1
+         text "-"
+        }
+        ButtonWidgetClass maximize {
+         position 0 0
+         size 32 32
+         hexactpos 0
+         vexactpos 0
+         hexactsize 1
+         vexactsize 1
+         text "[]"
+        }
+        ButtonWidgetClass close {
+         position 0 0
+         size 32 32
+         hexactpos 0
+         vexactpos 0
+         hexactsize 1
+         vexactsize 1
+         text "X"
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+  WrapSpacerWidgetClass body {
+   clipchildren 1
+   ignorepointer 1
+   position 0 0
+   size 1 1
+   hexactpos 0
+   vexactpos 0
+   hexactsize 0
+   vexactsize 0
+   Padding 5
+   Margin 5
+   "Size To Content H" 1
+   "Size To Content V" 1
+  }
+ }
+}

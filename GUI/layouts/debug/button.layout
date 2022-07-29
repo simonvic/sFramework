@@ -1,0 +1,11 @@
+ButtonWidgetClass button {
+ color 1 1 1 0.2157
+ position 0 0
+ size 1 48
+ hexactpos 0
+ vexactpos 0
+ hexactsize 0
+ vexactsize 1
+ style DayZDefaultButton
+ text "awf"
+}

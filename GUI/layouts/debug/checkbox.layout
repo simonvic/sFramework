@@ -1,0 +1,8 @@
+CheckBoxWidgetClass checkbox {
+ position 0 0
+ size 1 48
+ hexactpos 0
+ vexactpos 0
+ hexactsize 0
+ vexactsize 1
+}

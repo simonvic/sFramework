@@ -1,0 +1,11 @@
+WrapSpacerWidgetClass table {
+ color 0 0 0 0.5216
+ position 0 0
+ size 128 128
+ hexactpos 0
+ vexactpos 0
+ hexactsize 1
+ vexactsize 1
+ Padding 0
+ Margin 0
+}

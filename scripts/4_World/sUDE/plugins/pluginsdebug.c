@@ -1,5 +1,33 @@
 /*
-class PluginSDebug extends PluginBase {
+modded class Weapon_Base{
+	override void EEFired(int muzzleType, int mode, string ammoType){
+		super.EEFired(muzzleType, mode, ammoType);
+
+		Magazine magazine = GetMagazine(GetCurrentMuzzle());
+
+		if (GetGame().IsServer() || !GetGame().IsMultiplayer())
+			SetHealth(GetMaxHealth()); // prevent weapon from deteriorating
+
+		if (magazine){
+			if (GetGame().IsServer() || !GetGame().IsMultiplayer())
+				magazine.ServerSetAmmoMax(); // unlimited ammo
+			
+			if (GetGame().IsClient() || !GetGame().IsMultiplayer())
+				magazine.LocalSetAmmoMax(); // update client side UI
+		}
+		
+		ItemSuppressor suppressor = GetAttachedSuppressor();
+		if (suppressor && (GetGame().IsServer() || !GetGame().IsMultiplayer())) {
+			suppressor.SetHealth(suppressor.GetMaxHealth());
+		}
+	}
+
+	override bool IsJammed(){
+		return false; // prevent jamming
+	}
+}
+
+class PluginSDebug : PluginBase {
 	
 	protected float m_time;
 	
@@ -7,12 +35,12 @@ class PluginSDebug extends PluginBase {
 	static bool bodyClipAllContact_enabled = false;
 	static bool bodyClipContactPos_enabled = false;
 		
-	protected static PlayerBase simonvic;
-	protected static Weapon_Base m_weapon;
-	protected ref SRaycast m_crosshairRaycast;
-	protected ref SRaycast m_bodyClipRaycast;
+	static PlayerBase simonvic;
+	static Weapon_Base m_weapon;
+	ref SRaycast m_crosshairRaycast;
+	ref SRaycast m_bodyClipRaycast;
 	
-	protected static ref array<SurvivorBase> theBoris = new array<SurvivorBase>;
+	static ref array<SurvivorBase> theBoris = new array<SurvivorBase>;
 	
 	Shape line = Debug.DrawLine("0 0 0", "0 0 0", 0xFF0000);
 	
@@ -68,7 +96,7 @@ class PluginSDebug extends PluginBase {
 			simonvic = PlayerBase.Cast(players[0]);
 		}
 		vector startPosition = simonvic.GetPosition();
-		vector margin = "0 0 0.2";
+		vector margin = "0 0 0.5";
 		vector verticalMargin = "0 0.2 0";
 		
 		PluginSDebug.spawnWeaponsSet(startPosition, margin);
@@ -129,157 +157,193 @@ class PluginSDebug extends PluginBase {
 	
 	static void spawnWeaponsSet(vector startPosition, vector margin){
 		
-		array<ref SSpawnable> spawnables = new array<ref SSpawnable>;
-			
+		SSpawnableBundle s = new SSpawnableBundle();
+		
 		////////////////////////////////////////////////////////////
 		// ASSAULT RIFLES
-		spawnables.Insert(SSpawnable.build("M4A1").withAttachments({
+		s.build("M4A1").withAttachments({
 			"M4_Suppressor",
 			"M4_OEBttstck",
 			"M4_RISHndgrd"
 		}).withSpawnableAttachments(
-			(new SSpawnable("ReflexOptic")).withAttachment("Battery9V")));
+			(new SSpawnable("ReflexOptic")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("M16A2"));
+		s.build("M16A2");
 		
-		spawnables.Insert(SSpawnable.build("AK101").withAttachments({
+		s.build("AK101").withAttachments({
 			"AK_Suppressor",
 			"AK_PlasticBttstck",
 			"AK_RailHndgrd"
 		}).withSpawnableAttachments(
 			(new SSpawnable("PSO11Optic")).withAttachment("Battery9V"),
-			(new SSpawnable("UniversalLight")).withAttachment("Battery9V")));
+			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("AK74").withAttachments({
+		s.build("AK74").withAttachments({
 			"AK_Suppressor",
 			"AK_PlasticBttstck",
 			"AK_RailHndgrd"
 		}).withSpawnableAttachments(
 			(new SSpawnable("KobraOptic")).withAttachment("Battery9V"),
-			(new SSpawnable("UniversalLight")).withAttachment("Battery9V")));
+			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("AKM").withAttachments({
+		s.build("AKM").withAttachments({
 			"AK_Suppressor",
 			"AK_WoodBttstck",
 			"AK_WoodHndgrd"
 		}).withSpawnableAttachments(
-			(new SSpawnable("KobraOptic")).withAttachment("Battery9V")));
+			(new SSpawnable("KobraOptic")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("AKS74U").withAttachments({
+		s.build("AKS74U").withAttachments({
 			"AK_Suppressor",
 			"AKS74U_Bttstck",
 			"GhillieAtt_tan"
-		}));
+		});
 		
-		spawnables.Insert(SSpawnable.build("FAL").withAttachments({
+		s.build("FAL").withAttachments({
 			"Fal_FoldingBttstck"
 		}).withSpawnableAttachments(
-			(new SSpawnable("M68Optic")).withAttachment("Battery9V")));
+			(new SSpawnable("M68Optic")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("VSS").withAttachments({
+		s.build("VSS").withAttachments({
 			"KashtanOptic"
-		}));
+		});
 		
-		spawnables.Insert(SSpawnable.build("ASVAL").withSpawnableAttachments(
+		s.build("ASVAL").withSpawnableAttachments(
 			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"),
-			(new SSpawnable("ACOGOptic")).withAttachment("Battery9V")));
+			(new SSpawnable("ACOGOptic")).withAttachment("Battery9V"));
 		
+		s.build("Aug").withAttachments({
+			"M4_Suppressor",
+			"GhillieAtt_tan"
+		}).withSpawnableAttachments(
+			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"),
+			(new SSpawnable("ReflexOptic")).withAttachment("Battery9V"));
+		
+		
+		s.build("AugShort").withAttachments({
+			"M4_Suppressor"
+		});
+		
+		s.build("FAMAS").withAttachments({
+			"M4_Suppressor"
+		});
+		
+		s.build("SawedOffFAMAS").withAttachments({
+			"M4_Suppressor"
+		});
 		
 		////////////////////////////////////////////////////////////
 		// SMG
-		spawnables.Insert(SSpawnable.build("MP5K").withAttachments({
+		s.build("MP5K").withAttachments({
 			"MP5_Compensator",
 			"MP5k_StockBttstck",
 			"MP5_RailHndgrd"
 		}).withSpawnableAttachments(
 			(new SSpawnable("ReflexOptic")).withAttachment("Battery9V"),
-			(new SSpawnable("UniversalLight")).withAttachment("Battery9V")));
+			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("CZ61"));
-		spawnables.Insert(SSpawnable.build("UMP45"));
+		s.build("CZ61");
+		s.build("UMP45");
+		
+		
+		//s.build("PP19").withAttachments({
+		//	"PP19_Bttstck"
+		//});
+		
 		
 		
 		
 		////////////////////////////////////////////////////////////
 		// RIFLES
-		spawnables.Insert(SSpawnable.build("B95").withAttachments({
+		s.build("B95").withAttachments({
 			"HuntingOptic"
-		}));
+		});
 		
-		spawnables.Insert(SSpawnable.build("CZ527").withAttachments({
+		s.build("CZ527").withAttachments({
 			"HuntingOptic"
-		}));
+		});
 		
-		spawnables.Insert(SSpawnable.build("Winchester70").withAttachments({
+		s.build("CZ550").withAttachments({
 			"HuntingOptic"
-		}));
+		});
 		
-		spawnables.Insert(SSpawnable.build("Mosin9130").withAttachments({
+		s.build("Winchester70").withAttachments({
+			"HuntingOptic"
+		});
+		
+		s.build("Mosin9130").withAttachments({
 			"PUScopeOptic",
 			"Mosin_Compensator"
-		}));
+		});
 		
-		spawnables.Insert(SSpawnable.build("SawedoffMosin9130"));
-		spawnables.Insert(SSpawnable.build("Repeater"));
-		spawnables.Insert(SSpawnable.build("Ruger1022"));
-		spawnables.Insert(SSpawnable.build("SVD"));
-		spawnables.Insert(SSpawnable.build("SKS"));
-		spawnables.Insert(SSpawnable.build("Izh18"));
-		spawnables.Insert(SSpawnable.build("SawedoffIzh18"));
+		s.build("SawedoffMosin9130");
+		s.build("Repeater");
+		s.build("Ruger1022");
+		s.build("SVD");
+		s.build("SKS");
+		s.build("Izh18");
+		s.build("SawedoffIzh18");
 		
 		
 		////////////////////////////////////////////////////////////
 		// SHOTGUNS
-		spawnables.Insert(SSpawnable.build("Saiga").withAttachments({
+		s.build("Saiga").withAttachments({
 			"Saiga_Bttstck"
-		}));
+		});
 		
-		spawnables.Insert(SSpawnable.build("Mp133Shotgun").withSpawnableAttachments(
-			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V")));
+		s.build("Mp133Shotgun").withSpawnableAttachments(
+			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("Izh43Shotgun"));
-		spawnables.Insert(SSpawnable.build("SawedoffIzh43Shotgun"));
+		s.build("Izh43Shotgun");
+		s.build("SawedoffIzh43Shotgun");
 		
 		
 		
 		////////////////////////////////////////////////////////////
 		// HANDGUNS
-		spawnables.Insert(SSpawnable.build("Magnum"));
-		spawnables.Insert(SSpawnable.build("MakarovIJ70"));
-		spawnables.Insert(SSpawnable.build("MKII"));
-		spawnables.Insert(SSpawnable.build("Colt1911").withAttachments({
+		s.build("Magnum");
+		s.build("SawedoffMagnum");
+		s.build("MakarovIJ70");
+		//s.build("P1");
+		//s.build("Derringer");
+		s.build("MKII");
+		s.build("Colt1911").withAttachments({
 			"PistolSuppressor"
 		}).withSpawnableAttachments(
-			(new SSpawnable("TLRLight")).withAttachment("Battery9V")));
+			(new SSpawnable("TLRLight")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("CZ75").withAttachments({
-			"PistolSuppressor"
-		}).withSpawnableAttachments(
-			(new SSpawnable("TLRLight")).withAttachment("Battery9V"),
-			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V")));
-		
-		spawnables.Insert(SSpawnable.build("FNX45").withAttachments({
+		s.build("CZ75").withAttachments({
 			"PistolSuppressor"
 		}).withSpawnableAttachments(
 			(new SSpawnable("TLRLight")).withAttachment("Battery9V"),
-			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V")));
+			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("Glock19").withAttachments({
+		s.build("FNX45").withAttachments({
 			"PistolSuppressor"
 		}).withSpawnableAttachments(
 			(new SSpawnable("TLRLight")).withAttachment("Battery9V"),
-			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V")));
+			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V"));
 		
-		spawnables.Insert(SSpawnable.build("Deagle").withAttachments({
+		s.build("Glock19").withAttachments({
+			"PistolSuppressor"
+		}).withSpawnableAttachments(
+			(new SSpawnable("TLRLight")).withAttachment("Battery9V"),
+			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V"));
+		
+		s.build("Deagle").withAttachments({
 			"PistolSuppressor",
 			"PistolOptic"
-		}));
+		});
+		
+		s.build("LongHorn").withAttachments({
+			"PistolOptic"
+		});
 		
 		vector position = startPosition;
-		foreach(SSpawnable s : spawnables){
-			s.spawn(position).collect().SetOrientation("0 0 0");
+		array<ref SSpawnable> spawnables = s.getBundle();
+		foreach(SSpawnable spawnable : spawnables){
+			spawnable.spawn(position).collect().SetOrientation("0 0 0");
 			position = position + margin;
-			
 		}
 	}
 	
@@ -489,81 +553,9 @@ class PluginSDebug extends PluginBase {
 		
 	}
 	
-	static void sandbox(){
-		SLog.d("Config tests");
-		string cfgName = "sude_CfgPPE";
-		string stringValue;
-		float floatValue;
-		vector vectorValue;
-		int intValue;
-		TStringArray stringValues = new TStringArray;
-		TFloatArray floatValues = new TFloatArray;
-		TIntArray intValues = new TIntArray;
-		
-		string baseName;
-		
-		string pathArray[] = {cfgName,"ClassTest","stringTest"};
-		TStringArray pathTest = new TStringArray;
-		pathTest.Init(pathArray);
-		
-		SLog.d(pathTest, "PathTest ", 1);
-		SLog.d(GetGame().ConfigPathToString(pathTest), "", 2);
-		
-		
-		if ( GetGame().ConfigIsExisting(cfgName) ){
-			GetGame().ConfigGetText(cfgName+" stringTest",stringValue);
-			floatValue = GetGame().ConfigGetFloat(cfgName+" floatTest");
-			vectorValue = GetGame().ConfigGetVector(cfgName+" vectorTest");
-			intValue = GetGame().ConfigGetInt(cfgName+" intTest");
-			
-			GetGame().ConfigGetTextArray(cfgName+" stringArrayTest", stringValues);
-			GetGame().ConfigGetFloatArray(cfgName+" floatArrayTest", floatValues);
-			GetGame().ConfigGetIntArray(cfgName+" intArrayTest", intValues);
-			GetGame().ConfigGetBaseName(cfgName,baseName);
-			
-			SLog.d("There are " + GetGame().ConfigGetChildrenCount(cfgName) + " children in " + cfgName, "", 1);
-			SLog.d(stringValue, "", 2);
-			SLog.d(floatValue, "", 2);
-			SLog.d(vectorValue, "", 2);
-			SLog.d(intValue, "", 2);
-			SLog.d(stringValues, "", 2);
-			SLog.d(floatValues, "", 2);
-			SLog.d(intValues, "", 2);	
-				
-			SLog.d(GetGame().ConfigGetTextOut(cfgName+" ClassTest stringTest"), "", 1);
-			
-			SLog.d(baseName, "BaseName", 1);	
-		}
-			
-		
+	static void sandbox() {
+
 	}
 
-}
-
-
-
-
-/*
-modded class Weapon_Base{
-	override void EEFired(int muzzleType, int mode, string ammoType){
-		super.EEFired(muzzleType, mode, ammoType);
-
-		Magazine magazine = GetMagazine(GetCurrentMuzzle());
-
-		if (GetGame().IsServer() || !GetGame().IsMultiplayer())
-			SetHealth(GetMaxHealth()); // prevent weapon from deteriorating
-
-		if (magazine){
-			if (GetGame().IsServer() || !GetGame().IsMultiplayer())
-				magazine.ServerSetAmmoMax(); // unlimited ammo
-			
-			if (GetGame().IsClient() || !GetGame().IsMultiplayer())
-				magazine.LocalSetAmmoMax(); // update client side UI
-		}
-	}
-
-	override bool IsJammed(){
-		return false; // prevent jamming
-	}
 }
 */

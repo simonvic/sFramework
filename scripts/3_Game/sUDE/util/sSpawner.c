@@ -169,6 +169,26 @@ class SSpawnable {
 	
 }
 
+class SSpawnableBundle : Managed {
+	
+	protected ref array<ref SSpawnable> m_bundle = new array<ref SSpawnable>;
+	
+	void SSpawnableBundle() {
+		
+	}
+	
+	SSpawnable build(string itemName) {
+		SSpawnable item = new SSpawnable(itemName);
+		m_bundle.Insert(item);
+		return item;
+	}
+	
+	array<ref SSpawnable> getBundle() {
+		return m_bundle;
+	}
+	
+}
+
 class SSpawner{
 	
 	/**

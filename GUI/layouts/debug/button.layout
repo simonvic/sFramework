@@ -1,11 +1,12 @@
 ButtonWidgetClass button {
- color 1 1 1 0.2157
+ color 0.9412 0.3294 0.298 0.5373
  position 0 0
- size 1 48
+ size 128 32
  hexactpos 0
  vexactpos 0
- hexactsize 0
+ hexactsize 1
  vexactsize 1
  style DayZDefaultButton
- text "awf"
+ text "Button"
+ font "gui/fonts/metron22"
 }

@@ -1,38 +1,83 @@
-class SDebugUI : Managed {
+/**
+
+	@brief Create a simple interface for debugging purposes
+	It can also be used in a "per-frame context"
+
+	@code
+		// Example usage for per-frame update
+		ref SDebugUI dui = new SDebugUI();
+
+		void OnUpdate(float timeslice) {
+			dui.begin();
+			dui.window("Debug monitor");
+			dui.text("Time : " + GetGame().GetDayTime());
+			dui.newline();
+			dui.slider(0.5, 0.1, 0, 1);
+			dui.check("some text");
+			dui.button("click me", this, "printSum", new Param2<int,int>(69, 420));
+			dui.newline();
+			dui.table({
+				{"Attribute",    "Value"},
+				{"Time",         ""+m_time},
+				{"Radio volume", ""+GetGame().GetSoundScene().GetRadioVolume()},
+				{"VoIP volume",  ""+GetGame().GetSoundScene().GetVOIPVolume()},
+				{"VoIP level",   ""+GetGame().GetSoundScene().GetAudioLevel()}
+			});
+			dui.end();
+		}
+
+		void printSum(int x, int y) {
+			Print(x + y);
+		}
+		
+*/
+class SDebugUI : ScriptedWidgetEventHandler {
 	
-	static Widget root;
+	
+	Widget root;
+	
+	
+	ref map<ButtonWidget, ref DebugButtonCallback> buttonsCallbacks;
 	
 	/**
 	*	Stack (LIFO) of the instantiated windows.
 	*	The first element is the last created window
 	*/
-	static ref array<Widget> windows = {};
+	ref SStack<Widget> windows;
+	
+	
+	
+	void SDebugUI() {
+		root = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/root.layout");
+		root.SetHandler(this);
+		root.SetSort(999);
+		windows = new SStack<Widget>();
+		buttonsCallbacks = new map<ButtonWidget, ref DebugButtonCallback>;
+	}
 	
 	
 	/**
 	*	@brief Build a new window
 	*	@param title - title of the window
 	*	@param sizePx - X and Y size defined in pixels
-	*	@param pos - X and Y position defined in screen space (0.0 - 1.0)
+	*	@param posPx - X and Y position defined in pixels
 	*	@return Widget - new window created
 	*/
-	static Widget window(string title = "", array<float> sizePx = null, array<float> pos = null) {
-		if (!root) {
-			root = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/root.layout");
-		}
+	Widget window(string title = "", array<int> sizePx = null, array<int> posPx = null) {		
 		Widget w = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/window.layout", root);
+		w.SetHandler(this);
 		if (sizePx == null || sizePx.Count() != 2) {
 			w.SetSize(512, 512);
 		} else {
 			w.SetSize(sizePx[0], sizePx[1]);
 		}
-		if (pos == null || pos.Count() != 2) {
-			w.SetPos(0.25, 0.25);
+		if (posPx == null || posPx.Count() != 2) {
+			w.SetPos(128, 128);
 		} else {
-			w.SetPos(pos[0], pos[1]);
+			w.SetPos(posPx[0], posPx[1]);
 		}
 		TextWidget.Cast(w.FindAnyWidget("title")).SetText(title);
-		windows.InsertAt(w, 0);
+		windows.push(w);
 		return w;
 	}
 		
@@ -42,21 +87,24 @@ class SDebugUI : Managed {
 	*	@param text - text to show next to the checkbox
 	*	@return CheckBoxWidget
 	*/
-	static CheckBoxWidget check(string text) {
+	CheckBoxWidget check(string text) {
 		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
 		w.SetName(text);
 		w.SetText(text);
 		return w;
 	}
-	
+
 	/**
 	*	@brief Create a button
 	*	@param text - text to show next i nthe button
 	*	@return ButtonWidget
 	*/
-	static ButtonWidget button(string text) {
+	ButtonWidget button(string text, Class instance, string function, Param params) {
 		ButtonWidget w  = ButtonWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/button.layout"));
 		w.SetText(text);
+		w.SetName(text);
+		buttonsCallbacks.Set(w, new DebugButtonCallback(instance, function, params));
+		
 		return w;
 	}
 	
@@ -65,7 +113,7 @@ class SDebugUI : Managed {
 	*	@param text -
 	*	@return TextWidget
 	*/
-	static TextWidget text(string text) {
+	TextWidget text(string text) {
 		TextWidget w  = TextWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/text.layout"));
 		w.SetText(text);
 		return w;
@@ -79,7 +127,7 @@ class SDebugUI : Managed {
 	*	@param float - min value of the slider
 	*	@return SliderWidget
 	*/
-	static SliderWidget slider(float value, float step = 0.1, float min = 0, float max = 1) {
+	SliderWidget slider(float value, float step = 0.1, float min = 0, float max = 1) {
 		SliderWidget w = SliderWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/slider.layout"));
 		w.SetStep(step);
 		w.SetMinMax(min, max);
@@ -89,16 +137,21 @@ class SDebugUI : Managed {
 	
 	/**
 	*	@brief Create a table which contains text.
-	*		The dimensions of the table are automatically calculated based on the given data
 	*	@param sizePx - X and Y size defined in pixel
 	*	@param data - matrix of rows and columns of string data
 	*	@return WrapSpacerWidget
 	*/
-	static WrapSpacerWidget table(array<int> sizePx, array<ref array<string>> data) {
+	WrapSpacerWidget table(array<ref array<string>> data, array<int> sizePx = null) {
 		WrapSpacerWidget w = WrapSpacerWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/table.layout"));
-		w.SetFlags(WidgetFlags.EXACTSIZE);
-		w.SetSize(sizePx[0], sizePx[1]);
 		if (data == null || data.Count() == 0) return w;
+		
+		if (sizePx == null || sizePx.Count() != 2) {
+			w.SetSize(256, 256);
+		} else {
+			w.SetSize(sizePx[0], sizePx[1]);
+		}
+
+		
 		float height = 1 / data.Count();
 		foreach (auto row : data) {
 			if (row == null || row.Count() == 0) continue;
@@ -125,7 +178,7 @@ class SDebugUI : Managed {
 	*	@param color - color of the line
 	*	@return CanvasWidget
 	*/
-	static CanvasWidget plot(array<int> sizePx, string title = "", array<ref array<ref array<float>>> lines = null, array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor color = null) {
+	CanvasWidget plot(array<int> sizePx, string title = "", array<ref array<ref array<float>>> lines = null, array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor color = null) {
 		CanvasWidget c = canvas(sizePx, title);
 		
 		if (!color) color = SColor.rgba(0xF0544Cff);
@@ -157,10 +210,13 @@ class SDebugUI : Managed {
 	*	@param title - title of the plot
 	*	@return CanvasWidget
 	*/
-	static CanvasWidget canvas(array<int> sizePx, string title = "") {
+	CanvasWidget canvas(array<int> sizePx = null, string title = "") {
 		Widget r = widget("MyMODS/sFramework/GUI/layouts/debug/canvas.layout");
 		CanvasWidget c = CanvasWidget.Cast(r.FindAnyWidget("canvas"));
-		c.SetSize(sizePx[0], sizePx[1]);
+		
+		auto s = sizePx;
+		if (s == null || s.Count() < 2) s = {256, 256};
+		c.SetSize(s[0], s[1]);
 		TextWidget t = TextWidget.Cast(r.FindAnyWidget("title"));
 		t.SetText(title);
 		return c;
@@ -171,11 +227,13 @@ class SDebugUI : Managed {
 	*	@param size - X and Y size defined in screen space (0.0 - 1.0)
 	*	@return Widget
 	*/
-	static Widget spacer(array<float> size = null) {
-		auto s = size;
-		if (!s || s.Count() < 2) s = {0.3, 0.3};
-		Widget w = GetGame().GetWorkspace().CreateWidget(FrameWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, windows[0].FindAnyWidget("body"));
-		w.SetSize(s[0], s[1]);
+	Widget spacer(array<float> size = null) {
+		Widget w = GetGame().GetWorkspace().CreateWidget(FrameWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, windows.peek().FindAnyWidget("body"));		
+		if (size == null || size.Count() < 2) {
+			w.SetSize(0.3, 0.0);
+		} else {
+			w.SetSize(size[0], size[1]);
+		}
 		return w;
 	}
 	
@@ -185,7 +243,7 @@ class SDebugUI : Managed {
 	*	@param sizePx - height in pixels of the empty line
 	*	@return Widget
 	*/
-	static Widget newLine(int sizePx = 1) {
+	Widget newline(int sizePx = 1) {
 		Widget w = spacer();
 		w.SetFlags(WidgetFlags.VEXACTSIZE);
 		w.SetSize(1.0, sizePx);
@@ -198,22 +256,123 @@ class SDebugUI : Managed {
 	*	@param name - name of the root widget
 	*	@return Widget
 	*/
-	static Widget widget(string layout, string name = string.Empty) {
-		Widget w = GetGame().GetWorkspace().CreateWidgets(layout, windows[0].FindAnyWidget("body"));
+	Widget widget(string layout, string name = string.Empty) {
+		Widget w = GetGame().GetWorkspace().CreateWidgets(layout, windows.peek().FindAnyWidget("body"));
 		if (name != string.Empty) {
 			w.SetName(name);
 		}
+		w.SetHandler(this);
 		return w;
+	}
+	
+	
+	void begin() {
+		foreach (auto button, auto callback : buttonsCallbacks) {
+			if (button.GetState()) {
+				GetGame().GameScript.CallFunctionParams(callback.instance, callback.function, null, callback.params);
+			}
+		}
+		clear();
+	}
+	
+	void end() {
+	}
+	
+	void show() {
+	}
+	
+	void hide() {
+		
 	}
 	
 	/**
 	*	@brief Clear the widgets
 	*/
-	static void clear() {
-		foreach (Widget w : windows) {
+	void clear() {
+		buttonsCallbacks.Clear();
+		Widget w = windows.pop();
+		while (w != null) {
 			w.Unlink();
+			w = windows.pop();
 		}
-		windows.Clear();
 	}
 	
+	
+	
+	override bool OnClick(Widget w, int x, int y, int button) {
+		switch (w.GetName()) {
+			case "collapse":
+			Widget body = w.GetParent().GetParent().GetParent().GetParent().FindAnyWidget("body");
+			if (body.IsVisible()) {
+				ButtonWidget.Cast(w).SetText("+");
+			} else {
+				ButtonWidget.Cast(w).SetText("-");
+			}
+			body.Show(!body.IsVisible());
+			break;
+			
+			
+			case "maximize":
+			break;
+			
+			case "close":
+			break;
+			
+		}
+		return true;
+	}
+	
+	override bool OnMouseEnter(Widget w, int x, int y) {
+		//Print("OnMouseEnter" + w);
+		return true;
+	}
+	
+	override bool OnModalResult(Widget w, int x, int y, int code, int result);
+	override bool OnDoubleClick(Widget w, int x, int y, int button);
+	override bool OnSelect(Widget w, int x, int y);
+	override bool OnItemSelected(Widget w, int x, int y, int row, int column, int oldRow, int oldColumn);
+	override bool OnFocus(Widget w, int x, int y);
+	override bool OnFocusLost(Widget w, int x, int y);
+	
+	override bool OnMouseLeave(Widget w, Widget enterW, int x, int y);
+	override bool OnMouseWheel(Widget w, int x, int y, int wheel);
+	override bool OnMouseButtonDown(Widget w, int x, int y, int button);
+	override bool OnMouseButtonUp(Widget w, int x, int y, int button);
+	override bool OnController(Widget w, int control, int value);
+	override bool OnKeyDown(Widget w, int x, int y, int key);
+	override bool OnKeyUp(Widget w, int x, int y, int key);
+	override bool OnKeyPress(Widget w, int x, int y, int key);
+	override bool OnChange(Widget w, int x, int y, bool finished);
+	override bool OnDrag(Widget w, int x, int y) {
+		return true;
+	}
+	
+	override bool OnDragging(Widget w, int x, int y, Widget reciever) {
+		w.GetParent().SetPos(x, y);
+		return true;
+	}
+	override bool OnDraggingOver(Widget w, int x, int y, Widget reciever);
+	override bool OnDrop(Widget w, int x, int y, Widget reciever) {
+		return true;
+	}
+	override bool OnDropReceived(Widget w, int x, int y, Widget reciever);
+	override bool OnResize(Widget w, int x, int y);
+	override bool OnChildAdd(Widget w, Widget child);
+	override bool OnChildRemove(Widget w, Widget child);
+	override bool OnUpdate(Widget w);
+	override bool OnEvent(EventType eventType, Widget target, int parameter0, int parameter1);
+	
+}
+
+
+class DebugButtonCallback : Managed {
+	Class instance;
+	string function;
+	ref Param params;
+	
+	void DebugButtonCallback(Class i, string f, Param p) {
+		instance = i;
+		function = f;
+		params = p;
+	}
 }

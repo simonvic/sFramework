@@ -1,5 +1,5 @@
 FrameWidgetClass rootFrame {
- ignorepointer 0
+ ignorepointer 1
  position 0 0
  size 1 1
  hexactpos 0

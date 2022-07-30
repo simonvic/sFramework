@@ -1,10 +1,11 @@
 SliderWidgetClass slider {
  position 0 0
- size 1 48
+ size 256 32
  hexactpos 0
  vexactpos 0
- hexactsize 0
+ hexactsize 1
  vexactsize 1
+ draggable 0
  vertical 0
  flipped 0
  "fill in" 1

@@ -1,11 +1,12 @@
 TextWidgetClass text {
- size 0 0
+ size 32 32
  hexactpos 0
  vexactpos 0
- hexactsize 0
- vexactsize 0
+ hexactsize 1
+ vexactsize 1
  text "this is a sample text"
- "exact text" 1
+ font "gui/fonts/metron22"
+ "exact text" 0
  "size to text h" 1
  "size to text v" 1
 }

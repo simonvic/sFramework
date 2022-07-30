@@ -1,10 +1,11 @@
 GridSpacerWidgetClass root_window {
  clipchildren 1
+ ignorepointer 1
  color 0 0 0 0.5529
  position 0 0
  size 923.56897 523.12402
- hexactpos 0
- vexactpos 0
+ hexactpos 1
+ vexactpos 1
  hexactsize 1
  vexactsize 1
  style DayZDefaultPanel
@@ -15,7 +16,7 @@ GridSpacerWidgetClass root_window {
  Rows 2
  {
   WrapSpacerWidgetClass c_header {
-   ignorepointer 1
+   ignorepointer 0
    color 0 0 0 0.5373
    position 0 0
    size 1 32
@@ -23,6 +24,7 @@ GridSpacerWidgetClass root_window {
    vexactpos 0
    hexactsize 0
    vexactsize 1
+   draggable 1
    Padding 0
    Margin 0
    content_halign right
@@ -49,8 +51,10 @@ GridSpacerWidgetClass root_window {
        vexactpos 0
        hexactsize 0
        vexactsize 0
+       draggable 0
        text "title"
-       "exact text" 1
+       font "gui/fonts/metron28"
+       "exact text" 0
        "size to text h" 0
        "size to text v" 0
        "text valign" center
@@ -101,7 +105,7 @@ GridSpacerWidgetClass root_window {
     }
    }
   }
-  WrapSpacerWidgetClass body {
+  GridSpacerWidgetClass c_body {
    clipchildren 1
    ignorepointer 1
    position 0 0
@@ -114,6 +118,23 @@ GridSpacerWidgetClass root_window {
    Margin 5
    "Size To Content H" 1
    "Size To Content V" 1
+   Columns 1
+   Rows 1
+   {
+    WrapSpacerWidgetClass body {
+     ignorepointer 1
+     position 0 0
+     size 1 1
+     hexactpos 0
+     vexactpos 0
+     hexactsize 0
+     vexactsize 0
+     Padding 8
+     Margin 0
+     "Size To Content H" 1
+     "Size To Content V" 1
+    }
+   }
   }
  }
 }

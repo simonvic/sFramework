@@ -1,4 +1,5 @@
 GridSpacerWidgetClass root_canvas {
+ ignorepointer 1
  color 0 0 0 0.5216
  position 0 0
  size 0 0
@@ -32,6 +33,7 @@ GridSpacerWidgetClass root_canvas {
      hexactsize 0
      vexactsize 1
      text "this is a sample title"
+     font "gui/fonts/metron22"
      "exact text" 1
      "size to text h" 1
      "size to text v" 1

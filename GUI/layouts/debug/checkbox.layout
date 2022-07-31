@@ -5,6 +5,8 @@ CheckBoxWidgetClass checkbox {
  vexactpos 0
  hexactsize 1
  vexactsize 1
+ scaled 0
  style Default
  font "gui/fonts/metron22"
+ checked 0
 }

@@ -5,7 +5,11 @@ SliderWidgetClass slider {
  vexactpos 0
  hexactsize 1
  vexactsize 1
+ scaled 0
  draggable 0
+ maximum 1
+ step 0.1
+ current 0.5
  vertical 0
  flipped 0
  "fill in" 1

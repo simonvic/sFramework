@@ -1,4 +1,7 @@
 WrapSpacerWidgetClass table {
+ clipchildren 1
+ inheritalpha 0
+ ignorepointer 1
  color 0 0 0 0.5216
  position 0 0
  size 128 128
@@ -6,6 +9,7 @@ WrapSpacerWidgetClass table {
  vexactpos 0
  hexactsize 1
  vexactsize 1
+ scaled 0
  Padding 0
  Margin 0
 }

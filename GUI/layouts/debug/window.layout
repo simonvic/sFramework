@@ -8,6 +8,7 @@ GridSpacerWidgetClass root_window {
  vexactpos 1
  hexactsize 1
  vexactsize 1
+ scaled 1
  style DayZDefaultPanel
  Padding 0
  Margin 0
@@ -24,6 +25,7 @@ GridSpacerWidgetClass root_window {
    vexactpos 0
    hexactsize 0
    vexactsize 1
+   scaled 1
    draggable 1
    Padding 0
    Margin 0
@@ -37,6 +39,7 @@ GridSpacerWidgetClass root_window {
      vexactpos 0
      hexactsize 0
      vexactsize 0
+     scaled 1
      style Colorable
      Padding 0
      Margin 4
@@ -51,6 +54,7 @@ GridSpacerWidgetClass root_window {
        vexactpos 0
        hexactsize 0
        vexactsize 0
+       scaled 1
        draggable 0
        text "title"
        font "gui/fonts/metron28"
@@ -79,6 +83,7 @@ GridSpacerWidgetClass root_window {
          vexactpos 0
          hexactsize 1
          vexactsize 1
+         style Default
          text "-"
         }
         ButtonWidgetClass maximize {
@@ -88,9 +93,11 @@ GridSpacerWidgetClass root_window {
          vexactpos 0
          hexactsize 1
          vexactsize 1
+         style Default
          text "[]"
         }
         ButtonWidgetClass close {
+         color 0.2 0.2 0.2 1
          position 0 0
          size 32 32
          hexactpos 0

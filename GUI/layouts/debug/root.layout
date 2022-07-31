@@ -6,4 +6,5 @@ FrameWidgetClass rootFrame {
  vexactpos 0
  hexactsize 0
  vexactsize 0
+ scaled 1
 }

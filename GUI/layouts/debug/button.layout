@@ -6,6 +6,7 @@ ButtonWidgetClass button {
  vexactpos 0
  hexactsize 1
  vexactsize 1
+ scaled 0
  style DayZDefaultButton
  text "Button"
  font "gui/fonts/metron22"

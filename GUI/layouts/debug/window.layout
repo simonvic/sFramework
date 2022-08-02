@@ -12,6 +12,7 @@ GridSpacerWidgetClass root_window {
  style DayZDefaultPanel
  Padding 0
  Margin 0
+ "Size To Content H" 1
  "Size To Content V" 1
  Columns 1
  Rows 2
@@ -29,9 +30,11 @@ GridSpacerWidgetClass root_window {
    draggable 1
    Padding 0
    Margin 0
+   "Size To Content H" 1
    content_halign right
    {
     GridSpacerWidgetClass header {
+     visible 1
      ignorepointer 1
      position 0 0
      size 1 1

@@ -34,7 +34,7 @@
 */
 class SDebugUI : ScriptedWidgetEventHandler {
 	
-	static const ref array<int>   DEFAULT_WINDOW_SIZE  = {512, 512};
+	static const ref array<int>   DEFAULT_WINDOW_SIZE  = {512 + 24, 512};
 	static const ref array<int>   DEFAULT_WINDOW_POS   = {128, 128};
 	static const ref array<int>   DEFAULT_WIDGET_SIZE  = {256, 256};
 	static const ref array<float> DEFAULT_PLOT_SCALE   = {1.0, 1.0};
@@ -45,6 +45,13 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	static const int PLOT_HISTORY_MIN = 5;
 	static const int PLOT_HISTORY_MAX = 1000;
 	static const int DEFAULT_PLOT_HISTORY = 50;
+	
+	private static ref SDebugUI INSTANCE;
+	static SDebugUI getInstance(){
+		if (!INSTANCE) INSTANCE = new SDebugUI();
+		return INSTANCE;
+	}
+
 	
 	Widget root;
 	
@@ -59,6 +66,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	ref map<string, ref array<ref array<float>>> plotsHistory;
 	
 	void SDebugUI() {
+		if (isServer()) return;
 		root = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/root.layout");
 		root.SetHandler(this);
 		root.SetSort(999);
@@ -74,7 +82,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param posPx - X and Y position defined in pixels
 	*	@return Widget - new window created
 	*/
-	Widget window(string title = "", array<int> sizePx = null, array<int> posPx = null) {		
+	Widget window(string title = "", array<int> sizePx = null, array<int> posPx = null) {	
+		if (isServer()) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WINDOW_SIZE;
 		if (!posPx || posPx.Count() < 2) posPx = DEFAULT_WINDOW_POS;
 		
@@ -95,6 +104,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return CheckBoxWidget
 	*/
 	CheckBoxWidget check(string text) {
+		if (isServer()) return null;
 		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
 		w.SetName(text);
 		w.SetText(text);
@@ -107,6 +117,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return ButtonWidget
 	*/
 	ButtonWidget button(string text, Class instance, string function, Param params) {
+		if (isServer()) return null;
 		ButtonWidget w  = ButtonWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/button.layout"));
 		w.SetText(text);
 		w.SetName(text);
@@ -121,6 +132,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return TextWidget
 	*/
 	TextWidget text(string text) {
+		if (isServer()) return null;
 		TextWidget w  = TextWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/text.layout"));
 		w.SetText(text);
 		return w;
@@ -135,6 +147,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return SliderWidget
 	*/
 	SliderWidget slider(float value, float step = 0.1, float min = 0, float max = 1) {
+		if (isServer()) return null;
 		SliderWidget w = SliderWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/slider.layout"));
 		w.SetStep(step);
 		w.SetMinMax(min, max);
@@ -148,7 +161,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param data - matrix of rows and columns of string data
 	*	@return WrapSpacerWidget
 	*/
-	WrapSpacerWidget table(array<ref array<string>> data, array<int> sizePx = DEFAULT_WIDGET_SIZE) {
+	WrapSpacerWidget table(array<ref array<string>> data, array<int> sizePx = null) {
+		if (isServer()) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		WrapSpacerWidget w = WrapSpacerWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/table.layout"));
 		w.SetSize(sizePx[0], sizePx[1]);
@@ -165,6 +179,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 				t.SetFlags(WidgetFlags.CENTER);
 				t.SetSize(width, height);
 				t.SetText(entry);
+				
+				//Print(SFlagOperator.from(t.GetFlags()).collectBinaryString());
 			}
 		}
 		return w;
@@ -174,6 +190,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@brief Plot live data
 	*	@param title - title of the plot
 	*	@param y - y axis data
+	*	@param min - min y
+	*	@param max - max y
 	*	@param sizePx - X and Y size of the plot defined in pixel
 	*	@param historySize - how many points to store and plot
 	*	@param scale - X and Y scale of the plot data
@@ -182,13 +200,20 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param color - color of the line
 	*	@return CanvasWidget
 	*/
-	CanvasWidget plotlive(string title, float y, array<int> sizePx = null, int historySize = 50, array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor color = null) {
+	CanvasWidget plotlive(string title, float y, float min = 0, float max = 1, array<int> sizePx = null, int historySize = 50, array<float> scale = null, array<float> offset = null, int widthPx = 3, SColor color = null) {
+		if (isServer()) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		if (!scale  || scale.Count()  < 2) scale  = DEFAULT_PLOT_SCALE;
 		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
 		if (!color)                        color  = DEFAULT_PLOT_COLOR;
 		historySize = Math.Clamp(historySize, PLOT_HISTORY_MIN, PLOT_HISTORY_MAX);
-		CanvasWidget c = canvas(sizePx, title);
+		CanvasWidget c = canvas(sizePx, title + " " + y);
+		
+		if (min != 0 || max != 1) {
+			TextWidget.Cast(c.FindAnyWidget("min")).SetText(""+min);
+			TextWidget.Cast(c.FindAnyWidget("max")).SetText(""+max);
+		}
+		
 		auto line = plotsHistory.Get(title);
 		if (!line) {
 			line = {{0.5,0.5}, {0,y}};
@@ -205,10 +230,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		for (int i = line.Count() - 1; i > 0; i--) {
 			if (line[i] == null) continue;
 			c.DrawLine(
-				SMath.mapTo(offset[0] + scale[0] * x,              0, 1, 0,         sizePx[0]),
-				SMath.mapTo(offset[1] + scale[1] * line[i][1],     0, 1, sizePx[1], 0),
-				SMath.mapTo(offset[0] + scale[0] * x + precision,  0, 1, 0,         sizePx[0]),
-				SMath.mapTo(offset[1] + scale[1] * line[i - 1][1], 0, 1, sizePx[1], 0),
+				SMath.mapTo(offset[0] + scale[0] * x,              0,   1,   0,         sizePx[0]),
+				SMath.mapTo(offset[1] + scale[1] * line[i][1],     min, max, sizePx[1], 0),
+				SMath.mapTo(offset[0] + scale[0] * x + precision,  0,   1,   0,         sizePx[0]),
+				SMath.mapTo(offset[1] + scale[1] * line[i - 1][1], min, max, sizePx[1], 0),
 				widthPx,
 				color.getARGB());
 			x += precision;
@@ -228,6 +253,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return CanvasWidget
 	*/
 	CanvasWidget plot(array<ref array<ref array<float>>> lines = null, array<int> sizePx = null, string title = "", array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor color = null) {
+		if (isServer()) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		if (!scale  || scale.Count()  < 2) scale  = DEFAULT_PLOT_SCALE;
 		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
@@ -254,6 +280,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return CanvasWidget
 	*/
 	CanvasWidget canvas(array<int> sizePx = null, string title = "") {
+		if (isServer()) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		Widget r = widget("MyMODS/sFramework/GUI/layouts/debug/canvas.layout");
 		CanvasWidget c = CanvasWidget.Cast(r.FindAnyWidget("canvas"));
@@ -269,6 +296,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return Widget
 	*/
 	Widget spacer(array<float> size = null) {
+		if (isServer()) return null;
 		if (!size || size.Count() < 2) size = DEFAULT_SPACER_SIZE;
 		Widget w = GetGame().GetWorkspace().CreateWidget(FrameWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, windows.peek().FindAnyWidget("body"));		
 		w.SetSize(size[0], size[1]);
@@ -282,6 +310,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return Widget
 	*/
 	Widget newline(int sizePx = 1) {
+		if (isServer()) return null;
 		Widget w = spacer();
 		w.SetFlags(WidgetFlags.VEXACTSIZE);
 		w.SetSize(1.0, sizePx);
@@ -295,7 +324,13 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return Widget
 	*/
 	Widget widget(string layout, string name = string.Empty) {
-		Widget w = GetGame().GetWorkspace().CreateWidgets(layout, windows.peek().FindAnyWidget("body"));
+		if (isServer()) return null;
+		Widget window = windows.peek();
+		if (!window) {
+			SLog.e("No window to place widget on!",""+this);
+			return null;
+		}
+		Widget w = GetGame().GetWorkspace().CreateWidgets(layout, window.FindAnyWidget("body"));
 		if (name != string.Empty) {
 			w.SetName(name);
 		}
@@ -305,6 +340,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	
 	void begin() {
+		if (isServer()) return;
 		foreach (auto button, auto callback : buttonsCallbacks) {
 			if (button.GetState()) {
 				GetGame().GameScript.CallFunctionParams(callback.instance, callback.function, null, callback.params);
@@ -356,8 +392,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			
 			case "close":
 			break;
-			
-		}
+		}		
 		return true;
 	}
 	
@@ -384,16 +419,18 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		return true;
 	}
 	override bool OnDraggingOver(Widget w, int x, int y, Widget reciever);
-	override bool OnDrop(Widget w, int x, int y, Widget reciever) {
-		return true;
-	}
-	
+	override bool OnDrop(Widget w, int x, int y, Widget reciever);	
 	override bool OnDropReceived(Widget w, int x, int y, Widget reciever);
 	override bool OnResize(Widget w, int x, int y);
 	override bool OnChildAdd(Widget w, Widget child);
 	override bool OnChildRemove(Widget w, Widget child);
 	override bool OnUpdate(Widget w);
 	override bool OnEvent(EventType eventType, Widget target, int parameter0, int parameter1);
+	
+	
+	protected bool isServer() {
+		return GetGame().IsDedicatedServer();
+	}
 	
 }
 

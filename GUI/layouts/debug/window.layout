@@ -81,6 +81,7 @@ GridSpacerWidgetClass root_window {
        Rows 1
        {
         ButtonWidgetClass collapse {
+         color 0.9412 0.3294 0.298 1
          position 0 0
          size 32 32
          hexactpos 0
@@ -91,6 +92,7 @@ GridSpacerWidgetClass root_window {
          text "-"
         }
         ButtonWidgetClass maximize {
+         color 0.9412 0.3294 0.298 1
          position 0 0
          size 32 32
          hexactpos 0
@@ -101,7 +103,7 @@ GridSpacerWidgetClass root_window {
          text "[]"
         }
         ButtonWidgetClass close {
-         color 0.2 0.2 0.2 1
+         color 0.9412 0.3294 0.298 1
          position 0 0
          size 32 32
          hexactpos 0

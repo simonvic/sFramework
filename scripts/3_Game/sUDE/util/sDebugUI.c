@@ -116,6 +116,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	CheckBoxWidget check(string name, out bool variable) {
 		if (isServer()) return null;
 		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
+		if (!w) return null;
 		w.SetName(name);
 		w.SetText(name);
 		if (statesCheckbox.Contains(name)) {
@@ -137,6 +138,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	ButtonWidget button(string text, Class instance, string function, Param params) {
 		if (isServer()) return null;
 		ButtonWidget w  = ButtonWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/button.layout"));
+		if (!w) return null;
 		w.SetText(text);
 		w.SetName(text);
 		buttonsCallbacks.Set(w, new SDebugButtonCallback(instance, function, params));
@@ -152,6 +154,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	TextWidget text(string text) {
 		if (isServer()) return null;
 		TextWidget w  = TextWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/text.layout"));
+		if (!w) return null;
 		w.SetText(text);
 		return w;
 	}
@@ -168,6 +171,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	SliderWidget slider(string name, out float value, float step = 0.1, float min = 0, float max = 1) {
 		if (isServer()) return null;
 		SliderWidget w = SliderWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/slider.layout"));
+		if (!w) return null;
 		w.SetName(name);
 		w.SetStep(step);
 		w.SetMinMax(min, max);
@@ -190,6 +194,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer()) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		WrapSpacerWidget w = WrapSpacerWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/table.layout"));
+		if (!w) return null;
 		w.SetSize(sizePx[0], sizePx[1]);
 
 		if (data == null || data.Count() == 0) return w;
@@ -233,7 +238,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (!color)                        color  = DEFAULT_PLOT_COLOR;
 		historySize = Math.Clamp(historySize, PLOT_HISTORY_MIN, PLOT_HISTORY_MAX);
 		CanvasWidget c = canvas(sizePx, title);
-		
+		if (!c) return null;
 		if (min != 0 || max != 1) {
 			TextWidget.Cast(c.FindAnyWidget("min")).SetText(""+min);
 			TextWidget.Cast(c.FindAnyWidget("max")).SetText(""+max);
@@ -285,6 +290,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
 		if (!color)                        color  = DEFAULT_PLOT_COLOR;
 		CanvasWidget c = canvas(sizePx, title);
+		if (!c) return null;
+		
 		foreach (auto line : lines) {	
 			for (int i = 0; i < line.Count() - 1; i++) {
 				c.DrawLine(
@@ -309,6 +316,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer()) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		Widget r = widget("MyMODS/sFramework/GUI/layouts/debug/canvas.layout");
+		if (!r) return null;
 		CanvasWidget c = CanvasWidget.Cast(r.FindAnyWidget("canvas"));
 		c.SetSize(sizePx[0], sizePx[1]);
 		TextWidget t = TextWidget.Cast(r.FindAnyWidget("title"));
@@ -353,7 +361,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer()) return null;
 		Widget window = windows.peek();
 		if (!window) {
-			SLog.e("No window to place widget on!",""+this);
+			SLog.e("No window to place widget on! ("+name+")",""+this);
 			return null;
 		}
 		Widget w = GetGame().GetWorkspace().CreateWidgets(layout, window.FindAnyWidget("body"));
@@ -443,7 +451,18 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	override bool OnFocus(Widget w, int x, int y);
 	override bool OnFocusLost(Widget w, int x, int y);
 	override bool OnMouseLeave(Widget w, Widget enterW, int x, int y);
-	override bool OnMouseWheel(Widget w, int x, int y, int wheel);
+	override bool OnMouseWheel(Widget w, int x, int y, int wheel) {
+		switch (w.Type()) {
+			//@todo make atomic method
+			case SliderWidget:
+			auto slider = SliderWidget.Cast(w);
+			if (KeyState(KeyCode.KC_LSHIFT)) wheel *= 10;
+			slider.SetCurrent(slider.GetCurrent() + (wheel * slider.GetStep()));
+			statesSlider.Set(slider.GetName(), slider.GetCurrent());
+			break;
+		}
+		return true;
+	}
 	override bool OnMouseButtonDown(Widget w, int x, int y, int button);
 	override bool OnMouseButtonUp(Widget w, int x, int y, int button);
 	override bool OnController(Widget w, int control, int value);

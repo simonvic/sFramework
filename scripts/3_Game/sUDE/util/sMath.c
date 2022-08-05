@@ -92,14 +92,25 @@ class SMath {
 	}
 	
 	/**
-	* @brief Normalize a value from a range to 0..1 range
+	* @brief Normalize a value from a range to 0..1 range (non-clamped)
 	* 	@param value \p float - Value to normalize
 	* 	@param min \p float - Value minimum range
 	* 	@param max \p float - Value maximum range
 	* 	@return \p float - normalized value
 	*/
 	static float normalize(float value, float min, float max){
-		return ((value - min) / (max - min));
+		return (value - min) / (max - min);
+	}
+	
+	/**
+	* @brief Normalize a value from a range to 0..1 range (clamped)
+	* 	@param value \p float - Value to normalize
+	* 	@param min \p float - Value minimum range
+	* 	@param max \p float - Value maximum range
+	* 	@return \p float - normalized value
+	*/
+	static float normalizeClamp(float value, float min, float max){
+		return Math.Clamp(SMath.normalize(value, min, max), 0, 1);
 	}
 	
 	/**

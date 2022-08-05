@@ -201,7 +201,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			foreach (auto entry : row) {
 				TextWidget t = TextWidget.Cast(GetGame().GetWorkspace().CreateWidget(TextWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, w));
 				t.ClearFlags(WidgetFlags.EXACTSIZE);
-				t.SetFlags(WidgetFlags.CENTER);
+				t.SetFlags(WidgetFlags.CENTER | WidgetFlags.VCENTER);
 				t.SetSize(width, height);
 				t.SetText(entry);
 				
@@ -232,11 +232,12 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
 		if (!color)                        color  = DEFAULT_PLOT_COLOR;
 		historySize = Math.Clamp(historySize, PLOT_HISTORY_MIN, PLOT_HISTORY_MAX);
-		CanvasWidget c = canvas(sizePx, title + " " + y);
+		CanvasWidget c = canvas(sizePx, title);
 		
 		if (min != 0 || max != 1) {
 			TextWidget.Cast(c.FindAnyWidget("min")).SetText(""+min);
 			TextWidget.Cast(c.FindAnyWidget("max")).SetText(""+max);
+			TextWidget.Cast(c.FindAnyWidget("current")).SetText(""+y);
 		}
 		
 		auto line = plotsHistory.Get(title);

@@ -33,11 +33,27 @@ GridSpacerWidgetClass root_canvas {
      hexactsize 0
      vexactsize 1
      text "this is a sample title"
-     font "gui/fonts/metron22"
+     font "gui/fonts/metron16"
      "exact text" 0
      "size to text h" 1
      "size to text v" 1
-     "text halign" center
+    }
+    TextWidgetClass max {
+     visible 1
+     ignorepointer 1
+     size 32 32
+     halign right_ref
+     hexactpos 1
+     vexactpos 1
+     hexactsize 1
+     vexactsize 1
+     scaled 1
+     style Light
+     font "gui/fonts/metron14"
+     "exact text" 0
+     "size to text h" 1
+     "size to text v" 1
+     "text halign" right
     }
     TextWidgetClass min {
      visible 1
@@ -51,24 +67,28 @@ GridSpacerWidgetClass root_canvas {
      vexactsize 1
      scaled 1
      style Light
-     "exact text" 1
+     font "gui/fonts/metron14"
+     "text offset" 0 14
+     "exact text" 0
      "size to text h" 1
      "size to text v" 1
      "text halign" right
      "text valign" center
     }
-    TextWidgetClass max {
+    TextWidgetClass current {
      visible 1
      ignorepointer 1
      size 32 32
      halign right_ref
+     valign center_ref
      hexactpos 1
      vexactpos 1
      hexactsize 1
      vexactsize 1
      scaled 1
      style Light
-     "exact text" 1
+     font "gui/fonts/metron14"
+     "exact text" 0
      "size to text h" 1
      "size to text v" 1
      "text halign" right

@@ -125,8 +125,8 @@ GridSpacerWidgetClass root_window {
    vexactpos 0
    hexactsize 0
    vexactsize 0
-   Padding 5
-   Margin 5
+   Padding 0
+   Margin 4
    "Size To Content H" 1
    "Size To Content V" 1
    Columns 1

@@ -19,7 +19,7 @@ GridSpacerWidgetClass root_window {
  {
   WrapSpacerWidgetClass c_header {
    ignorepointer 0
-   color 0 0 0 0.5373
+   color 0 0 0 0
    position 0 0
    size 1 32
    hexactpos 0
@@ -36,6 +36,7 @@ GridSpacerWidgetClass root_window {
     GridSpacerWidgetClass header {
      visible 1
      ignorepointer 1
+     color 0 0 0 0.5098
      position 0 0
      size 1 1
      hexactpos 0

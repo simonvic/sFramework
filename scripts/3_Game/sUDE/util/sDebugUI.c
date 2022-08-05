@@ -46,10 +46,15 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	static const int PLOT_HISTORY_MAX = 1000;
 	static const int DEFAULT_PLOT_HISTORY = 50;
 	
-	private static ref SDebugUI INSTANCE;
-	static SDebugUI getInstance(){
-		if (!INSTANCE) INSTANCE = new SDebugUI();
-		return INSTANCE;
+	
+	static ref map<string, ref SDebugUI> instances = new map<string, ref SDebugUI>;
+	
+	static SDebugUI of(string name) {				
+		SDebugUI dui = instances.Get(name);
+		if (dui) return dui;
+		dui = new SDebugUI();
+		instances.Set(name, dui);
+		return dui;
 	}
 
 	
@@ -63,15 +68,19 @@ class SDebugUI : ScriptedWidgetEventHandler {
 
 	ref map<ButtonWidget, ref SDebugButtonCallback> buttonsCallbacks;
 	
+	ref map<string, bool> statesCheckbox;
+	ref map<string, float> statesSlider;
 	ref map<string, ref array<ref array<float>>> plotsHistory;
 	
-	void SDebugUI() {
+	private void SDebugUI() {
 		if (isServer()) return;
 		root = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/root.layout");
 		root.SetHandler(this);
 		root.SetSort(999);
 		windows = new SStack<Widget>();
 		buttonsCallbacks = new map<ButtonWidget, ref SDebugButtonCallback>;
+		statesCheckbox = new map<string, bool>;
+		statesSlider = new map<string, float>;
 		plotsHistory = new map<string, ref array<ref array<float>>>;
 	}
 	
@@ -100,14 +109,23 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	/**
 	*	@brief Create a checkbox
-	*	@param text - text to show next to the checkbox
+	*	@param name - name of the widget
+	*	@param variable - variable to link
 	*	@return CheckBoxWidget
 	*/
-	CheckBoxWidget check(string text) {
+	CheckBoxWidget check(string name, out bool variable) {
 		if (isServer()) return null;
 		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
-		w.SetName(text);
-		w.SetText(text);
+		w.SetName(name);
+		w.SetText(name);
+		if (statesCheckbox.Contains(name)) {
+			bool checked = statesCheckbox.Get(name);
+			w.SetChecked(checked);
+			variable = checked;
+		} else {
+			w.SetChecked(variable);
+			statesCheckbox.Set(name, variable);
+		}
 		return w;
 	}
 
@@ -140,18 +158,25 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	/**
 	*	@brief Create a slider
-	*	@param float - current value of the slider
+	*	@param name - name of the slider
+	*	@param float - value to link to the slider
 	*	@param float - step value of the slider
 	*	@param float - max value of the slider
 	*	@param float - min value of the slider
 	*	@return SliderWidget
 	*/
-	SliderWidget slider(float value, float step = 0.1, float min = 0, float max = 1) {
+	SliderWidget slider(string name, out float value, float step = 0.1, float min = 0, float max = 1) {
 		if (isServer()) return null;
 		SliderWidget w = SliderWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/slider.layout"));
+		w.SetName(name);
 		w.SetStep(step);
 		w.SetMinMax(min, max);
+		if (statesSlider.Contains(name)) {
+			value = statesSlider.Get(name);
+		}
 		w.SetCurrent(value);
+		TextWidget.Cast(w.FindAnyWidget("name")).SetText(name);
+		TextWidget.Cast(w.FindAnyWidget("value")).SetText(""+value);
 		return w;
 	}
 	
@@ -252,7 +277,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param color - color of the line
 	*	@return CanvasWidget
 	*/
-	CanvasWidget plot(array<ref array<ref array<float>>> lines = null, array<int> sizePx = null, string title = "", array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor color = null) {
+	CanvasWidget plot(string title = "", array<ref array<ref array<float>>> lines = null, array<int> sizePx = null, array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor color = null) {
 		if (isServer()) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		if (!scale  || scale.Count()  < 2) scale  = DEFAULT_PLOT_SCALE;
@@ -375,28 +400,41 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	
 	override bool OnClick(Widget w, int x, int y, int button) {
-		switch (w.GetName()) {
-			case "collapse":
-			Widget body = w.GetParent().GetParent().GetParent().GetParent().FindAnyWidget("body");
-			if (body.IsVisible()) {
-				ButtonWidget.Cast(w).SetText("+");
-			} else {
-				ButtonWidget.Cast(w).SetText("-");
+		switch (w.Type()) {
+			case ButtonWidget:
+			ButtonWidget btn = ButtonWidget.Cast(w);
+			switch (w.GetName()) {
+				case "collapse":
+				Widget body = w.GetParent().GetParent().GetParent().GetParent().FindAnyWidget("body");
+				if (body.IsVisible()) {
+					btn.SetText("+");
+				} else {
+					btn.SetText("-");
+				}
+				body.Show(!body.IsVisible());
+				break;
+				
+				case "maximize":
+				break;
+				
+				case "close":
+				break;
 			}
-			body.Show(!body.IsVisible());
 			break;
 			
-			
-			case "maximize":
+			case CheckBoxWidget:
+			CheckBoxWidget chk = CheckBoxWidget.Cast(w);
+			if (statesCheckbox.Contains(chk.GetName())) {
+				statesCheckbox.Set(chk.GetName(), !statesCheckbox.Get(chk.GetName()));
+			}
 			break;
 			
-			case "close":
-			break;
-		}		
+		}
+				
 		return true;
 	}
 	
-	override bool OnMouseEnter(Widget w, int x, int y);	
+	override bool OnMouseEnter(Widget w, int x, int y);
 	override bool OnModalResult(Widget w, int x, int y, int code, int result);
 	override bool OnDoubleClick(Widget w, int x, int y, int button);
 	override bool OnSelect(Widget w, int x, int y);
@@ -411,11 +449,28 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	override bool OnKeyDown(Widget w, int x, int y, int key);
 	override bool OnKeyUp(Widget w, int x, int y, int key);
 	override bool OnKeyPress(Widget w, int x, int y, int key);
-	override bool OnChange(Widget w, int x, int y, bool finished);
-	override bool OnDrag(Widget w, int x, int y);
+	override bool OnChange(Widget w, int x, int y, bool finished) {
+		switch (w.Type()) {
+			case SliderWidget:
+			SliderWidget slider = SliderWidget.Cast(w);
+			statesSlider.Set(slider.GetName(), slider.GetCurrent());
+			break;
+		}
+		return true;
+	}
+	
+	
+	vector dragOffset;
+	override bool OnDrag(Widget w, int x, int y) {
+		float wx,wy;
+		w.GetParent().GetPos(wx,wy);
+		dragOffset[0] = x - wx;
+		dragOffset[1] = y - wy;
+		return true;
+	}
 	
 	override bool OnDragging(Widget w, int x, int y, Widget reciever) {
-		w.GetParent().SetPos(x, y);
+		w.GetParent().SetPos(x - dragOffset[0], y - dragOffset[1]);
 		return true;
 	}
 	override bool OnDraggingOver(Widget w, int x, int y, Widget reciever);

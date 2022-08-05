@@ -14,5 +14,32 @@ SliderWidgetClass slider {
  flipped 0
  "fill in" 1
  "draw marker" 0
- "listen to input" 0
+ "listen to input" 1
+ {
+  TextWidgetClass name {
+   ignorepointer 1
+   color 0.9412 0.3294 0.298 1
+   position 0 0
+   size 0.5 1
+   hexactpos 0
+   vexactpos 0
+   hexactsize 0
+   vexactsize 0
+   scaled 0
+   font "gui/fonts/metron14"
+   "text valign" center
+  }
+  TextWidgetClass value {
+   ignorepointer 1
+   color 0.9412 0.3294 0.298 1
+   position 0.5 0
+   size 0.5 1
+   hexactpos 0
+   vexactpos 0
+   hexactsize 0
+   vexactsize 0
+   "text halign" right
+   "text valign" center
+  }
+ }
 }

@@ -53,7 +53,7 @@ class SMath {
 	* 	@return \p float - position on curve
 	*/
 	static float Arctan(float amplitude, float sharpness, float horizontalOffset, float verticalOffset, float x){
-		return amplitude * Math.Atan2(x * sharpness + horizontalOffset, 1) + verticalOffset;
+		return amplitude * Math.Atan(x * sharpness + horizontalOffset) + verticalOffset;
 	}
 	
 	/**

@@ -6,7 +6,7 @@ TextWidgetClass text {
  vexactsize 1
  scaled 1
  text "this is a sample text"
- font "gui/fonts/metron22"
+ font "gui/fonts/metron16"
  "exact text" 0
  "size to text h" 1
  "size to text v" 1

@@ -5,9 +5,8 @@
 
 	@code
 		// Example usage for per-frame update
-		ref SDebugUI dui = new SDebugUI();
-
 		void OnUpdate(float timeslice) {
+			SDebugUI dui = SDebugUI.of(ClassName());
 			dui.begin();
 			dui.window("Debug monitor");
 			dui.text("Time : " + GetGame().GetDayTime());
@@ -135,7 +134,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param text - text to show next i nthe button
 	*	@return ButtonWidget
 	*/
-	ButtonWidget button(string text, Class instance, string function, Param params) {
+	ButtonWidget button(string text, Class instance, string function, Param params = null) {
 		if (isServer()) return null;
 		ButtonWidget w  = ButtonWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/button.layout"));
 		if (!w) return null;
@@ -206,7 +205,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			foreach (auto entry : row) {
 				TextWidget t = TextWidget.Cast(GetGame().GetWorkspace().CreateWidget(TextWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, w));
 				t.ClearFlags(WidgetFlags.EXACTSIZE);
-				t.SetFlags(WidgetFlags.CENTER | WidgetFlags.VCENTER);
+				t.SetFlags(WidgetFlags.CENTER | WidgetFlags.VCENTER | WidgetFlags.IGNOREPOINTER);
 				t.SetSize(width, height);
 				t.SetText(entry);
 				

@@ -61,7 +61,7 @@ GridSpacerWidgetClass root_window {
        scaled 1
        draggable 0
        text "title"
-       font "gui/fonts/metron28"
+       font "gui/fonts/metron16"
        "exact text" 0
        "size to text h" 0
        "size to text v" 0

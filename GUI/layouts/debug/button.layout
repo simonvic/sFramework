@@ -9,5 +9,5 @@ ButtonWidgetClass button {
  scaled 0
  style DayZDefaultButton
  text "Button"
- font "gui/fonts/metron22"
+ font "gui/fonts/metron16"
 }

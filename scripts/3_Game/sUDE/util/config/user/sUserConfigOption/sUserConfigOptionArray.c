@@ -25,10 +25,10 @@ class SUserConfigOptionArray<Class T> : SUserConfigOptionBase {
 		array<T> previousValue = get();
 		super.setParam(param);
 		array<T> newValue = get();
-		if (!SMath.equal(previousValue, newValue)) {
+		if (!equal(previousValue, newValue)) {
 			onValueChange(previousValue, newValue);
 		}
-	} 
+	}
 	
 	protected void onValueChange(array<T> previousValue, array<T> newValue);
 }

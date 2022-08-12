@@ -87,4 +87,38 @@ class SUserConfigOptionBase : Managed {
 	protected void onConstraintEnable();
 	protected void onConstraintDisable();
 	protected void onConstraintRemove();
+	
+	
+	
+	
+	
+	//@todo move this somewhere else
+	
+	static bool equal(float x, float y) {
+		return SMath.equal(x,y);
+	}
+	
+	static bool equal(array<float> x, array<float> y) {
+		return SMath.equal(x,y);
+	}
+	
+	static bool equal(array<int> x, array<int> y) {
+		if (!x || !y) return false;
+		
+		int xCount = x.Count();
+		if (xCount != y.Count()) {
+			return false;
+		}
+		
+		for (int i = 0; i < xCount; i++) {
+			if (x[i] != y[i]) {
+				return false;			
+			}
+		}
+		
+		return true;
+	}
+	
+	
+	
 }

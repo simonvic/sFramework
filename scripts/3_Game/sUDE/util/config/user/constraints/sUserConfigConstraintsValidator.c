@@ -29,7 +29,7 @@ class SUserConfigConstraintsValidator : Managed {
 	*/
 	static bool canBeDeserialized(string stringData, out string deserializationError){
 		JsonSerializer serializer = new JsonSerializer;
-		SUserConfigBase data = new SUserConfigBase;
+		SUserConfigConstraintsBase data = new SUserConfigConstraintsBase;
 		return serializer.ReadFromString( data, stringData, deserializationError );
 	}
 

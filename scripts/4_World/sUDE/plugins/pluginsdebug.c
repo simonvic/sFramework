@@ -1,129 +1,334 @@
 /*
-modded class Weapon_Base{
+class SDebugCheats {
+	static bool weapon_noDamage = true;
+	static bool weapon_infAmmo = true;
+	static bool weapon_noJam = true;
+	static bool player_noDamage = false;
+}
+
+modded class Weapon_Base {
+	
 	override void EEFired(int muzzleType, int mode, string ammoType){
 		super.EEFired(muzzleType, mode, ammoType);
-
-		Magazine magazine = GetMagazine(GetCurrentMuzzle());
-
-		if (GetGame().IsServer() || !GetGame().IsMultiplayer())
-			SetHealth(GetMaxHealth()); // prevent weapon from deteriorating
-
-		if (magazine){
-			if (GetGame().IsServer() || !GetGame().IsMultiplayer())
-				magazine.ServerSetAmmoMax(); // unlimited ammo
-			
-			if (GetGame().IsClient() || !GetGame().IsMultiplayer())
-				magazine.LocalSetAmmoMax(); // update client side UI
+		if (SDebugCheats.weapon_noDamage) {
+			if (GetGame().IsServer() || !GetGame().IsMultiplayer()) {
+				SetHealth(GetMaxHealth());
+				ItemSuppressor suppressor = GetAttachedSuppressor();
+				if (suppressor) {
+					suppressor.SetHealth(suppressor.GetMaxHealth());
+				}
+			}
 		}
 		
-		ItemSuppressor suppressor = GetAttachedSuppressor();
-		if (suppressor && (GetGame().IsServer() || !GetGame().IsMultiplayer())) {
-			suppressor.SetHealth(suppressor.GetMaxHealth());
+		
+		if (SDebugCheats.weapon_infAmmo) {
+			Magazine magazine = GetMagazine(GetCurrentMuzzle());
+			if (magazine == null) {
+				SpawnAmmo();
+			} else {
+				if (GetGame().IsServer() || !GetGame().IsMultiplayer()) {
+					magazine.ServerSetAmmoMax();
+				}
+				
+				if (GetGame().IsClient() || !GetGame().IsMultiplayer()) {
+					magazine.LocalSetAmmoMax();
+				}
+			}
 		}
+		
 	}
-
-	override bool IsJammed(){
-		return false; // prevent jamming
+	
+	override bool IsJammed() {
+		if (SDebugCheats.weapon_noJam) return false;
+		return super.IsJammed();
 	}
+	
 }
 
 class PluginSDebug : PluginBase {
 	
 	protected float m_time;
 	
-	static bool crosshair_enabled = false;
-	static bool bodyClipAllContact_enabled = false;
-	static bool bodyClipContactPos_enabled = false;
-		
 	static PlayerBase simonvic;
-	static Weapon_Base m_weapon;
-	ref SRaycast m_crosshairRaycast;
-	ref SRaycast m_bodyClipRaycast;
+	static Weapon_Base weapon;
 	
-	static ref array<SurvivorBase> theBoris = new array<SurvivorBase>;
+	static ref array<SurvivorBase> theBoris = {};
+	static ref array<Object> spawnedItems = {};
 	
-	Shape line = Debug.DrawLine("0 0 0", "0 0 0", 0xFF0000);
 	
-	void PluginSDebug(){
-		m_crosshairRaycast = new SRaycast(vector.Zero, vector.Zero, 0.05, ObjIntersectView, CollisionFlags.NEARESTCONTACT);
-		m_bodyClipRaycast = new SRaycast(vector.Zero, vector.Zero, 0.05, 0, CollisionFlags.FIRSTCONTACT);
+	static ref SDebugUI dui;
+	
+	void PluginSDebug() {
+		if (GetGame().IsClient()) {
+			dui = SDebugUI.of(ClassName());
+		}
+		DayZGame.Event_OnRPC.Insert(this.onRPC);
 	}
 	
-	void ~PluginSDebug(){
+	void ~PluginSDebug() {
+		deleteAll();
 	}
 	
 	override void OnUpdate(float delta_time){
-		
-		if(GetGame().IsClient() || !GetGame().IsMultiplayer()) {
+		m_time += delta_time;
+		if (GetGame().IsClient() || !GetGame().IsMultiplayer()) {
 			simonvic = PlayerBase.Cast(GetGame().GetPlayer());
+			if (simonvic) {
+				Class.CastTo(weapon, simonvic.GetItemInHands());
+			}
 			onUpdateClient(delta_time);
 		}
 		
-		if(GetGame().IsServer() || !GetGame().IsMultiplayer()) {
-			array<Man> players = new array<Man>;
+		if (GetGame().IsServer() || !GetGame().IsMultiplayer()) {
+			array<Man> players = {};
 			GetGame().GetPlayers(players);
 			simonvic = PlayerBase.Cast(players[0]);
+			if (simonvic) {
+				Class.CastTo(weapon, simonvic.GetItemInHands());
+			}
 			onUpdateServer(delta_time);
 		}
 		
 		onUpdateBoth(delta_time);
 	}
 	
-	void onUpdateBoth(float delta_time){
+	void onUpdateBoth(float delta_time) {
 	}
 	
-	void onUpdateClient(float delta_time){
-		if(!simonvic) simonvic = PlayerBase.Cast(GetGame().GetPlayer());
-		if(simonvic && Weapon_Base.Cast(simonvic.GetItemInHands())) m_weapon = Weapon_Base.Cast(simonvic.GetItemInHands());
+	void onUpdateServer(float delta_time) {
+	}
+	
+	static bool weapon_noDamage = SDebugCheats.weapon_noDamage;
+	static bool weapon_infAmmo = SDebugCheats.weapon_infAmmo;
+	static bool weapon_noJam = SDebugCheats.weapon_noJam;
+	static bool player_noDamage = SDebugCheats.player_noDamage;
+
+	
+	void onUpdateClient(float delta_time) {
+		if (!simonvic) return;
+		dui.begin();
+		dui.window("Debug", {256+24,0}, {(256+12)*8,0});
 		
-		m_time += delta_time;
-		if(crosshair_enabled) updateCrosshair();
+		dui.text("[NUMPAD *] to enable cursor\n[NUMPAD /] to disable cursor");
+		dui.text("[NUMPAD +] to enable UI\n[NUMPAD -] to disable UI");
+		SoftSkillsManager ssm = simonvic.GetSoftSkillsManager();
+		float strength;
+		dui.slider("Strength", strength, 0.1, -1, 1);
+		if (ssm.GetSpecialtyLevel() != strength) {
+			sendToServer("specialty", ""+strength);
+		}
+		ssm.SetSpecialtyLevel(strength);
+		simonvic.GetStatSpecialty().Set(strength);
+		dui.newline();
+		dui.table({
+			{"playerStats"}
+			{"weight",  ""+simonvic.GetWeight()}
+			{"wetness", ""+simonvic.GetStatWet().Get()}
+			
+		}, {256,128});
+		dui.newline();
+		dui.text("Debug menus------------------");
+		dui.check("Recoil", AimingModelFilterRecoil.debugMonitor);
+		dui.check("Inertia", AimingModelFilterInertia.debugMonitor);
+		dui.check("RecoilControl", RecoilControl.debugMonitor);
+		dui.newline();
+		dui.text("Cheats------------------");
+		dui.check("weapon_noDamage", weapon_noDamage);
+		syncDebugCheat("weapon_noDamage", weapon_noDamage, SDebugCheats.weapon_noDamage);
 		
-		if(bodyClipAllContact_enabled || bodyClipContactPos_enabled) updateBodyClip();
+		dui.check("weapon_infAmmo", weapon_infAmmo);
+		syncDebugCheat("weapon_infAmmo", weapon_infAmmo, SDebugCheats.weapon_infAmmo);
 		
-		if(false) updateMouse();
+		dui.check("weapon_noJam", weapon_noJam);
+		syncDebugCheat("weapon_noJam", weapon_noJam, SDebugCheats.weapon_noJam);
+		
+		dui.check("player_noDamage", player_noDamage);
+		syncDebugCheat("player_noDamage", player_noDamage, SDebugCheats.player_noDamage);
+		
+		dui.newline();
+		
+		dui.button("player_heal", this, "heal");
+		dui.button("spawn_weapons", this, "sendToServer", new Param1<string>("spawn_weapons"));
+		dui.button("spawn_boris", this, "sendToServer", new Param1<string>("spawn_boris"));
+		dui.button("delete_all", this, "sendToServer", new Param1<string>("delete_all"));
+		
+		dui.newline();
+	}
+	
+	private void syncDebugCheat(string name, bool localCheat, out bool cheat) {
+		if (localCheat != cheat) {
+			sendToServer(name, ""+localCheat);
+		}
+		cheat = localCheat;
+	}
+	
+	static int RPCID_DEBUG_SYNC = SRPCIDs.SYNC_USER_CONFIG_CONSTRAINTS + 1;
+	
+	private void sendToServer(string name, string value = "") {
+		SLog.d(name + " = " + value, "sendToServer");
+		GetGame().RPCSingleParam(null, RPCID_DEBUG_SYNC, new Param2<string, string>(name, value), true);
 	}
 
-
-	void onUpdateServer(float delta_time){
+	void onRPC(PlayerIdentity sender, Object target, int rpcId, ParamsReadContext ctx) {
+		if (rpcId != RPCID_DEBUG_SYNC || GetGame().IsClient()) return;
+		Param2<string, string> p;
+		ctx.Read(p);
+		switch (p.param1) {
+			case "specialty":
+			ctx.Read(CachedObjectsParams.PARAM1_FLOAT);
+			simonvic.GetSoftSkillsManager().SetSpecialtyLevel(CachedObjectsParams.PARAM1_FLOAT.param1);
+			simonvic.GetStatSpecialty().Set(CachedObjectsParams.PARAM1_FLOAT.param1);
+			break;
+			case "weapon_noDamage": SDebugCheats.weapon_noDamage = p.param2 == "true"; break;
+			case "weapon_infAmmo": SDebugCheats.weapon_infAmmo = p.param2 == "true"; break;
+			case "weapon_noJam": SDebugCheats.weapon_noJam = p.param2 == "true"; break;
+			case "player_noDamage": godmode(p.param2 == "true"); break;
+			case "player_heal": heal(); break;
+			case "player_teleport": teleport(p.param2.ToVector()); break;
+			case "spawn_infected": spawnInfected(p.param2.ToVector()); break;
+			case "spawn_weapons": spawnWeaponsSet(simonvic.GetPosition() + "0 1 0"); break;
+			case "spawn_boris": spawnDefaultBorisDummies(); break;
+			case "delete_all": deleteAll(); break;
+			
+			default: Print("unknown cheat");
+		}
 	}
 	
+	private void spawnInfected(vector target) {
+		if (GetGame().IsClient()) {
+			sendToServer("spawn_infected", string.Format("%1 %2 %3", target[0], target[1], target[2]));
+			return;
+		}
+		GetGame().CreateObject("ZmbM_NBC_Yellow", target, false, true);
+	}
 	
-	static void setupShootingDebugArea(){
-		if(!simonvic){
+	private void godmode(bool enable = true) {
+		SDebugCheats.player_noDamage = enable;
+		player_noDamage = enable;
+		if (GetGame().IsClient()) {
+			sendToServer("player_noDamage", ""+enable);
+			return;
+		}
+		simonvic.SetAllowDamage(!enable);
+	}
+	
+	private void heal() {
+		if (GetGame().IsClient()) {
+			sendToServer("player_heal");
+			return;
+		}
+		simonvic.SetHealth(simonvic.GetMaxHealth("", ""));
+		simonvic.SetHealth( "","Blood", simonvic.GetMaxHealth("","Blood"));
+		simonvic.SetHealth("","Shock", simonvic.GetMaxHealth("","Shock"));
+		simonvic.GetStatHeatComfort().Set(simonvic.GetStatHeatComfort().GetMax());
+		simonvic.GetStatTremor().Set(simonvic.GetStatTremor().GetMin());
+		simonvic.GetStatWet().Set(simonvic.GetStatWet().GetMin());
+		simonvic.GetStatEnergy().Set(simonvic.GetStatEnergy().GetMax());
+		simonvic.GetStatWater().Set(simonvic.GetStatWater().GetMax());
+		simonvic.GetStatDiet().Set(simonvic.GetStatDiet().GetMax());
+		simonvic.AddHealth("LeftLeg","Health",(simonvic.GetMaxHealth("LeftLeg", "Health")  - simonvic.GetHealth("LeftLeg", "Health")));
+		simonvic.AddHealth("RightLeg","Health",(simonvic.GetMaxHealth("RightLeg", "Health") - simonvic.GetHealth("RightLeg", "Health")));
+		simonvic.AddHealth("RightFoot","Health",(simonvic.GetMaxHealth("RightFoot", "Health") - simonvic.GetHealth("RightFoot", "Health")));
+		simonvic.AddHealth("LeftFoot","Health",(simonvic.GetMaxHealth("LeftFoot", "Health") - simonvic.GetHealth("LeftFoot", "Health")));
+		simonvic.GetBleedingManagerServer().RemoveAllSources();
+	}
+	
+	private void teleport(vector target) {
+		if (GetGame().IsClient()) {
+			sendToServer("player_teleport", string.Format("%1 %2 %3", target[0], target[1], target[2]));
+			return;
+		}
+		simonvic.SetPosition(target);
+	}
+	
+	void onKeyPress(int keycode) {
+		switch (keycode) {
+			case KeyCode.KC_MULTIPLY:
+			GetGame().GetInput().ChangeGameFocus(1);
+			GetGame().GetUIManager().ShowUICursor(true);			
+			break;
+			
+			case KeyCode.KC_DIVIDE:
+			GetGame().GetInput().ChangeGameFocus(-1);
+			GetGame().GetUIManager().ShowUICursor(false);
+			break;
+			
+			case KeyCode.KC_ADD:
+			foreach (auto d : SDebugUI.instances) d.show();
+			dui.show();
+			break;
+			
+			case KeyCode.KC_SUBTRACT:
+			foreach (auto i : SDebugUI.instances) i.hide();
+			dui.hide();
+			break;
+			
+			case KeyCode.KC_NUMPAD1: heal(); break;
+			//case KeyCode.KC_NUMPAD2: godmode(!player_noDamage); break;
+			case KeyCode.KC_NUMPAD5: teleport(getLookingPosition(10000)); break;
+			case KeyCode.KC_NUMPAD7: spawnInfected(getLookingPosition(500)); break;
+		}		
+		//Print(typename.EnumToString(KeyCode, keycode));
+	}
+	
+	static vector getLookingPosition(float distance) {
+		vector camPos = GetGame().GetCurrentCameraPosition();
+		SRaycast ray = new SRaycast(camPos, camPos + GetGame().GetCurrentCameraDirection() * distance);
+		vector contactPos = ray.ignore(simonvic).launch().getContactPosition();
+		delete ray;
+		return contactPos;
+	}
+	
+
+	static void setupShootingDebugArea() {
+		
+		if (!simonvic){
 			array<Man> players = new array<Man>;
 			GetGame().GetPlayers(players);
 			simonvic = PlayerBase.Cast(players[0]);
 		}
 		vector startPosition = simonvic.GetPosition();
-		vector margin = "0 0 0.5";
-		vector verticalMargin = "0 0.2 0";
 		
-		PluginSDebug.spawnWeaponsSet(startPosition, margin);
-		PluginSDebug.spawnAmmoSet(startPosition + "-1 0 0", margin, verticalMargin);
+		spawnedItems.Insert(SSpawnable.build("StaticObj_Misc_Sandbox").spawn(startPosition + Vector(0,-0.5,0)).collect());
+		PluginSDebug.spawnWeaponsSet(startPosition + "0 1.35 -5");
 		PluginSDebug.spawnDefaultBorisDummies();
 	}
 	
+	static ref array<ref array<string>> weaponsByCat = {
+		{"M4A1","M16A2","AK101","AK74","AKM","AKS74U","FAL","VSS","ASVAL","Aug","AugShort","FAMAS","SawedOffFAMAS"}
+		{"B95","CZ527","Winchester70","Mosin9130","SawedoffMosin9130","Repeater","Ruger1022","SVD","SKS","Izh18","SawedoffIzh18"}
+		{"MP5K","CZ61","UMP45","PP19"}
+		{"Magnum","MakarovIJ70","MKII","Colt1911","CZ75","FNX45","Deagle","LongHorn"}
+	};
 	
-	static void spawnBorisDummies(vector startPosition, array<float> distances, vector direction){
-		foreach(float dis : distances){
-			EntityAI boris = null;
-			SSpawnable.build("SurvivorM_Boris").spawn(startPosition + direction * dis).collect(boris);
-			if(boris != null){
-				boris.SetCanBeDestroyed(false);
-				theBoris.Insert(SurvivorBase.Cast(boris));
+	static void spawnWeaponsSet(vector position) {
+		if (position == "0 0 0") position = simonvic.GetPosition();
+		vector pos = position;
+		foreach (auto weaponsList : weaponsByCat) {
+			foreach (auto w : weaponsList) {
+				Object o = GetGame().CreateObject(w, pos);
+				EntityAI e = EntityAI.Cast(o);
+				if (!e) {
+					Print("Can't spawn " + w);
+				} else {
+					Print("spawning " + w);
+					e.SetOrientation("90 0 90");
+					e.OnDebugSpawn();
+					spawnedItems.Insert(e);
+					pos = pos + "0.5 0 0.5";
+				}
 			}
+			pos = Vector(position[0] - 0.5, position[1], pos[2] - 0.5);
 		}
 	}
 	
-	static void spawnProneBoris(){
-		SurvivorBase boris = SurvivorBase.Cast(GetGame().CreateObject("SurvivorM_Boris",simonvic.GetPosition() + "1 2 1"));
-		boris.SetOrientation("0 0 0");
-		HumanCommandMove hcm = boris.StartCommand_Move();
-		Print(hcm);
-		if(hcm){
-			GetGame().GetCallQueue(CALL_CATEGORY_GAMEPLAY).CallLater(hcm.ForceStance, 1000, false, DayZPlayerConstants.STANCEIDX_PRONE);
-			hcm.ForceStance(DayZPlayerConstants.STANCEIDX_PRONE);
+	static void spawnBorisDummies(vector startPosition, array<float> distances, vector direction){
+		foreach (float dis : distances){
+			Object boris = GetGame().CreateObject("SurvivorM_Boris", startPosition + direction * dis, false, true, true);
+			if (boris != null){
+				boris.SetAllowDamage(false);
+				theBoris.Insert(SurvivorBase.Cast(boris));
+			}
 		}
 	}
 	
@@ -140,337 +345,39 @@ class PluginSDebug : PluginBase {
 		}, simonvic.GetDirection());
 	}
 	
-	static void deleteTheBoris(){
-		foreach(SurvivorBase boris : theBoris){
-			GetGame().ObjectDelete(boris);
-			GetGame().ObjectDeleteOnClient(boris);
-		}
-	}
-	
+
 	static void setTheBorisInvincibility(bool invincible){
-		foreach(SurvivorBase boris : theBoris){
-			boris.SetCanBeDestroyed(!invincible);
+		foreach (SurvivorBase boris : theBoris){
+			boris.SetAllowDamage(!invincible);
 		}
 	}
 	
+
 	
+
 	
-	static void spawnWeaponsSet(vector startPosition, vector margin){
-		
-		SSpawnableBundle s = new SSpawnableBundle();
-		
-		////////////////////////////////////////////////////////////
-		// ASSAULT RIFLES
-		s.build("M4A1").withAttachments({
-			"M4_Suppressor",
-			"M4_OEBttstck",
-			"M4_RISHndgrd"
-		}).withSpawnableAttachments(
-			(new SSpawnable("ReflexOptic")).withAttachment("Battery9V"));
-		
-		s.build("M16A2");
-		
-		s.build("AK101").withAttachments({
-			"AK_Suppressor",
-			"AK_PlasticBttstck",
-			"AK_RailHndgrd"
-		}).withSpawnableAttachments(
-			(new SSpawnable("PSO11Optic")).withAttachment("Battery9V"),
-			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"));
-		
-		s.build("AK74").withAttachments({
-			"AK_Suppressor",
-			"AK_PlasticBttstck",
-			"AK_RailHndgrd"
-		}).withSpawnableAttachments(
-			(new SSpawnable("KobraOptic")).withAttachment("Battery9V"),
-			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"));
-		
-		s.build("AKM").withAttachments({
-			"AK_Suppressor",
-			"AK_WoodBttstck",
-			"AK_WoodHndgrd"
-		}).withSpawnableAttachments(
-			(new SSpawnable("KobraOptic")).withAttachment("Battery9V"));
-		
-		s.build("AKS74U").withAttachments({
-			"AK_Suppressor",
-			"AKS74U_Bttstck",
-			"GhillieAtt_tan"
-		});
-		
-		s.build("FAL").withAttachments({
-			"Fal_FoldingBttstck"
-		}).withSpawnableAttachments(
-			(new SSpawnable("M68Optic")).withAttachment("Battery9V"));
-		
-		s.build("VSS").withAttachments({
-			"KashtanOptic"
-		});
-		
-		s.build("ASVAL").withSpawnableAttachments(
-			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"),
-			(new SSpawnable("ACOGOptic")).withAttachment("Battery9V"));
-		
-		s.build("Aug").withAttachments({
-			"M4_Suppressor",
-			"GhillieAtt_tan"
-		}).withSpawnableAttachments(
-			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"),
-			(new SSpawnable("ReflexOptic")).withAttachment("Battery9V"));
-		
-		
-		s.build("AugShort").withAttachments({
-			"M4_Suppressor"
-		});
-		
-		s.build("FAMAS").withAttachments({
-			"M4_Suppressor"
-		});
-		
-		s.build("SawedOffFAMAS").withAttachments({
-			"M4_Suppressor"
-		});
-		
-		////////////////////////////////////////////////////////////
-		// SMG
-		s.build("MP5K").withAttachments({
-			"MP5_Compensator",
-			"MP5k_StockBttstck",
-			"MP5_RailHndgrd"
-		}).withSpawnableAttachments(
-			(new SSpawnable("ReflexOptic")).withAttachment("Battery9V"),
-			(new SSpawnable("UniversalLight")).withAttachment("Battery9V"));
-		
-		s.build("CZ61");
-		s.build("UMP45");
-		
-		
-		//s.build("PP19").withAttachments({
-		//	"PP19_Bttstck"
-		//});
-		
-		
-		
-		
-		////////////////////////////////////////////////////////////
-		// RIFLES
-		s.build("B95").withAttachments({
-			"HuntingOptic"
-		});
-		
-		s.build("CZ527").withAttachments({
-			"HuntingOptic"
-		});
-		
-		s.build("CZ550").withAttachments({
-			"HuntingOptic"
-		});
-		
-		s.build("Winchester70").withAttachments({
-			"HuntingOptic"
-		});
-		
-		s.build("Mosin9130").withAttachments({
-			"PUScopeOptic",
-			"Mosin_Compensator"
-		});
-		
-		s.build("SawedoffMosin9130");
-		s.build("Repeater");
-		s.build("Ruger1022");
-		s.build("SVD");
-		s.build("SKS");
-		s.build("Izh18");
-		s.build("SawedoffIzh18");
-		
-		
-		////////////////////////////////////////////////////////////
-		// SHOTGUNS
-		s.build("Saiga").withAttachments({
-			"Saiga_Bttstck"
-		});
-		
-		s.build("Mp133Shotgun").withSpawnableAttachments(
-			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V"));
-		
-		s.build("Izh43Shotgun");
-		s.build("SawedoffIzh43Shotgun");
-		
-		
-		
-		////////////////////////////////////////////////////////////
-		// HANDGUNS
-		s.build("Magnum");
-		s.build("SawedoffMagnum");
-		s.build("MakarovIJ70");
-		//s.build("P1");
-		//s.build("Derringer");
-		s.build("MKII");
-		s.build("Colt1911").withAttachments({
-			"PistolSuppressor"
-		}).withSpawnableAttachments(
-			(new SSpawnable("TLRLight")).withAttachment("Battery9V"));
-		
-		s.build("CZ75").withAttachments({
-			"PistolSuppressor"
-		}).withSpawnableAttachments(
-			(new SSpawnable("TLRLight")).withAttachment("Battery9V"),
-			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V"));
-		
-		s.build("FNX45").withAttachments({
-			"PistolSuppressor"
-		}).withSpawnableAttachments(
-			(new SSpawnable("TLRLight")).withAttachment("Battery9V"),
-			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V"));
-		
-		s.build("Glock19").withAttachments({
-			"PistolSuppressor"
-		}).withSpawnableAttachments(
-			(new SSpawnable("TLRLight")).withAttachment("Battery9V"),
-			(new SSpawnable("FNP45_MRDSOptic")).withAttachment("Battery9V"));
-		
-		s.build("Deagle").withAttachments({
-			"PistolSuppressor",
-			"PistolOptic"
-		});
-		
-		s.build("LongHorn").withAttachments({
-			"PistolOptic"
-		});
-		
-		vector position = startPosition;
-		array<ref SSpawnable> spawnables = s.getBundle();
-		foreach(SSpawnable spawnable : spawnables){
-			spawnable.spawn(position).collect().SetOrientation("0 0 0");
-			position = position + margin;
+	static void deleteTheBoris(){
+		foreach (auto o : theBoris) {
+			GetGame().ObjectDelete(o);
+			GetGame().ObjectDeleteOnClient(o);
 		}
 	}
 	
-	static void spawnAmmoSet(vector startPosition, vector margin, vector verticalMargin){
-		vector position = startPosition;
-		
-		SSpawnable.build("Mag_STANAG_30Rnd").spawn(position);
-		SSpawnable.build("Mag_STANAGCoupled_30Rnd").spawn(position + verticalMargin );
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_AK101_30Rnd").spawn(position);		
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_AK74_30Rnd").spawn(position);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_AKM_30Rnd").spawn(position);
-		SSpawnable.build("Mag_AKM_Drum75Rnd").spawn(position);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_FAL_20Rnd").spawn(position);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_VSS_10Rnd").spawn(position);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_VAL_20Rnd").spawn(position);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_MP5_15Rnd").spawn(position);
-		SSpawnable.build("Mag_MP5_30Rnd").spawn(position + verticalMargin);
-
-		position = position + margin;
-		
-		Magazine.Cast(SSpawnable.build("Ammo_308Win").spawn(position).collect()).ServerSetAmmoCount(20);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_CZ527_5rnd").spawn(position);
-
-		position = position + margin;
-		
-		Magazine.Cast(SSpawnable.build("Ammo_308WinTracer").spawn(position).collect()).ServerSetAmmoCount(20);
-
-		position = position + margin;
-		
-		Magazine.Cast(SSpawnable.build("Ammo_762x54Tracer").spawn(position).collect()).ServerSetAmmoCount(20);
-
-		position = position + margin;
-		
-		Magazine.Cast(SSpawnable.build("Ammo_357").spawn(position).collect()).ServerSetAmmoCount(20);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_SVD_10Rnd").spawn(position);
-
-		position = position + margin;
-		
-		Magazine.Cast(SSpawnable.build("Ammo_762x39Tracer").spawn(position).collect()).ServerSetAmmoCount(20);
-
-		position = position + margin;
-		
-		Magazine.Cast(SSpawnable.build("Ammo_12gaPellets").spawn(position).collect()).ServerSetAmmoCount(20);
-		Magazine.Cast(SSpawnable.build("Ammo_12gaSlug").spawn(position + verticalMargin).collect()).ServerSetAmmoCount(20);
-		Magazine.Cast(SSpawnable.build("Ammo_12gaRubberSlug").spawn(position).collect()).ServerSetAmmoCount(20);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_Saiga_5Rnd").spawn(position + verticalMargin);
-		SSpawnable.build("Mag_Saiga_8Rnd").spawn(position + verticalMargin);
-		SSpawnable.build("Mag_Saiga_Drum20Rnd").spawn(position + verticalMargin * 2);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_IJ70_8Rnd").spawn(position + verticalMargin);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_MKII_10Rnd").spawn(position + verticalMargin);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_1911_7Rnd").spawn(position + verticalMargin);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_CZ75_15Rnd").spawn(position + verticalMargin);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_FNX45_15Rnd").spawn(position + verticalMargin);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_Glock_15Rnd").spawn(position + verticalMargin);
-
-		position = position + margin;
-		
-		SSpawnable.build("Mag_Deagle_9rnd").spawn(position + verticalMargin);
-
-		position = position + margin;
-	
+	static void deleteSpawnedItems(){
+		foreach (auto o : spawnedItems) {
+			GetGame().ObjectDelete(o);
+			GetGame().ObjectDeleteOnClient(o);
+		}
 	}
 	
+	static void deleteAll() {
+		deleteTheBoris();
+		deleteSpawnedItems();
+	}
+	
+
 	static void updateMovementSettings(){
-		PlayerBase player;
-		if(GetGame().IsClient() || !GetGame().IsMultiplayer()) {
-			player = PlayerBase.Cast(GetGame().GetPlayer());
-
-
-
-		}
-		
-		if(GetGame().IsServer() || !GetGame().IsMultiplayer()) {
-			array<Man> players = new array<Man>;
-			GetGame().GetPlayers(players);
-			player = PlayerBase.Cast(players[0]);
-		}
-		
-		SHumanCommandMoveSettings hcm = player.GetDayZPlayerType().CommandMoveSettingsW();
+		SHumanCommandMoveSettings hcm = simonvic.GetDayZPlayerType().CommandMoveSettingsW();
 
 		//! run sprint (SHIFT HOLD) filter 
 		hcm.m_fRunSpringTimeout = 0.1;							//!< filter span value		[s]
@@ -490,72 +397,12 @@ class PluginSDebug : PluginBase {
 		hcm.m_fHeadingChangeLimiterWalk = 2000;				//!<
 		hcm.m_fHeadingChangeLimiterRun = 1500;				//!<		
 		hcm.m_fLeaningSpeed = 3.0;
-		player.StartCommand_Move();
+		simonvic.StartCommand_Move();
 	}
 	
-	
-	void updateMouse(){
-			
-		vector start = GetGame().GetCurrentCameraPosition();
-		vector end = start + "1 0 0";
-		
-		GetGame().GetCallQueue(CALL_CATEGORY_GAMEPLAY).CallLater(Debug.RemoveShape, 50, false, Debug.DrawLine(start, end, 0xFF0000));
-	}
-	
-	void updateCrosshair(){
-		Weapon_Base weapon = m_weapon;
-		vector usti_hlavne_position = weapon.ModelToWorld(weapon.GetSelectionPositionLS( "usti hlavne" ));//usti hlavne
-		vector konec_hlavne_position = weapon.ModelToWorld(weapon.GetSelectionPositionLS( "konec hlavne" ));//konec hlavne	
-		vector direction = vector.Direction(konec_hlavne_position, usti_hlavne_position );
-		
-		//SDebug.spawnDebugDot(m_crosshairRaycast.getContactPos(), 0.005, 0.5);
-		//SDebug.spawnDebugDot(m_crosshairRaycast.getBegPos(), 0.005, 0.5);
-		//SDebug.spawnDebugDot(m_crosshairRaycast.getEndPos(), 0.005, 0.5);
-		//SDebug.spawnDebugDot(usti_hlavne_position, 0.005, 0.5);
-		//SDebug.spawnDebugDot(konec_hlavne_position, 0.005, 0.5);
-		vector from = usti_hlavne_position;
-		vector to = konec_hlavne_position + (direction * 100);
-		
-		m_crosshairRaycast.init(from,to).launch();
-		
-		
-		Debug.DestroyAllShapes();
-		Debug.DrawLine(from, m_crosshairRaycast.getContactPosition(), SColor.rgb(0xF00000).getARGB());
-		SDebug.spawnDebugDot(m_crosshairRaycast.getContactPosition(), 0.05, 1);
-		
-	}
-	
-	void updateBodyClip(){		
-		
-		vector point = simonvic.GetPosition() + vector.Forward * 2;
-		
-		vector from = simonvic.GetPosition();
-		vector axis = vector.Up;
-		float cosAngle = Math.Cos(m_time*Math.PI);
-		float sinAngle = Math.Sin(m_time*Math.PI);
-		
-		
-		vector offsetPos = from - point;
-		vector result = vector.RotateAroundZero(offsetPos, axis, cosAngle, sinAngle) + from;
-		
-		
-		m_bodyClipRaycast.from(from + "0 1.5 0").to(result + "0 1.5 0").ignore(simonvic).launch();
-		
-		
-		if(bodyClipContactPos_enabled && m_bodyClipRaycast.hasHit())
-			SDebug.spawnDebugDot(m_bodyClipRaycast.getContactPosition(), 0.05, 2);
-		
-		if(bodyClipAllContact_enabled){
-			SDebug.spawnDebugDot(m_bodyClipRaycast.getContactPosition(), 0.02, 2);
-			SDebug.spawnDebugDot(from, 0.02, 1);
-			SDebug.spawnDebugDot(point, 0.02, 1);
-		}
-		
-	}
 	
 	static void sandbox() {
 
 	}
-
 }
 */

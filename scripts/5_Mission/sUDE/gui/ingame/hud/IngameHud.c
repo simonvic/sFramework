@@ -9,7 +9,7 @@ modded class IngameHud {
 	}
 	
 	string getOverlayLayoutName(){
-		return "MyMODS/sFramework/scripts/5_Mission/gui/ingame/hud/camera_overlays_root.layout";
+		return "MyMODS/sFramework/GUI/layouts/ingame/hud/camera_overlays_root.layout";
 	}
 	
 	override void Update( float timeslice ){

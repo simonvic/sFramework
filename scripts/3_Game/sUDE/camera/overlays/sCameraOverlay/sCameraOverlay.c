@@ -318,7 +318,7 @@ class SCameraOverlay : Managed {
 	}
 	
 	protected string getLayout(){
-		return "MyMODS/sFramework/scripts/5_Mission/gui/ingame/hud/camera_overlay.layout";
+		return "MyMODS/sFramework/GUI/layouts/ingame/hud/camera_overlay.layout";
 	}
 	
 	string toString(){

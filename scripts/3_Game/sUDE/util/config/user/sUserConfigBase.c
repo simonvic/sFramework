@@ -144,6 +144,19 @@ class SUserConfigBase : SJSONSerializable{
 	}
 	
 	/**
+	*	@brief Get a int option based on its name.
+	*	 @param optionName \p string - Name of the option
+	*	 @return SUserConfigOption<int> - option found, NULL otherwise
+	*/
+	SUserConfigOption<int> getOptionInt(string optionName) {
+		return SUserConfigOption<int>.Cast(m_options.Get(optionName));
+	}
+	
+	void getOption(string optionName, out SUserConfigOption<int> option) {
+		option = getOptionInt(optionName);
+	}
+	
+	/**
 	*	@brief Get a bool option based on its name.
 	*	 @param optionName \p string - Name of the option
 	*	 @return SUserConfigOption<bool> - option found, NULL otherwise

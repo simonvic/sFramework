@@ -10,6 +10,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	
 	protected SUserConfigBase m_sUserConfig;
 	protected ref map<Widget, SUserConfigOptionBase> m_optionsWidgets = new map<Widget, SUserConfigOptionBase>;
+	protected ref map<Widget, ref array<int>> m_indecesLinks = new map<Widget, ref array<int>>;
 	
 	protected ref Widget m_root;
 	protected ref Widget m_infoBoxRoot;
@@ -66,15 +67,16 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		m_optionsWidgets.Set(checkbox, option);
 	}
 	
-	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, TIntArray indices = null){		
+	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, array<int> indices) {
 		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
 		
 		if (indices && indices.Count() > 0) {
 			slider.SetCurrent(option.get()[indices[0]]);
+			m_indecesLinks.Set(slider, indices);
 		} else {
 			slider.SetCurrent(option.get()[0]);
+			m_indecesLinks.Set(slider, {0});
 		}
-		slider.SetUserData(indices);
 		slider.SetHandler(this);
 				
 		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name+"_value")); //@todo hardcode goes brrrr. Change this
@@ -83,6 +85,44 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		txt.SetHandler(this);
 		
 		m_optionsWidgets.Set(slider, option);
+	}
+	
+	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, int index) {		
+		array<int> indeces = {index};
+		initOptionWidget(slider, name, option, indeces);
+	}
+	
+	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, array<string> channels) {
+		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
+		array<int> indices = {};
+		foreach (string channel : channels) {
+			indices.Insert(getColorChannelIndex(channel));
+		}
+		initOptionWidget(slider, name, option, indices);
+	}	
+	
+	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, string channel) {		
+		array<string> channels = {channel};
+		initOptionWidget(slider, name, option, channels);
+	}
+	
+	static int getColorChannelIndex(string channel) {
+		switch (channel) {	
+			case "red": return 0;
+			case "green": return 1;
+			case "blue": return 2;
+			case "alpha": return 3;
+		}
+		return -1;
+	}	
+	
+	protected void initOptionWidget(out XComboBoxWidget combo, string name, SUserConfigOption<int> option){		
+		combo = XComboBoxWidget.Cast(m_root.FindAnyWidget(name));
+		combo.SetCurrentItem(option.get());
+		//combo.SetHandler(this); //what?!
+		
+		m_optionsWidgets.Set(combo, option);
+		
 	}
 
 	override bool OnMouseEnter(Widget w, int x, int y) {
@@ -151,11 +191,12 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	}
 	
 	override bool OnChange(Widget w, int x, int y, bool finished){
-		if(!w) return false;
+		if (!w) return false;
 		
 		switch (w.Type()) {
 			case SliderWidget:   return onChange(SliderWidget.Cast(w));
 			case CheckBoxWidget: return onChange(CheckBoxWidget.Cast(w));
+			case XComboBoxWidget: return onChange(XComboBoxWidget.Cast(w));
 		}
 		
 		return true;
@@ -169,11 +210,10 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	
 	// this is the most unsafe code of the history of unsafe code, forgive me
 	protected bool onChangeArrayFloat(SliderWidget w, SUserConfigOptionArray<float> option) {
-		if (!option) return true;
+		if (!option) return false;
 		
-		TIntArray indices;
-		w.GetUserData(indices);
-		if (!indices) return true;
+		array<int> indices = m_indecesLinks.Get(w);
+		if (!indices || indices.Count() <= 0) return false;
 		
 		float current = w.GetCurrent();
 		array<float> temp = option.get();
@@ -190,7 +230,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	}
 	
 	protected bool onChangeFloat(SliderWidget w, SUserConfigOption<float> option) {
-		if (!option) return true;
+		if (!option) return false;
 		
 		option.set(w.GetCurrent());
 		w.SetCurrent(option.get());
@@ -202,11 +242,21 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		
 	
 	protected bool onChange(CheckBoxWidget w) {
-		SUserConfigOption<bool> option = SUserConfigOption<bool>.Cast(m_optionsWidgets.Get(w));
-		if (!option) return true;
+		auto option = SUserConfigOption<bool>.Cast(m_optionsWidgets.Get(w));
+		if (!option) return false;
 		
 		option.set(w.IsChecked());
 		w.SetChecked(option.get());
+		return true;
+	}
+	
+	protected int onChange(XComboBoxWidget w) {
+		auto option = SUserConfigOption<int>.Cast(m_optionsWidgets.Get(w));
+		if (!option) return false;
+		
+		option.set(w.GetCurrentItem());
+		w.SetCurrentItem(option.get());
+		
 		return true;
 	}
 	

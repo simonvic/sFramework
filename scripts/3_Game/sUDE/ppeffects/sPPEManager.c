@@ -197,17 +197,17 @@ class SPPEManager {
 
 		animateParams(delta_time);
 		mergeResult();
-		if(m_resultPPE.hasChanged()){
+		if (m_resultPPE.hasChanged()) {
 			applyParams(m_resultPPE);
 		}
 		
-		if(isDDOFEnabled() /*&& !m_resultDOF.equals(m_targetDOF, 0.01)*/){
+		if (isDDOFEnabled() /*&& !m_resultDOF.equals(m_targetDOF, 0.01)*/) {
 			updateDDOF(delta_time);
 			applyDOF(m_resultDOF);
 		}
 	}	
 	
-	protected static void updateDDOF(float pDt){
+	protected static void updateDDOF(float pDt) {
 		m_resultDOF.blurStrength = Math.SmoothCD(m_resultDOF.blurStrength, m_targetDOF.blurStrength, m_DDOFBlurVelocity, 0.05, 100, pDt); //smooth the blur strength over time
 		m_resultDOF.focusDistance = Math.SmoothCD(m_resultDOF.focusDistance, m_targetDOF.focusDistance, m_DDOFVelocity, 0.15, 1000, pDt); //smooth the focus distance over time
 	}
@@ -600,18 +600,18 @@ class SPPEManager {
 	}
 	
 	static void setDDOFEnabledIn3PP(bool enabled){
-		if(enabled) {
+		if (enabled) {
 			enableDDOF();
-		}else{
+		} else {
 			disableDDOF();
 			resetDDOF(true);
 		}
 	}
 	
 	static void setDDOFEnabledInVehicle(bool enabled){
-		if(enabled) {
+		if (enabled) {
 			enableDDOF();
-		}else{
+		} else {
 			disableDDOF();
 			resetDDOF(true);
 		}
@@ -622,9 +622,9 @@ class SPPEManager {
 	*	 @param immediate \p bool - immediately reset the DoF
 	*/
 	static void resetDDOF(bool immediate = false){
-		if(immediate){
+		if (immediate) {
 			resetDOF();
-		}else{
+		} else {
 			m_targetDOF.blurStrength = 0;
 			m_targetDOF.focusDistance = 0;
 		}

@@ -1,5 +1,5 @@
 //if we had interfaces...
-class SCameraOverlayAnimated : SCameraOverlay{
+class SCameraOverlayAnimated : SCameraOverlay {
 	
 	protected eSAnimableState m_animationState = eSAnimableState.STOPPED;
 	protected float m_time;
@@ -13,7 +13,7 @@ class SCameraOverlayAnimated : SCameraOverlay{
 	/**
 	* @brief Set the animation state to PLAYING and reset the time
 	*/
-	void start(){
+	void start() {
 		m_time = 0;
 		setAnimationState(eSAnimableState.PLAYING);
 		onStart();
@@ -22,8 +22,8 @@ class SCameraOverlayAnimated : SCameraOverlay{
 	/**
 	*	@brief Called on each frame
 	*/
-	void animate(float deltaTime){
-		if(!isPlaying()) return;
+	void animate(float deltaTime) {
+		if (!isPlaying()) return;
 		
 		m_time += deltaTime;
 		onAnimate(deltaTime);
@@ -32,7 +32,7 @@ class SCameraOverlayAnimated : SCameraOverlay{
 	/**
 	* @brief Reset values to default and prepare to stop
 	*/
-	void stop(){
+	void stop() {
 		setAnimationState(eSAnimableState.STOPPED);
 		onStop();
 	}
@@ -40,7 +40,7 @@ class SCameraOverlayAnimated : SCameraOverlay{
 	/**
 	* @brief Pause the animation from animating without resetting the time
 	*/
-	void pause(){
+	void pause() {
 		setAnimationState(eSAnimableState.PAUSED);
 		onPause();
 	}
@@ -48,7 +48,7 @@ class SCameraOverlayAnimated : SCameraOverlay{
 	/**
 	* @brief Resume the animation
 	*/
-	void resume(){
+	void resume() {
 		setAnimationState(eSAnimableState.PLAYING);
 		onResume();
 	}
@@ -57,27 +57,27 @@ class SCameraOverlayAnimated : SCameraOverlay{
 	* @brief Get the time elapsed from the animation start
 	* 	@return \p float - time elapsed
 	*/
-	float getTime(){
+	float getTime() {
 		return m_time;
 	}
 	
-	bool isPlaying(){
+	bool isPlaying() {
 		return m_animationState == eSAnimableState.PLAYING;
 	}
 	
-	bool isPaused(){
+	bool isPaused() {
 		return m_animationState == eSAnimableState.PAUSED;
 	}
 	
-	bool hasStopped(){
+	bool hasStopped() {
 		return m_animationState == eSAnimableState.STOPPED;
 	}
 	
-	eSAnimableState getAnimationState(){
+	eSAnimableState getAnimationState() {
 		return m_animationState;
 	}
 	
-	protected void setAnimationState(eSAnimableState state){
+	protected void setAnimationState(eSAnimableState state) {
 		m_animationState = state;
 	}
 }

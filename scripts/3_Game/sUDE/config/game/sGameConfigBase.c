@@ -1,14 +1,14 @@
-class SGameConfigBase{
+class SGameConfigBase {
 			
-	string getModulePath(){
+	string getModulePath() {
 		return SGameConfig.getCfgName() + " " + getModuleName();
 	}
 	
-	string getModuleName(){
+	string getModuleName() {
 		return "";
 	}
 	
-	bool getIsEnabled(){
+	bool getIsEnabled() {
 		return SGameConfig.getBool(getModulePath() + " enabled"); //@todo add check if module is not present
 	}
 }

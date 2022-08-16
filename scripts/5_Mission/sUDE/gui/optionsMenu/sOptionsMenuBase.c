@@ -31,7 +31,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		return m_sUserConfig;
 	}
 	
-	void setRoot(Widget root){
+	void setRoot(Widget root) {
 		m_root = root;
 		m_root.SetHandler(this);
 	}
@@ -46,7 +46,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	}
 	
 	
-	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOption<float> option){		
+	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOption<float> option) {		
 		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
 		slider.SetCurrent(option.get());
 		slider.SetHandler(this);
@@ -59,7 +59,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		m_optionsWidgets.Set(slider, option);
 	}
 	
-	protected void initOptionWidget(out CheckBoxWidget checkbox, string name, SUserConfigOption<bool> option){
+	protected void initOptionWidget(out CheckBoxWidget checkbox, string name, SUserConfigOption<bool> option) {
 		checkbox = CheckBoxWidget.Cast(m_root.FindAnyWidget( name ));
 		checkbox.SetChecked(option.get());
 		checkbox.SetHandler(this);
@@ -116,7 +116,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		return -1;
 	}	
 	
-	protected void initOptionWidget(out XComboBoxWidget combo, string name, SUserConfigOption<int> option){		
+	protected void initOptionWidget(out XComboBoxWidget combo, string name, SUserConfigOption<int> option) {		
 		combo = XComboBoxWidget.Cast(m_root.FindAnyWidget(name));
 		combo.SetCurrentItem(option.get());
 		//combo.SetHandler(this); //what?!
@@ -154,28 +154,28 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		}
 	}
 
-	void show(){
+	void show() {
 		m_root.Show(true);
 	}
 	
-	void hide(){
+	void hide() {
 		m_root.Show(false);	
 		hideInfoBox();
 	}
 	
-	void showInfoBox(){
+	void showInfoBox() {
 		m_infoBoxRoot.Show(true);
 	}
 	
-	void hideInfoBox(){
+	void hideInfoBox() {
 		m_infoBoxRoot.Show(false);	
 	}
 	
-	void showInfoBoxWarning(){
+	void showInfoBoxWarning() {
 		m_infoBoxWarning.Show(true);
 	}
 	
-	void hideInfoBoxWarning(){
+	void hideInfoBoxWarning() {
 		m_infoBoxWarning.Show(false);	
 	}
 	
@@ -186,11 +186,11 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		return true;
 	}
 	
-	protected void onConfigChange(){ //@todo lol change this shit
+	protected void onConfigChange() { //@todo lol change this shit
 		m_sUserConfig.save();
 	}
 	
-	override bool OnChange(Widget w, int x, int y, bool finished){
+	override bool OnChange(Widget w, int x, int y, bool finished) {
 		if (!w) return false;
 		
 		switch (w.Type()) {

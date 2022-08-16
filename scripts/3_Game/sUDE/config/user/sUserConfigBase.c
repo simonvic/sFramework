@@ -1,5 +1,5 @@
 
-class SUserConfigBase : SJSONSerializable{
+class SUserConfigBase : SJSONSerializable {
 	//protected float serialVersionUID = 69; //@todo use serialVersionUID instead of checking the fields
 	
 	#ifndef DEVELOPER
@@ -29,7 +29,7 @@ class SUserConfigBase : SJSONSerializable{
 	*	@brief Abstract. Serialization method to be implemented.
 	*	       It's needed because of how Enforce handles script variables
 	*	 @code
-	*	 	override string serialize(){
+	*	 	override string serialize() {
 	*	 		string result;
 	*	 		auto cfg = new MyUserConfig();
 	*	 		getSerializer().WriteToString(cfg, true, result);
@@ -92,11 +92,11 @@ class SUserConfigBase : SJSONSerializable{
 		return "m_serializer;m_options";
 	}	
 	
-	bool isValid(){
+	bool isValid() {
 		return SUserConfigValidator.isValid(getPath(), getFields());
 	}
 	
-	bool isDefaultValid(){
+	bool isDefaultValid() {
 		return SUserConfigValidator.isValid(getDefaultPath(), getFields());
 	}
 	

@@ -102,7 +102,7 @@ class SCameraOverlay : Managed {
 		vector rotation = "0.0 0.0 0.0",
 		int priority = 0,
 		array<typename> targetCameras = null,
-		bool hidesWithIngameHUD = false){
+		bool hidesWithIngameHUD = false) {
 		
 		m_image = image;
 		m_alpha = alpha;
@@ -113,7 +113,7 @@ class SCameraOverlay : Managed {
 		m_size = size;
 		m_rotation = rotation;
 		m_priority = priority;
-		if(targetCameras) m_targetCameras = targetCameras;
+		if (targetCameras) m_targetCameras = targetCameras;
 		m_hidesWithIngameHUD = hidesWithIngameHUD;
 		onInit();
 	}
@@ -125,164 +125,164 @@ class SCameraOverlay : Managed {
 	
 	///////////////////////////
 	// IMAGE
-	string getImageName(){
+	string getImageName() {
 		return m_image;
 	}
 	
-	void setImage(string image){
+	void setImage(string image) {
 		m_image = image;
-		if(m_widget) m_widget.LoadImageFile(0, image);
+		if (m_widget) m_widget.LoadImageFile(0, image);
 	}
 	
 	
 	
 	///////////////////////////
 	// ALPHA
-	float getAlpha(){
+	float getAlpha() {
 		return m_alpha;
 	}
 	
-	void setAlpha(float alpha){
+	void setAlpha(float alpha) {
 		m_alpha = alpha;
-		if(m_widget) m_widget.SetAlpha(alpha);
+		if (m_widget) m_widget.SetAlpha(alpha);
 	}
 	
 	
 	
 	///////////////////////////
 	// MASK
-	string getMask(){
+	string getMask() {
 		return m_mask;
 	}
 	
-	void setMask(string mask){
+	void setMask(string mask) {
 		m_mask = mask;
-		if(m_widget) m_widget.LoadMaskTexture(mask);
+		if (m_widget) m_widget.LoadMaskTexture(mask);
 	}
 	
-	float getMaskProgress(){
+	float getMaskProgress() {
 		return m_maskProgress;
 	}
 	
-	void setMaskProgress(float maskProgress){
+	void setMaskProgress(float maskProgress) {
 		m_maskProgress = maskProgress;
-		if(m_widget) m_widget.SetMaskProgress(maskProgress);
+		if (m_widget) m_widget.SetMaskProgress(maskProgress);
 	}
 	
-	float getMaskTransitionWidth(){
+	float getMaskTransitionWidth() {
 		return m_maskTransitionWidth;
 	}
 	
-	void setMaskTransitionWidth(float maskTransitionWidth){
+	void setMaskTransitionWidth(float maskTransitionWidth) {
 		m_maskTransitionWidth = maskTransitionWidth;
-		if(m_widget) m_widget.SetMaskTransitionWidth(maskTransitionWidth);
+		if (m_widget) m_widget.SetMaskTransitionWidth(maskTransitionWidth);
 	}
 	
 	
 	
 	///////////////////////////
 	// POSITION
-	vector getPosition(){
+	vector getPosition() {
 		return m_position;
 	}
 	
-	void setPosition(float x, float y){
+	void setPosition(float x, float y) {
 		setPosition(Vector(x, y, 0));
 	}
 	
-	void setPosition(vector position){
+	void setPosition(vector position) {
 		m_position = position;
-		if(m_widget) m_widget.SetPos(position[0], position[1]);
+		if (m_widget) m_widget.SetPos(position[0], position[1]);
 	}
 	
 	
 	
 	///////////////////////////
 	// SIZE
-	vector getSize(){
+	vector getSize() {
 		return m_size;
 	}
 	
-	void setSize(float size){
+	void setSize(float size) {
 		setSize(Vector(size, size, 0));
 	}
 	
-	void setSize(float x, float y){
+	void setSize(float x, float y) {
 		setSize(Vector(x, y, 0));
 	}
 	
-	void setSize(vector size){
+	void setSize(vector size) {
 		m_size = size;
-		if(m_widget) m_widget.SetSize(size[0], size[1]);
+		if (m_widget) m_widget.SetSize(size[0], size[1]);
 	}
 	
 	
 	
 	///////////////////////////
 	// ROTATION
-	vector getRotation(){
+	vector getRotation() {
 		return m_rotation;
 	}
 	
-	void setRotation(float yaw, float pitch, float roll){
+	void setRotation(float yaw, float pitch, float roll) {
 		setRotation(Vector(yaw, pitch, roll));
 	}
 	
-	void setRotation(vector rotation){
+	void setRotation(vector rotation) {
 		m_rotation = rotation;
-		if(m_widget) m_widget.SetRotation(rotation[1], rotation[0], rotation[2]);
+		if (m_widget) m_widget.SetRotation(rotation[1], rotation[0], rotation[2]);
 	}
 	
 	
 	
 	///////////////////////////
 	// PRIORITY
-	int getPriority(){
+	int getPriority() {
 		return m_priority;
 	}
 	
-	void setPriority(int priority){
+	void setPriority(int priority) {
 		m_priority = priority;
-		if(m_widget) m_widget.SetSort(priority);
+		if (m_widget) m_widget.SetSort(priority);
 	}
 	
 	
 	
 	///////////////////////////
 	// TARGET CAMAERAS
-	array<typename> getTargetCameras(){
+	array<typename> getTargetCameras() {
 		return m_targetCameras;
 	}
 	
-	void setTargetCameras(array<typename> targetCameras){
-		if(targetCameras) m_targetCameras = targetCameras;
+	void setTargetCameras(array<typename> targetCameras) {
+		if (targetCameras) m_targetCameras = targetCameras;
 	}
 	
 	
 	
 	///////////////////////////
 	// VISIBILITY
-	bool isVisible(){
+	bool isVisible() {
 		return m_isVisible;
 	}
 	
-	void setVisible(bool visible){
+	void setVisible(bool visible) {
 		m_isVisible = visible;
-		if(m_widget) m_widget.Show(visible);
+		if (m_widget) m_widget.Show(visible);
 	}
 	
 	
-	bool hidesWithIngameHUD(){
+	bool hidesWithIngameHUD() {
 		return m_hidesWithIngameHUD;
 	}
 	
-	void setHidesWithIngameHUD(bool hidesWithIngameHUD){
+	void setHidesWithIngameHUD(bool hidesWithIngameHUD) {
 		m_hidesWithIngameHUD = hidesWithIngameHUD;
 	}
 	
-	bool canBeShownOn(typename cameraType){
-		foreach(typename t : m_targetCameras){	
-			if(cameraType.IsInherited(t)) return true;
+	bool canBeShownOn(typename cameraType) {
+		foreach (typename t : m_targetCameras) {	
+			if (cameraType.IsInherited(t)) return true;
 		}
 		return false;
 	}
@@ -291,14 +291,14 @@ class SCameraOverlay : Managed {
 	
 	///////////////////////////
 	// WIDGET
-	ImageWidget getWidget(){
+	ImageWidget getWidget() {
 		return m_widget;
 	}
 	
-	ImageWidget buildWidget(Widget parent){
-		if(!m_widget){
+	ImageWidget buildWidget(Widget parent) {
+		if (!m_widget) {
 			m_widget = ImageWidget.Cast(GetGame().GetWorkspace().CreateWidgets(getLayout(), parent));
-		}else{
+		} else {
 			parent.AddChild(m_widget);
 		}
 		onPreBuild();
@@ -317,11 +317,11 @@ class SCameraOverlay : Managed {
 		return m_widget;
 	}
 	
-	protected string getLayout(){
+	protected string getLayout() {
 		return "MyMODS/sFramework/GUI/layouts/ingame/hud/camera_overlay.layout";
 	}
 	
-	string toString(){
+	string toString() {
 		return string.Format(
 			"image= %1 \n alpha= %2 \n mask= %3 \n maskProgress= %4 \n maskTransitionWidth= %5 \n position= %6 \n size= %7 \n rotation= %8 \n priority= %9",
 			getImageName(),
@@ -338,7 +338,7 @@ class SCameraOverlay : Managed {
 			hidesWithIngameHUD());
 	}
 	
-	void debugPrint(int depth = 0){
+	void debugPrint(int depth = 0) {
 		SLog.d(this,"",depth);
 		depth++;
 		SLog.d(getImageName(),"imageName",depth);
@@ -351,7 +351,7 @@ class SCameraOverlay : Managed {
 		SLog.d(getRotation(),"rotation",depth);
 		SLog.d(getPriority(),"priority",depth);
 		SLog.d(getTargetCameras(),"targetCameras",depth);
-		foreach(typename cam : m_targetCameras){
+		foreach (typename cam : m_targetCameras) {
 			SLog.d(cam,"",depth+1);
 		}
 		SLog.d(isVisible(),"isVisible",depth);

@@ -16,7 +16,7 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 		vector rotation = "0 0 0",
 		int priority = 0,
 		array<typename> targetCameras = null,
-		bool hidesWithIngameHUD = false){
+		bool hidesWithIngameHUD = false) {
 		
 		SCameraOverlayTimed overlay = new SCameraOverlayTimed(image, alpha, mask, maskProgress, maskTransitionWidth, position, size, rotation, priority, targetCameras, hidesWithIngameHUD);
 		overlay.setDuration(duration);
@@ -26,12 +26,12 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 		// why tf the constructors have to behave like this? :(
 	}
 	
-	override void animate(float deltaTime){
-		if( !isPlaying() ) {
+	override void animate(float deltaTime) {
+		if ( !isPlaying() ) {
 			return; 
 		}
 		
-		if(getTime() >= m_duration ) {
+		if (getTime() >= m_duration ) {
 			stop();
 			return;
 		}
@@ -42,7 +42,7 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	* @brief Set the duration of the animation
 	* 	@param duration \p float - animation duration (seconds)
 	*/
-	void setDuration(float duration){
+	void setDuration(float duration) {
 		m_duration = duration;
 	}
 		
@@ -65,7 +65,7 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	/**
 	* @brief Get if the animation should be deactivated when ends
 	*/
-	bool shouldDeactivateOnStop(){
+	bool shouldDeactivateOnStop() {
 		return m_deactivateOnStop;
 	}
 	
@@ -73,7 +73,7 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	*	@brief Set if the overlay has to be deactivated on has stopped
 	*	 @param deactivateOnStop \p bool 
 	*/
-	void setDeactivateOnStop(bool deactivateOnStop){
+	void setDeactivateOnStop(bool deactivateOnStop) {
 		m_deactivateOnStop = deactivateOnStop;
 	}
 	

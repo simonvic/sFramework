@@ -41,7 +41,7 @@ class STreeNode<Class T> : Managed {
 	}
 	
 	
-	void debugPrint(int depth = 0){
+	void debugPrint(int depth = 0) {
 		SLog.d(getData(), "", depth);
 		foreach (STreeNode<T> child : m_children) {
 			child.debugPrint(depth+1);

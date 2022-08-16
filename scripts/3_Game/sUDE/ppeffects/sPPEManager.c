@@ -46,32 +46,32 @@ class SPPEManager {
 	//				INIT
 	////////////////////////////////////////////////////////////
 	
-	void SPPEManager(){
+	void SPPEManager() {
 		
 	}
 	
-	void ~SPPEManager(){
+	void ~SPPEManager() {
 		onDestroy();
 	}
 	
-	static void onInit(){
+	static void onInit() {
 		initDOF();
 		loadMaterials();	
 		loadDefaultParams();	
 		activateInitialPPE();
 	}
 		
-	protected static void onDestroy(){
+	protected static void onDestroy() {
 		
 	}
 	
-	protected static void initDOF(){
+	protected static void initDOF() {
 		m_targetDOF.initPreset(m_DDOF);
 		m_resultDOF.initPreset(m_DDOF);
 	}
 	
 	//@todo find a way of caching material instead of getting it every time
-	protected static void loadMaterials(){
+	protected static void loadMaterials() {
 		glow = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.GLOW);
 		radialBlur = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.RADIAL_BLUR);
 		motionBlur = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.MOTION_BLUR);
@@ -80,12 +80,12 @@ class SPPEManager {
 		filmgrain = GetGame().GetWorld().GetMaterial(PPEMaterialsNames.FILM_GRAIN);
 	}
 	
-	protected static void loadDefaultParams(){
+	protected static void loadDefaultParams() {
 		m_defaultPPE.init(new PPEDefaultPreset());
 		m_resultPPE.init(new PPEDefaultPreset());
 	}
 	
-	protected static void activateInitialPPE(){
+	protected static void activateInitialPPE() {
 		//activate(m_vanillaPPE); //merged manually
 	}
 	
@@ -105,16 +105,16 @@ class SPPEManager {
 	* @brief Add a post process effect 
 	* 	@params params \p SPPEffect - Parameters to be added
 	*/
-	static void activate(SPPEffect params){
-		if(GetGame().IsServer() && GetGame().IsMultiplayer()){
+	static void activate(SPPEffect params) {
+		if (GetGame().IsServer() && GetGame().IsMultiplayer()) {
 			SLog.w("ACTIVATING " + params + " on server!","SPPEManager::activate");
 			return;
 		}
-		if(params.IsInherited(SPPEffectAnimated)){
+		if (params.IsInherited(SPPEffectAnimated)) {
 			SPPEffectAnimated ppeAp = SPPEffectAnimated.Cast(params);
 			m_animatedPPE.Insert(ppeAp); // https://www.youtube.com/watch?v=Ct6BUPvE2sM
 			ppeAp.start();
-		}else{
+		} else {
 			m_persistentPPE.Insert(params);
 		}
 		params.onActivate();
@@ -124,16 +124,16 @@ class SPPEManager {
 	* @brief Remove a post process effect 
 	* 	@params params \p SPPEffect - Parameters to be removed
 	*/
-	static void deactivate(SPPEffect params){
-		if(GetGame().IsServer() && GetGame().IsMultiplayer()){
+	static void deactivate(SPPEffect params) {
+		if (GetGame().IsServer() && GetGame().IsMultiplayer()) {
 			SLog.w("DEACTIVATING " + params + " on server!","SPPEManager::deactivate");
 			return;
 		}
-		if(params.IsInherited(SPPEffectAnimated)){
+		if (params.IsInherited(SPPEffectAnimated)) {
 			SPPEffectAnimated ppeAp = SPPEffectAnimated.Cast(params);
 			ppeAp.stop();
 			m_animatedPPE.Remove(m_animatedPPE.Find(ppeAp));
-		}else{
+		} else {
 			m_persistentPPE.Remove(m_persistentPPE.Find(params));			
 		}
 		params.onDeactivate();
@@ -144,8 +144,8 @@ class SPPEManager {
 	*	 @params params \p SPPEffect - Parameters to be toggled
 	*	 @params activate \p bool - state
 	*/
-	static void toggle(SPPEffect params, bool activate){
-		if(activate) 
+	static void toggle(SPPEffect params, bool activate) {
+		if (activate) 
 			activate(params);
 		else
 			deactivate(params);
@@ -155,17 +155,17 @@ class SPPEManager {
 	/**
 	* @brief Remove all PostProcessing effects
 	*/
-	static void deactivateAll(){
+	static void deactivateAll() {
 		deactivateAllPersitentPPE();
 		deactivateAllAnimations();		
 	}
 	
-	static void deactivateAllPersitentPPE(){
+	static void deactivateAllPersitentPPE() {
 		m_persistentPPE.Clear();
 	}
 	
-	static void deactivateAllAnimations(){
-		foreach(auto ppeAp : m_animatedPPE){
+	static void deactivateAllAnimations() {
+		foreach (auto ppeAp : m_animatedPPE) {
 			ppeAp.stop();
 		}
 		m_animatedPPE.Clear();
@@ -174,7 +174,7 @@ class SPPEManager {
 	/**
 	*	@brief Immediately apply default params
 	*/
-	static void applyDefault(){
+	static void applyDefault() {
 		applyParams(m_defaultPPE);
 	}
 	
@@ -192,7 +192,7 @@ class SPPEManager {
 	//				UPDATING PROCESS
 	////////////////////////////////////////////////////////////
 	
-	static void onUpdate(float delta_time){
+	static void onUpdate(float delta_time) {
 		m_time += delta_time;
 
 		animateParams(delta_time);
@@ -215,17 +215,17 @@ class SPPEManager {
 	/**
 	* @brief Iterate over all animated parameters and animate
 	*/
-	protected static void animateParams(float deltaTime){
+	protected static void animateParams(float deltaTime) {
 		TSPPEffectsAnimatedList toDeactivate = new TSPPEffectsAnimatedList;
-		foreach(SPPEffectAnimated ap : m_animatedPPE){
-			if(ap.isPlaying()) {
+		foreach (SPPEffectAnimated ap : m_animatedPPE) {
+			if (ap.isPlaying()) {
 				ap.animate(deltaTime);
-			}else if(ap.hasStopped() && SPPEffectTimed.Cast(ap) && SPPEffectTimed.Cast(ap).shouldDeactivateOnStop()){
+			}else if (ap.hasStopped() && SPPEffectTimed.Cast(ap) && SPPEffectTimed.Cast(ap).shouldDeactivateOnStop()) {
 				toDeactivate.Insert(ap);
 			}
 		}
 		
-		foreach(SPPEffectAnimated apToDeactivate : toDeactivate){
+		foreach (SPPEffectAnimated apToDeactivate : toDeactivate) {
 			deactivate(apToDeactivate);
 		}
 	}
@@ -233,7 +233,7 @@ class SPPEManager {
 	/**
 	*	@brief Merge the result PPEparams that will finally be applied
 	*/
-	protected static void mergeResult(){
+	protected static void mergeResult() {
 		mergeResultWithRequestedPPE();
 		mergeResultWithDefault();		
 	}
@@ -241,7 +241,7 @@ class SPPEManager {
 	/**
 	*	@brief Merge the requested PPE 
 	*/
-	protected static void mergeResultWithRequestedPPE(){
+	protected static void mergeResultWithRequestedPPE() {
 	
 		m_requestedPPE.clear();
 		
@@ -266,12 +266,12 @@ class SPPEManager {
 	*	@brief Interpolate non-requested values to default
 	*	 forgive me for this crap, I need to rush :(
 	*/
-	protected static void mergeResultWithDefault(){
+	protected static void mergeResultWithDefault() {
 		mergeResultFloatWithDefault();
 		mergeResultColorWithDefault();
 	}
 	
-	protected static void mergeResultFloatWithDefault(){
+	protected static void mergeResultFloatWithDefault() {
 		TPPEFloatParamsMap temp = m_resultPPE.getFloatParams();
 		foreach (auto ppeMaterial, auto ppeFloatParams : temp) {
 			foreach (auto ppeParamName, auto ppeParamValue : ppeFloatParams) {
@@ -288,7 +288,7 @@ class SPPEManager {
 		}
 	}
 	
-	protected static void mergeResultColorWithDefault(){
+	protected static void mergeResultColorWithDefault() {
 		TPPEColorParamsMap temp = m_resultPPE.getColorParams();
 		foreach (auto ppeMaterial, auto ppeColorParams : temp) {
 			foreach (auto ppeParamName, auto ppeParamValue : ppeColorParams) {
@@ -310,7 +310,7 @@ class SPPEManager {
 	* @brief Iterate and apply the effect
 	* 	@params params \p SPPEffect - Effect to be applied
 	*/
-	protected static void applyParams(SPPEffect ppe){
+	protected static void applyParams(SPPEffect ppe) {
 		applyFloatParams(ppe);
 		applyColorParams(ppe);
 		ppe.onApply();
@@ -320,10 +320,10 @@ class SPPEManager {
 	/**
 	* @brief Iterate over all (float) parameters for each material and apply them	
 	*/
-	protected static void applyFloatParams(SPPEffect params){
+	protected static void applyFloatParams(SPPEffect params) {
 		TPPEFloatParamsMap ppeParams = params.getFloatParams();
-		foreach(auto ppeMaterial, auto ppeParam : ppeParams){
-			foreach(auto ppeParamName, auto ppeParamValue : ppeParam){
+		foreach (auto ppeMaterial, auto ppeParam : ppeParams) {
+			foreach (auto ppeParamName, auto ppeParamValue : ppeParam) {
 				applyPPEParamTo(ppeParamName, ppeParamValue, ppeMaterial);
 			}
 		}
@@ -333,10 +333,10 @@ class SPPEManager {
 	/**
 	* @brief Iterate over all (TPPEColor) parameters for each material and apply them
 	*/
-	protected static void applyColorParams(SPPEffect ppe){
+	protected static void applyColorParams(SPPEffect ppe) {
 		TPPEColorParamsMap ppeParams = ppe.getColorParams();
-		foreach(auto ppeMaterial, auto ppeParam : ppeParams){
-			foreach(auto ppeParamName, auto ppeParamValue : ppeParam){
+		foreach (auto ppeMaterial, auto ppeParam : ppeParams) {
+			foreach (auto ppeParamName, auto ppeParamValue : ppeParam) {
 				applyPPEParamTo(ppeParamName, ppeParamValue, ppeMaterial);
 			}
 		}	
@@ -349,7 +349,7 @@ class SPPEManager {
 	* 	@param mat \p TPPEMaterial - Material to apply parameter to
 	* 	@return \p bool - return true if parameter has been applied succesfully, false otherwise
 	*/
-	protected static bool applyPPEParamTo(TPPEParamName paramName, float paramValue, TPPEMaterial mat){
+	protected static bool applyPPEParamTo(TPPEParamName paramName, float paramValue, TPPEMaterial mat) {
 		return GetGame().GetWorld().GetMaterial(mat).SetParam(paramName,paramValue);
 	}
 	
@@ -361,7 +361,7 @@ class SPPEManager {
 	* 	@param mat \p TPPEMaterial - Material to apply parameter to
 	* 	@return \p bool - return true if parameter has been applied succesfully, false otherwise
 	*/
-	protected static bool applyPPEParamTo(TPPEParamName paramName, TPPEColor paramValue, TPPEMaterial mat){
+	protected static bool applyPPEParamTo(TPPEParamName paramName, TPPEColor paramValue, TPPEMaterial mat) {
 		float color[4];
 		color[0] = paramValue[0];
 		color[1] = paramValue[1];
@@ -377,7 +377,7 @@ class SPPEManager {
 	* 	@param ppeParamName \p TPPEParamName - Name of parameter
 	* 	@return \p float - default parameter value
 	*/
-	static float getFloatDefaultValue(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName){
+	static float getFloatDefaultValue(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName) {
 		return m_defaultPPE.getFloatParam(ppeMaterial, ppeParamName);
 	}
 	
@@ -387,7 +387,7 @@ class SPPEManager {
 	* 	@param ppeParamName \p TPPEParamName - Name of parameter
 	* 	@return \p TPPEColor - default parameter value
 	*/
-	static TPPEColor getColorDefaultValue(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName){
+	static TPPEColor getColorDefaultValue(TPPEMaterial ppeMaterial, TPPEParamName ppeParamName) {
 		return m_defaultPPE.getColorParam(ppeMaterial, ppeParamName);
 	}
 	
@@ -406,7 +406,7 @@ class SPPEManager {
 	* 	@param A \p float - Alpha
 	* 	@return \p TPPEColor - return converted TPPEColor
 	*/
-	static TPPEColor getPPEColor(float R, float G, float B, float A){
+	static TPPEColor getPPEColor(float R, float G, float B, float A) {
 		return {R, G, B, A};
 	}
 	
@@ -415,7 +415,7 @@ class SPPEManager {
 	* 	@param color \p SColor 
 	* 	@return \p TPPEColor - return converted TPPEColor
 	*/
-	static TPPEColor getPPEColor(SColor color){
+	static TPPEColor getPPEColor(SColor color) {
 		return getPPEColor(
 			SMath.mapTo(color.getRed(), 0, 255),
 			SMath.mapTo(color.getGreen(), 0, 255),
@@ -429,8 +429,8 @@ class SPPEManager {
 	* 	@param color2 \p TPPEColor - Second color
 	* 	@return \p TPPEColor - return mixed TPPEColor
 	*/
-	static TPPEColor mixColors(TPPEColor color1, TPPEColor color2, float coeff = 0.5){
-		if(!color1 || !color2) return null;
+	static TPPEColor mixColors(TPPEColor color1, TPPEColor color2, float coeff = 0.5) {
+		if (!color1 || !color2) return null;
 		
 		TPPEColor result = new TPPEColor;
 		result.InsertAt(Math.Lerp(color1[0], color2[0], coeff), 0); //Red
@@ -445,11 +445,11 @@ class SPPEManager {
 	////////////////////////////////////////////////////////////
 	//				DEBUG
 	////////////////////////////////////////////////////////////
-	static TSPPEffectsAnimatedList getAnimations(){
+	static TSPPEffectsAnimatedList getAnimations() {
 		return m_animatedPPE;
 	}
 	
-	static void debugPrintAll(bool printParamsValues = false){
+	static void debugPrintAll(bool printParamsValues = false) {
 		SLog.d("debugPrintAll","PluginPPEffect",0);
 		
 		SLog.d("======================================================", "",0);
@@ -457,7 +457,7 @@ class SPPEManager {
 		m_defaultPPE.debugPrint();
 				
 		SLog.d("-------------------- m_persistentPPE --------------------", "",0);
-		foreach(SPPEffect p : m_persistentPPE){
+		foreach (SPPEffect p : m_persistentPPE) {
 			if (printParamsValues) 
 				p.debugPrint();
 			else
@@ -465,7 +465,7 @@ class SPPEManager {
 		}
 		
 		SLog.d("-------------------- m_animatedPPE --------------------", "",0);
-		foreach(SPPEffect ap : m_animatedPPE){
+		foreach (SPPEffect ap : m_animatedPPE) {
 			if (printParamsValues)
 				ap.debugPrint();
 			else
@@ -505,43 +505,43 @@ class SPPEManager {
 	*	Methods used by vanilla code... Planned to be removed when vanilla code is replaced
 	*/
 	
-	static void vanillaSetRadialBlur(float powerX, float powerY, float offsetX, float offsetY ){
+	static void vanillaSetRadialBlur(float powerX, float powerY, float offsetX, float offsetY ) {
 		m_vanillaPPE.setRadialBlur(powerX, powerY, offsetX, offsetY);
 	}
 
-	static void vanillaSetGausBlur(float value){
+	static void vanillaSetGausBlur(float value) {
 		m_vanillaPPE.setGausBlur(value);
 	}
 	
-	static void vanillaSetLensChromAber(float value){
+	static void vanillaSetLensChromAber(float value) {
 		m_vanillaPPE.setLensChromAber(value);
 	}
 	
-	static void vanillaSetOverlay(float factor, TPPEColor color){
+	static void vanillaSetOverlay(float factor, TPPEColor color) {
 		m_vanillaPPE.setOverlay(factor, color);
 	}
 	
-	static void vanillaSetLens(float intensity, float centerX, float centerY, float chromAberIntensity){
+	static void vanillaSetLens(float intensity, float centerX, float centerY, float chromAberIntensity) {
 		m_vanillaPPE.setLens(intensity, centerX, centerY, chromAberIntensity);
 	}
 	
-	static void vanillaSetVignette(float intensity, TPPEColor color){
+	static void vanillaSetVignette(float intensity, TPPEColor color) {
 		m_vanillaPPE.setVignette(intensity, color);
 	}
 	
-	static void vanillaSetSaturation(float saturation){
+	static void vanillaSetSaturation(float saturation) {
 		m_vanillaPPE.setSaturation(saturation);
 	}
 	
-	static void vanillaSetColorization(TPPEColor color){
+	static void vanillaSetColorization(TPPEColor color) {
 		m_vanillaPPE.setColorization(color);
 	}
 	
-	static void vanillaSetFilmGrain(float sharpness, float grainSize){
+	static void vanillaSetFilmGrain(float sharpness, float grainSize) {
 		m_vanillaPPE.setFilmGrain(sharpness, grainSize);
 	}
 	
-	static void vanillaSetBloom(float steepness, float intensity, float threshold){
+	static void vanillaSetBloom(float steepness, float intensity, float threshold) {
 		m_vanillaPPE.setBloom(steepness, intensity, threshold);
 	}
 	
@@ -549,7 +549,7 @@ class SPPEManager {
 		applyDOF(enable, focusDistance, focusLength, focusLengthNear, blur, focusDepthOffset);
 	}
 	
-	static void vanillaResetDOFOverride(){
+	static void vanillaResetDOFOverride() {
 		resetDOF();
 	}
 	
@@ -566,40 +566,40 @@ class SPPEManager {
 	//				DEPTH of FIELD
 	////////////////////////////////////////////////////////////
 	
-	static float getDDOFStrength(){
+	static float getDDOFStrength() {
 		return m_DDOF.blurStrength;
 	}
 	
-	static float getDDOFMaxDistance(){
+	static float getDDOFMaxDistance() {
 		return m_DDOF.focusMaxDistance;
 	}
 	
-	static float getDDOFMinDistance(){
+	static float getDDOFMinDistance() {
 		return m_DDOF.focusMinDistance;
 	}
 		
-	static void setDDOFBlurStrength(float blurStrength){
-		if(blurStrength <= 0){
+	static void setDDOFBlurStrength(float blurStrength) {
+		if (blurStrength <= 0) {
 			m_DDOF.blurStrength = 0;
 			SPPEManager.resetDDOF(true);
-		}else{
+		} else {
 			m_DDOF.blurStrength = blurStrength;
 		}
 	}
 		
-	static void enableDDOF(){
+	static void enableDDOF() {
 		m_DDOF_Enabled = true;
 	}
 	
-	static void disableDDOF(){
+	static void disableDDOF() {
 		m_DDOF_Enabled = false;
 	}
 	
-	static bool isDDOFEnabled(){
+	static bool isDDOFEnabled() {
 		return m_DDOF_Enabled && m_DDOF.blurStrength != 0;
 	}
 	
-	static void setDDOFEnabledIn3PP(bool enabled){
+	static void setDDOFEnabledIn3PP(bool enabled) {
 		if (enabled) {
 			enableDDOF();
 		} else {
@@ -608,7 +608,7 @@ class SPPEManager {
 		}
 	}
 	
-	static void setDDOFEnabledInVehicle(bool enabled){
+	static void setDDOFEnabledInVehicle(bool enabled) {
 		if (enabled) {
 			enableDDOF();
 		} else {
@@ -621,7 +621,7 @@ class SPPEManager {
 	*	@brief Reset Dynamic Depth of Field
 	*	 @param immediate \p bool - immediately reset the DoF
 	*/
-	static void resetDDOF(bool immediate = false){
+	static void resetDDOF(bool immediate = false) {
 		if (immediate) {
 			resetDOF();
 		} else {
@@ -633,11 +633,11 @@ class SPPEManager {
 	/**
 	*	@brief Reset Depth of Field
 	*/
-	protected static void resetDOF(){
+	protected static void resetDOF() {
 		applyDOF(false, 0, 0, 0, 0, 1);
 	}
 	
-	static void requestDDOF(float focusDistance){
+	static void requestDDOF(float focusDistance) {
 		m_DDOF.focusDistance = focusDistance;
 		m_targetDOF.focusDistance = focusDistance;
 		m_targetDOF.blurStrength = m_DDOF.blurStrength;
@@ -645,19 +645,19 @@ class SPPEManager {
 	}
 	
 	
-	static void requestWeaponDOF(DoFPreset dof){
+	static void requestWeaponDOF(DoFPreset dof) {
 		applyDOF(dof);
 	}
 	
-	static void resetWeaponDOF(){
+	static void resetWeaponDOF() {
 		resetDOF();
 	}
 	
-	protected static void applyDOF(DoFPreset dof){
+	protected static void applyDOF(DoFPreset dof) {
 		applyDOF(true, Math.Clamp(dof.focusDistance, dof.focusMinDistance, dof.focusMaxDistance), dof.focusLength, dof.focusLengthNear, dof.blurStrength, dof.focusDepthOffset);
 	}
 	
-	protected static void applyDOF(bool enabled, float focusDistance, float focusLength, float focusLengthNear, float blurStrength, float focusDepthOffset){
+	protected static void applyDOF(bool enabled, float focusDistance, float focusLength, float focusLengthNear, float blurStrength, float focusDepthOffset) {
 		GetGame().OverrideDOF(enabled, focusDistance, focusLength, focusLengthNear, blurStrength, focusDepthOffset);
 	}
 	
@@ -670,19 +670,19 @@ class SPPEManager {
 	//				MOTION BLUR
 	////////////////////////////////////////////////////////////
 	
-	static bool isMotionBlurEnabled(){
+	static bool isMotionBlurEnabled() {
 		return m_MotionBlur_Enabled;
 	}
 	
-	static float getMotionBlurStrength(){
+	static float getMotionBlurStrength() {
 		return m_defaultPPE.getFloatParam(PPEMaterialsNames.MOTION_BLUR, PPEParamNames.MOTION_BLUR_POWER);
 	}
 	
-	static void setMotionBlurStrength(float strength){
-		if(strength <= 0){
+	static void setMotionBlurStrength(float strength) {
+		if (strength <= 0) {
 			m_MotionBlur_Enabled = false;
 			m_defaultPPE.setMotionBlurPower(0.0);
-		}else{
+		} else {
 			m_MotionBlur_Enabled = true;
 			m_defaultPPE.setMotionBlurPower(strength);
 		}
@@ -693,19 +693,19 @@ class SPPEManager {
 	//				BLOOM
 	////////////////////////////////////////////////////////////
 	
-	static bool isBloomEnabled(){
+	static bool isBloomEnabled() {
 		return m_Bloom_Enabled;
 	}
 	
-	static float getBloomStrength(){
+	static float getBloomStrength() {
 		return m_defaultPPE.getFloatParam(PPEMaterialsNames.GLOW, PPEParamNames.BLOOM_STEEPNESS);
 	}
 	
-	static void setBloomStrength(float strength){
-		if(strength <= 0){
+	static void setBloomStrength(float strength) {
+		if (strength <= 0) {
 			m_Bloom_Enabled = false;
 			m_defaultPPE.setBloomSteepness(0.0);
-		}else{
+		} else {
 			m_Bloom_Enabled = true;
 			m_defaultPPE.setBloomSteepness(strength);
 		}
@@ -716,30 +716,30 @@ class SPPEManager {
 	//				OPTICS (LENSES AND MASKS)
 	////////////////////////////////////////////////////////////
 
-	static void requestOpticMask(TFloatArray mask){
+	static void requestOpticMask(TFloatArray mask) {
 		requestOpticMask(mask[0],mask[1],mask[2],mask[3]);
 	}
 	
-	static void requestOpticMask(float positionX, float positionY, float radius, float blur){
+	static void requestOpticMask(float positionX, float positionY, float radius, float blur) {
 		resetMask();
 		GetGame().AddPPMask(positionX, positionY, radius, blur);
 	}
 		
-	static void resetMask(){
+	static void resetMask() {
 		GetGame().ResetPPMask();
 	}
 	
-	static void requestOpticLens(TFloatArray lens){
+	static void requestOpticLens(TFloatArray lens) {
 		requestOpticLens(lens[0],lens[1],lens[2],lens[3]);
 	}
 	
-	static void requestOpticLens(float intensity, float centerX, float centerY, float chromAberIntensity){
+	static void requestOpticLens(float intensity, float centerX, float centerY, float chromAberIntensity) {
 		m_vanillaPPE.setLens(intensity, centerX, centerY, chromAberIntensity);
 		m_defaultPPE.setLens(intensity, centerX, centerY, chromAberIntensity);
 		m_resultPPE.setLens(intensity, centerX, centerY, chromAberIntensity);
 	}
 	
-	static void resetOpticLens(){
+	static void resetOpticLens() {
 		m_vanillaPPE.setLens(0, 0, 0, 0);
 		m_defaultPPE.setLens(0, 0, 0, 0);
 		m_resultPPE.setLens(0, 0, 0, 0);

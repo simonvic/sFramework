@@ -6,7 +6,7 @@ class SSpawnable {
 	protected ref TSSpawnableAttachments attachments = new TSSpawnableAttachments;
 	protected EntityAI entity = null;
 	
-	void SSpawnable(string itemName){
+	void SSpawnable(string itemName) {
 		name = itemName;
 	}
 	
@@ -14,7 +14,7 @@ class SSpawnable {
 	*	@brief Get an instance of a SSpawnable
 	*	 @return new instance
 	*/
-	static SSpawnable build(string itemName){
+	static SSpawnable build(string itemName) {
 		return new SSpawnable(itemName);
 	}
 	
@@ -28,8 +28,8 @@ class SSpawnable {
 	*	 		"M4_RISHndgrd"
 	*	 	})
 	*/
-	SSpawnable withAttachments(array<string> attachmentsName){
- 		foreach(string attachmentName : attachmentsName){
+	SSpawnable withAttachments(array<string> attachmentsName) {
+ 		foreach (string attachmentName : attachmentsName) {
 			withAttachment(attachmentName);
 		}
 		return this;
@@ -41,7 +41,7 @@ class SSpawnable {
 	*	 @code 
 	*	 	SSpawnable.build("M4A1").withAttachments("M4_Suppressor");
 	*/
-	SSpawnable withAttachment(string attachmentName){
+	SSpawnable withAttachment(string attachmentName) {
 		attachments.Insert(new SSpawnable(attachmentName));
 		return this;
 	}	
@@ -50,8 +50,8 @@ class SSpawnable {
 	*	@brief Add SSpawnable attachments
 	*	 @param newAttachments \p TSSpawnableAttachments - List of SSpawnable attachments
 	*/
-	SSpawnable withSpawnableAttachments(TSSpawnableAttachments newAttachments){
-		foreach(SSpawnable attachment : newAttachments){
+	SSpawnable withSpawnableAttachments(TSSpawnableAttachments newAttachments) {
+		foreach (SSpawnable attachment : newAttachments) {
 			withSpawnableAttachment(attachment);
 		}
 		return this;
@@ -69,7 +69,7 @@ class SSpawnable {
 	*	 		(new SSpawnable("ReflexOptic")).withAttachment("Battery9V"),
 	*	 		(new SSpawnable("UniversalLight")).withAttachment("Battery9V")));
 	*/
-	SSpawnable withSpawnableAttachments(SSpawnable a0, SSpawnable a1 = null, SSpawnable a2 = null, SSpawnable a3 = null, SSpawnable a4 = null, SSpawnable a5 = null, SSpawnable a6 = null, SSpawnable a7 = null, SSpawnable a8 = null, SSpawnable a9 = null){
+	SSpawnable withSpawnableAttachments(SSpawnable a0, SSpawnable a1 = null, SSpawnable a2 = null, SSpawnable a3 = null, SSpawnable a4 = null, SSpawnable a5 = null, SSpawnable a6 = null, SSpawnable a7 = null, SSpawnable a8 = null, SSpawnable a9 = null) {
 		withSpawnableAttachment(a0);
 		withSpawnableAttachment(a1);
 		withSpawnableAttachment(a2);
@@ -87,8 +87,8 @@ class SSpawnable {
 	*	@brief Add SSpawnable attachment
 	*	 @param newAttachment \p SSpawnable - SSpawnable attachment
 	*/
-	SSpawnable withSpawnableAttachment(SSpawnable newAttachment){
-		if(newAttachment != null) attachments.Insert(newAttachment);
+	SSpawnable withSpawnableAttachment(SSpawnable newAttachment) {
+		if (newAttachment != null) attachments.Insert(newAttachment);
 		return this;
 	}
 	
@@ -96,9 +96,9 @@ class SSpawnable {
 	*	@brief Spawn the SSpawnable at the given world coordinates
 	*	 @param worldPosition \p vector - World Position coordinates
 	*/
-	SSpawnable spawn(vector worldPosition){
+	SSpawnable spawn(vector worldPosition) {
 		entity = SSpawner.spawn(name, worldPosition);
-		foreach(SSpawnable attachment : attachments){
+		foreach (SSpawnable attachment : attachments) {
 			attachment.spawn(entity.GetInventory());
 		}
 		return this;
@@ -108,9 +108,9 @@ class SSpawnable {
 	*	@brief Spawn the SSpawnable in the given inventory
 	*	 @param inventory \p GameInventory - Inventory to spawn the spawnables in
 	*/
-	SSpawnable spawn(GameInventory inventory){
+	SSpawnable spawn(GameInventory inventory) {
 		entity = SSpawner.spawn(name, inventory);
-		foreach(SSpawnable attachment : attachments){
+		foreach (SSpawnable attachment : attachments) {
 			attachment.spawn(entity.GetInventory());
 		}
 		return this;
@@ -120,7 +120,7 @@ class SSpawnable {
 	*	@brief Collect the spawned entity
 	*	 @return EntityAI - spawned entity (null, if not spawned)
 	*/
-	EntityAI collect(){
+	EntityAI collect() {
 		return entity;
 	}
 	
@@ -128,41 +128,41 @@ class SSpawnable {
 	*	@brief Collect the spawned entity
 	*	 @param EntityAI [out] - spawned entity (null, if not spawned)
 	*/
-	SSpawnable collect(EntityAI outEntity){
+	SSpawnable collect(EntityAI outEntity) {
 		outEntity = entity;
 		return this;
 	}
 	
-	string getName(){
+	string getName() {
 		return name;
 	}
 	
-	TSSpawnableAttachments getAttachments(){
+	TSSpawnableAttachments getAttachments() {
 		return attachments;
 	}
 	
-	string toString(){
+	string toString() {
 		return string.Format("%1 = { name=%2 | attachments=%3 | entity=%4}",
 			this, getName(), attachmentsToString(), entity);
 	}
 	
-	private string attachmentsToString(){
+	private string attachmentsToString() {
 		string output = "[";
 		
-		foreach(SSpawnable a : attachments){
+		foreach (SSpawnable a : attachments) {
 			output += a.toString() + " , \n";
 		}
 		
 		return output + "]";
 	}
 	
-	void debugPrint(int level = 0){
+	void debugPrint(int level = 0) {
 		SLog.d(this, getName(), level);
 		debugPrintAttachments(level + 2);		
 	}
 	
-	void debugPrintAttachments(int level = 2){
-		foreach(SSpawnable a : attachments){
+	void debugPrintAttachments(int level = 2) {
+		foreach (SSpawnable a : attachments) {
 			a.debugPrint(level);
 		}
 	}
@@ -189,7 +189,7 @@ class SSpawnableBundle : Managed {
 	
 }
 
-class SSpawner{
+class SSpawner {
 	
 	/**
 	*	@brief Spawn the item in the world
@@ -197,7 +197,7 @@ class SSpawner{
 	*	 @param worldPosition \p vector - World Position coordinates
 	*	 @return object created (null if not created)
 	*/
-	static EntityAI spawn(string itemName, vector worldPosition){
+	static EntityAI spawn(string itemName, vector worldPosition) {
 		return EntityAI.Cast(GetGame().CreateObject(itemName, worldPosition));
 	}
 	
@@ -207,7 +207,7 @@ class SSpawner{
 	*	 @param inventory \p GameInvenory - inventory to spawn the object in
 	*	 @return object created (null if not created)
 	*/
-	static EntityAI spawn(string itemName, GameInventory inventory){
+	static EntityAI spawn(string itemName, GameInventory inventory) {
 		return inventory.CreateInInventory(itemName));
 	}
 

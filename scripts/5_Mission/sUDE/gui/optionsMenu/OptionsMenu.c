@@ -2,7 +2,7 @@ modded class OptionsMenu {
 	
 	protected ref OptionsMenuSUDE m_sUDETab;
 	
-	override Widget Init(){
+	override Widget Init() {
 		//super
 		Widget temp = super.Init();
 		
@@ -17,7 +17,7 @@ modded class OptionsMenu {
 	}
 	
 	
-	OptionsMenuSUDE getSUDEMenu(){
+	OptionsMenuSUDE getSUDEMenu() {
 		return m_sUDETab;
 	}
 	

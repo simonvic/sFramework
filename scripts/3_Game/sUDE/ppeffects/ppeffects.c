@@ -2,7 +2,7 @@ class PPEDefaultPreset : SPPEffect {}
 
 
 class PPEDebugAnimation : SPPEffectAnimated {	
-	override void onAnimate(float deltaTime){
+	override void onAnimate(float deltaTime) {
 		clear();
 		setGodraysIntensity(0.0);
 		//setOverlay(Math.Cos(getTime() * 2), SPPEManager.getPPEColor(Math.AbsFloat(Math.Sin(getTime())),0,0,0));

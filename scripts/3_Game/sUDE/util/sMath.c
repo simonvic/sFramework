@@ -2,7 +2,7 @@ class SMath {
 	
 	static const float e = 2.7182818284;
 	
-	static float Exp(float x){
+	static float Exp(float x) {
 		return Math.Pow(e,x);
 	}
 	
@@ -14,7 +14,7 @@ class SMath {
 	* 	@param x \p float Input value
 	* 	@return \p float - position on curve
 	*/
-	static float Gauss(float height, float center, float width, float x){
+	static float Gauss(float height, float center, float width, float x) {
 		return height * Exp((- Math.Pow(x - center,2)) / 2 * Math.Pow(width,2));
 	}
 	
@@ -25,7 +25,7 @@ class SMath {
 	* 	@param x \p float Input value
 	* 	@return \p float - position on curve
 	*/
-	static float GaussPDF(float center, float width, float x){
+	static float GaussPDF(float center, float width, float x) {
 		return ( 1 / width * Math.Sqrt(2 * Math.PI) ) * Exp((- Math.Pow(x - center,2)) / 2 * Math.Pow(width,2));
 	}
 	
@@ -39,7 +39,7 @@ class SMath {
 	* 	@param x \p float Input value
 	* 	@return \p float - position on curve
 	*/
-	static float DampedSin(float amplitude, float decay, float phase, float frequency, float target, float x){
+	static float DampedSin(float amplitude, float decay, float phase, float frequency, float target, float x) {
 		return amplitude * Exp(- decay * x) * (Math.Cos(frequency * x + phase)) + target;
 	}
 	
@@ -52,7 +52,7 @@ class SMath {
 	* 	@param x \p float Input value
 	* 	@return \p float - position on curve
 	*/
-	static float Arctan(float amplitude, float sharpness, float horizontalOffset, float verticalOffset, float x){
+	static float Arctan(float amplitude, float sharpness, float horizontalOffset, float verticalOffset, float x) {
 		return amplitude * Math.Atan(x * sharpness + horizontalOffset) + verticalOffset;
 	}
 	
@@ -63,7 +63,7 @@ class SMath {
 	* 	@param y \p float Epsilon value (tolerance)
 	* 	@return \p bool - if are equals
 	*/
-	static bool equal(float x, float y, float epsilon = 1e-32){
+	static bool equal(float x, float y, float epsilon = 1e-32) {
 		return Math.AbsFloat(x - y) < epsilon;		
 	}
 	
@@ -74,7 +74,7 @@ class SMath {
 	* 	@param y \p float Epsilon value (tolerance)
 	* 	@return \p bool - if are equals
 	*/
-	static bool equal(array<float> x, array<float> y, float epsilon = 1e-32){
+	static bool equal(array<float> x, array<float> y, float epsilon = 1e-32) {
 		if (!x || !y) return false;
 		
 		int xCount = x.Count();
@@ -98,7 +98,7 @@ class SMath {
 	* 	@param max \p float - Value maximum range
 	* 	@return \p float - normalized value
 	*/
-	static float normalize(float value, float min, float max){
+	static float normalize(float value, float min, float max) {
 		return (value - min) / (max - min);
 	}
 	
@@ -109,7 +109,7 @@ class SMath {
 	* 	@param max \p float - Value maximum range
 	* 	@return \p float - normalized value
 	*/
-	static float normalizeClamp(float value, float min, float max){
+	static float normalizeClamp(float value, float min, float max) {
 		return Math.Clamp(SMath.normalize(value, min, max), 0, 1);
 	}
 	
@@ -122,7 +122,7 @@ class SMath {
 	* 	@param mappedMax \p float - Mapped value maximum range
 	* 	@return \p float - mapped value
 	*/
-	static float mapTo(float value, float min, float max, float mappedMin = 0, float mappedMax = 1){
+	static float mapTo(float value, float min, float max, float mappedMin = 0, float mappedMax = 1) {
 		return ((value - min) / (max - min)) * (mappedMax - mappedMin) + mappedMin;
 	}
 	
@@ -132,7 +132,7 @@ class SMath {
 	*	 @param digits \p int - number of desired deciaml digits (min 1, max 6)
 	*	 @return float - value with reduced precision
 	*/
-	static float reducePrecision(float value, int digits){
+	static float reducePrecision(float value, int digits) {
 		digits = Math.Clamp(digits, 1, 6);
 		digits = Math.Pow(10, digits);
 		return (float)((int) (value * digits)) / digits;

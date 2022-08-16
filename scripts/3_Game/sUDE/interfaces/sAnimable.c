@@ -15,22 +15,22 @@ enum eSAnimableState {
 *			void drive();
 *		}
 *		class Car : Driveable<Vehicle> { //Car extends Vehicles implements Driveable
-*			void drive(){Print("brum brum");}
+*			void drive() {Print("brum brum");}
 *		}
 */
 class SAnimable<Class T> {
 	protected ref T m_super;
-	T getSuper(){
+	T getSuper() {
 		return m_super;
 	}
-	void setSuper(T zuper){
+	void setSuper(T zuper) {
 		m_super = zuper;
 	}
 	
 	protected eSAnimableState m_animationState = eSAnimableState.STOPPED;
 	protected float m_time;
 	
-	void SAnimable(){
+	void SAnimable() {
 		onInit();
 	}
 	
@@ -41,8 +41,8 @@ class SAnimable<Class T> {
 	void onPause();
 	void onResume();
 	
-	void animate(float deltaTime){
-		if(!isPlaying()) return;
+	void animate(float deltaTime) {
+		if (!isPlaying()) return;
 		
 		m_time += deltaTime;
 		onAnimate(deltaTime);
@@ -51,7 +51,7 @@ class SAnimable<Class T> {
 	/**
 	* @brief Set the animation state to PLAYING and reset the time
 	*/
-	void start(){
+	void start() {
 		m_time = 0;
 		setAnimationState(eSAnimableState.PLAYING);
 		onStart();
@@ -60,7 +60,7 @@ class SAnimable<Class T> {
 	/**
 	* @brief Reset values to default and prepare to stop
 	*/
-	void stop(){
+	void stop() {
 		setAnimationState(eSAnimableState.STOPPED);
 		onStop();
 	}
@@ -68,7 +68,7 @@ class SAnimable<Class T> {
 	/**
 	* @brief Pause the animation from animating without resetting the time
 	*/
-	void pause(){
+	void pause() {
 		setAnimationState(eSAnimableState.PAUSED);
 		onPause();
 	}
@@ -76,7 +76,7 @@ class SAnimable<Class T> {
 	/**
 	* @brief Resume the animation
 	*/
-	void resume(){
+	void resume() {
 		setAnimationState(eSAnimableState.PLAYING);
 		onResume();
 	}
@@ -85,27 +85,27 @@ class SAnimable<Class T> {
 	* @brief Get the time elapsed from the animation start
 	* 	@return \p float - time elapsed
 	*/
-	float getTime(){
+	float getTime() {
 		return m_time;
 	}
 	
-	bool isPlaying(){
+	bool isPlaying() {
 		return m_animationState == eSAnimableState.PLAYING;
 	}
 	
-	bool isPaused(){
+	bool isPaused() {
 		return m_animationState == eSAnimableState.PAUSED;
 	}
 	
-	bool hasStopped(){
+	bool hasStopped() {
 		return m_animationState == eSAnimableState.STOPPED;
 	}
 	
-	eSAnimableState getAnimationState(){
+	eSAnimableState getAnimationState() {
 		return m_animationState;
 	}
 	
-	protected void setAnimationState(eSAnimableState state){
+	protected void setAnimationState(eSAnimableState state) {
 		m_animationState = state;
 	}
 }
@@ -115,16 +115,16 @@ class SAnimableTimed<Class T> : SAnimable<Class> {
 	
 	protected float m_duration;
 	
-	void SAnimableTimed(float duration){
+	void SAnimableTimed(float duration) {
 		m_duration = duration;
 	}
 
-	override void animate(float deltaTime){
-		if( !isPlaying() ) {
+	override void animate(float deltaTime) {
+		if ( !isPlaying() ) {
 			return; 
 		}
 		
-		if(getTime() >= m_duration ) {
+		if (getTime() >= m_duration ) {
 			stop();
 			return;
 		}
@@ -135,7 +135,7 @@ class SAnimableTimed<Class T> : SAnimable<Class> {
 	* @brief Set the duration of the animation
 	* 	@param duration \p float - animation duration (seconds)
 	*
-	void setDuration(float duration){
+	void setDuration(float duration) {
 		m_duration = duration;
 	}
 		

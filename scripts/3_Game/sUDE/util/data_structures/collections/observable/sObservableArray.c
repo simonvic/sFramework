@@ -180,8 +180,8 @@ class SObservableArray<Class T> : Managed {
 	void invert() {
 		int left = 0;
 		int right = m_list.Count() - 1;
-		if( right > 1 ) {
-			while( left < right ) {
+		if ( right > 1 ) {
+			while ( left < right ) {
 				T temp = m_list.Get(left);
 				this.set(left++, m_list.Get(right));
 				this.set(right--, temp);

@@ -18,7 +18,7 @@ class SRaycast {
 		
 	protected bool m_hasHit;
 	
-	void SRaycast(vector from, vector to, float radius = 0.1, int intersectionType = ObjIntersectView, CollisionFlags collisionFlags = CollisionFlags.NEARESTCONTACT, bool sorted = false, bool groundOnly = false){
+	void SRaycast(vector from, vector to, float radius = 0.1, int intersectionType = ObjIntersectView, CollisionFlags collisionFlags = CollisionFlags.NEARESTCONTACT, bool sorted = false, bool groundOnly = false) {
 		m_startPos = from;
 		m_endPos = to;
 		m_radius = radius;
@@ -39,7 +39,7 @@ class SRaycast {
 	*	 @param sorted \p bool - used only if groundOnly = false
 	*	 @param groundOnly \p bool - raycasts only ground (ignores all objects)
 	*/
-	SRaycast init(vector from, vector to, float radius, int intersectionType = ObjIntersectView, CollisionFlags collisionFlags = CollisionFlags.NEARESTCONTACT, bool sorted = false, bool groundOnly = false){
+	SRaycast init(vector from, vector to, float radius, int intersectionType = ObjIntersectView, CollisionFlags collisionFlags = CollisionFlags.NEARESTCONTACT, bool sorted = false, bool groundOnly = false) {
 		m_startPos = from;
 		m_endPos = to;
 		m_radius = radius;
@@ -56,7 +56,7 @@ class SRaycast {
 	*	 @param from \p vector - starting position
 	*	 @param end \p vector - ending position	
 	*/
-	SRaycast init(vector from, vector to){
+	SRaycast init(vector from, vector to) {
 		m_startPos = from;
 		m_endPos = to;
 		return this;
@@ -66,7 +66,7 @@ class SRaycast {
 	*	@brief Quickly set starting position
 	*	 @param from \p vector - starting position
 	*/
-	SRaycast from(vector from){
+	SRaycast from(vector from) {
 		m_startPos = from;
 		return this;
 	}
@@ -75,7 +75,7 @@ class SRaycast {
 	*	@brief Quickly set ending position
 	*	 @param to \p vector - ending position
 	*/
-	SRaycast to(vector to){
+	SRaycast to(vector to) {
 		m_endPos = to;
 		return this;
 	}
@@ -85,7 +85,7 @@ class SRaycast {
 	*	 @param Object \p obj1 - object to ignore
 	*	 @param Object \p obj2 - object to ignore
 	*/
-	SRaycast ignore(Object obj1 = null, Object obj2 = null){
+	SRaycast ignore(Object obj1 = null, Object obj2 = null) {
 		m_ignoredObjects = {obj1, obj2};
 		return this;
 	}
@@ -93,7 +93,7 @@ class SRaycast {
 	/**
 	*	@brief Launch the ray	
 	*/
-	SRaycast launch(){
+	SRaycast launch() {
 		m_hasHit = DayZPhysics.RaycastRV(m_startPos,
 			m_endPos,
 			m_contactPos,
@@ -111,85 +111,85 @@ class SRaycast {
 	
 	//@todo add setters
 		
-	bool hasHit(){
+	bool hasHit() {
 		return m_hasHit;
 	}
 	
-	vector getStartPosition(){
+	vector getStartPosition() {
 		return m_startPos;
 	}
 	
-	vector getEndPosition(){
+	vector getEndPosition() {
 		return m_endPos;
 	}
 	
-	vector getContactPosition(){
+	vector getContactPosition() {
 		return m_contactPos;
 	}
 	
-	vector getContactDirection(){
+	vector getContactDirection() {
 		return m_contactDir;
 	}
 	
-	int getContactComponent(){
+	int getContactComponent() {
 		return m_contactComponent;
 	}
 	
-	set<Object> getHitObjects(){
+	set<Object> getHitObjects() {
 		return m_hitObjects;
 	}
 	
-	array<Object> getIgnoredObjects(){
+	array<Object> getIgnoredObjects() {
 		return m_ignoredObjects;
 	}
 	
-	bool isSorted(){
+	bool isSorted() {
 		return m_isSorted;
 	}
 	
-	bool isGroundOnly(){
+	bool isGroundOnly() {
 		return m_isGroundOnly;
 	}
 	
-	int getIntersectionType(){
+	int getIntersectionType() {
 		return m_intersectionType;
 	}
 	
-	float getRadius(){
+	float getRadius() {
 		return m_radius;
 	}
 	
-	CollisionFlags getCollisionFlags(){
+	CollisionFlags getCollisionFlags() {
 		return m_collisionFlags;
 	}
 	
 
 
-	void setStartPosition(vector startPos){
+	void setStartPosition(vector startPos) {
 		m_startPos = startPos;
 	}
 	
-	void setEndPosition(vector endPos){
+	void setEndPosition(vector endPos) {
 		m_endPos = endPos;
 	}
 	
-	void setIsSorted(bool isSorted){
+	void setIsSorted(bool isSorted) {
 		m_isSorted = isSorted;
 	}
 	
-	void setIsGroundOnly(bool isGroundOnly){
+	void setIsGroundOnly(bool isGroundOnly) {
 		m_isGroundOnly = isGroundOnly;
 	}
 	
-	void setIntersectionType(int intersectionType){
+	void setIntersectionType(int intersectionType) {
 		m_intersectionType = intersectionType;
 	}
 	
-	void setRadius(float radius){
+	void setRadius(float radius) {
 		m_radius = radius;
 	}
 	
-	void setCollisionFlags(CollisionFlags collisionFlags){
+	void setCollisionFlags(CollisionFlags collisionFlags) {
 		m_collisionFlags = collisionFlags;
 	}	
 	

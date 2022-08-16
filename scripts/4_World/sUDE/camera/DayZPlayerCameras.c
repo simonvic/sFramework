@@ -1,4 +1,4 @@
-modded class DayZPlayerCameras{
+modded class DayZPlayerCameras {
 	
 	static const float DEFAULT_UNREGISTERED_TIME = 0.3;
 	
@@ -9,7 +9,7 @@ modded class DayZPlayerCameras{
 	
 	
 	
-	override static void RegisterCameras(DayZPlayerType pType){
+	override static void RegisterCameras(DayZPlayerType pType) {
 
 		pType.ResetCameraCreators();
 
@@ -126,18 +126,18 @@ modded class DayZPlayerCameras{
 	}
 	
 	
-	override static float GetTransitionTime(int pFrom, int pTo){
+	override static float GetTransitionTime(int pFrom, int pTo) {
 		int key = (pFrom * 65536) + pTo;
 		float val;
-		if (m_TransitionTimes.Find(key, val)){
+		if (m_TransitionTimes.Find(key, val)) {
 			return val;
-		}else{
+		} else {
 			//SLog.w("Transition time not registered: " + pFrom + " -> " + pTo + " . Using default " + DEFAULT_UNREGISTERED_TIME, "DayZPlayerCameras::GetTransitionTime");
 		}
 		return DEFAULT_UNREGISTERED_TIME;
 	}
 	
-	override static float OnCameraChange(DayZPlayer pPlayer, int pFrom, int pTo){
+	override static float OnCameraChange(DayZPlayer pPlayer, int pFrom, int pTo) {
 		return GetTransitionTime(pFrom, pTo);
 	}
 	

@@ -8,7 +8,7 @@ typedef map<typename, ref SUserConfigConstraintsBase> TSUserConfigConstraintsMod
 class SUserConfigConstraints {
 	
 	private static ref SUserConfigConstraints INSTANCE;
-	static SUserConfigConstraints getInstance(){
+	static SUserConfigConstraints getInstance() {
 		if (!INSTANCE) INSTANCE = new SUserConfigConstraints();
 		return INSTANCE;
 	}
@@ -27,7 +27,7 @@ class SUserConfigConstraints {
 	*	 @param moduleType typename - Typename of the module to load
 	*	 @param reload bool - Choose to load even if it's been already loaded
 	*/
-	void load(typename moduleType, bool reload = false){
+	void load(typename moduleType, bool reload = false) {
 		
 		if (GetGame().IsClient()) {
 			SLog.w("Trying to load user config constraints from client!, Ignoring...","SUserConfigConstraints::load");
@@ -38,7 +38,7 @@ class SUserConfigConstraints {
 		
 		//Check if correct typename
 		SUserConfigConstraintsBase moduleCfgConstraints = SUserConfigConstraintsBase.Cast(moduleType.Spawn());
-		if(!moduleCfgConstraints){
+		if (!moduleCfgConstraints) {
 			SLog.e("Error while loading < " + moduleType + " > Maybe not a module type?. Ignoring....","SUserConfigConstraints::load");
 			return;
 		}
@@ -56,7 +56,7 @@ class SUserConfigConstraints {
 	*	@brief Validate a module config constraint file. Copy the default if not present; create default file if also not present
 	*	 @param moduleCfgConstraints SUserConfigConstraintsBase - Module to validate
 	*/
-	protected void validateModuleCfgFile(SUserConfigConstraintsBase moduleCfgConstraints){		
+	protected void validateModuleCfgFile(SUserConfigConstraintsBase moduleCfgConstraints) {		
 		
 		if (moduleCfgConstraints.isValid()) return;
 
@@ -67,29 +67,29 @@ class SUserConfigConstraints {
 		SLog.i("Done","",2);
 	}
 	
-	protected bool isModuleLoaded(typename moduleCfgConstraints){
+	protected bool isModuleLoaded(typename moduleCfgConstraints) {
 		return modulesCfgConstraints.Contains(moduleCfgConstraints);
 	}
 	
 	/**
 	*	@brief Save modules configuration
 	*/
-	void save(){
-		foreach(SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints){
+	void save() {
+		foreach (SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints) {
 			moduleCfgConstraints.save();
 		}
 	}
 	
 	
-	bool isValid(){
-		foreach (SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints){
-			if(!moduleCfgConstraints.isValid()) return false;
+	bool isValid() {
+		foreach (SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints) {
+			if (!moduleCfgConstraints.isValid()) return false;
 		}
 		return true;
 	}
 	
-	void printLoadedModules(){
-		foreach (SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints){
+	void printLoadedModules() {
+		foreach (SUserConfigConstraintsBase moduleCfgConstraints : modulesCfgConstraints) {
 			SLog.d(moduleCfgConstraints);
 		}
 	}

@@ -1,15 +1,15 @@
 ////////////////////////////////////////////
 // VALUE based presets
 ////////////////////////////////////////////
-class PPEPresetBase{
-	void PPEPresetBase(){
+class PPEPresetBase {
+	void PPEPresetBase() {
 		init();
 	}
 	
-	void init(){};
+	void init() {};
 }
 
-class DoFPreset : PPEPresetBase{
+class DoFPreset : PPEPresetBase {
 	float blurStrength;
 	float focusDistance;
 	float focusLength;
@@ -18,11 +18,11 @@ class DoFPreset : PPEPresetBase{
 	float focusMinDistance;
 	float focusMaxDistance;
 	
-	void initPreset(DoFPreset dof){
+	void initPreset(DoFPreset dof) {
 		initPreset(dof.blurStrength, dof.focusDistance, dof.focusLength, dof.focusLengthNear, dof.focusDepthOffset, dof.focusMinDistance, dof.focusMaxDistance);
 	}
 	
-	void initPreset(float blur, float fDistance, float fLength, float fLengthNear, float fDepthOffset, float fMinDistance, float fMaxDistance){
+	void initPreset(float blur, float fDistance, float fLength, float fLengthNear, float fDepthOffset, float fMinDistance, float fMaxDistance) {
 		blurStrength = blur;
 		focusDistance = fDistance;
 		focusLength = fLength;
@@ -32,7 +32,7 @@ class DoFPreset : PPEPresetBase{
 		focusMaxDistance = fMaxDistance;
 	}
 	
-	void reset(){
+	void reset() {
 		blurStrength = 0;
 		focusDistance = 0;
 		focusLength = 0;
@@ -42,23 +42,23 @@ class DoFPreset : PPEPresetBase{
 		focusMaxDistance = 1;
 	}
 	
-	bool equals(DoFPreset dof, float epsilon = 1e-32){
-		if(this == dof) return true;
-		if(dof == null) return false;
-		if(this.Type() != dof.Type()) return false;
+	bool equals(DoFPreset dof, float epsilon = 1e-32) {
+		if (this == dof) return true;
+		if (dof == null) return false;
+		if (this.Type() != dof.Type()) return false;
 		TFloatArray f = {blurStrength, focusDistance, focusLength, focusLengthNear, focusDepthOffset, focusMinDistance, focusMaxDistance};
 		TFloatArray f2 = {dof.blurStrength, dof.focusDistance, dof.focusLength, dof.focusLengthNear, dof.focusDepthOffset, dof.focusMinDistance, dof.focusMaxDistance};
 		return SMath.equal(f, f2, epsilon);
 	}
 }
 
-class PPEMaskPreset : PPEPresetBase{
+class PPEMaskPreset : PPEPresetBase {
 	float posX;
 	float posY;
 	float radius;
 	float blur;
 	
-	void initPreset(float positionX, float positionY, float maskRadius, float blurStrength){
+	void initPreset(float positionX, float positionY, float maskRadius, float blurStrength) {
 		posX = positionX;
 		posY = positionY;
 		radius = maskRadius;

@@ -2,17 +2,17 @@ class SPPEffectTimed : SPPEffectAnimated {
 	protected float m_duration;
 	protected bool m_deactivationOnStop;
 	
-	void SPPEffectTimed(float duration, bool deactivationOnStop = true){
+	void SPPEffectTimed(float duration, bool deactivationOnStop = true) {
 		m_duration = duration;
 		m_deactivationOnStop = deactivationOnStop;
 	}
 
-	override void animate(float deltaTime){
-		if( !isPlaying() ) {
+	override void animate(float deltaTime) {
+		if ( !isPlaying() ) {
 			return; 
 		}
 		
-		if(getTime() >= m_duration ) {
+		if (getTime() >= m_duration ) {
 			stop();
 			return;
 		}
@@ -23,7 +23,7 @@ class SPPEffectTimed : SPPEffectAnimated {
 	* @brief Set the duration of the animation
 	* 	@param duration \p float - animation duration (seconds)
 	*/
-	void setDuration(float duration){
+	void setDuration(float duration) {
 		m_duration = duration;
 	}
 		
@@ -47,7 +47,7 @@ class SPPEffectTimed : SPPEffectAnimated {
 	* @brief Get if the animation should be deactivated when ends
 	*
 	*/
-	bool shouldDeactivateOnStop(){
+	bool shouldDeactivateOnStop() {
 		return m_deactivationOnStop;
 	}
 	

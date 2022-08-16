@@ -9,19 +9,19 @@ class SPPEffectAnimated : SPPEffect {
 	protected ePPEAnimationStates m_animationState = ePPEAnimationStates.STOPPED;
 	protected float m_time;
 	
-	void animate(float deltaTime){
-		if(!isPlaying()) return;
+	void animate(float deltaTime) {
+		if (!isPlaying()) return;
 		
 		m_time += deltaTime;
 		onAnimate(deltaTime);
 	}
 	
-	void onAnimate(float deltaTime){}
+	void onAnimate(float deltaTime) {}
 		
 	/**
 	* @brief Set the animation state to PLAYING and reset the time
 	*/
-	void start(){
+	void start() {
 		m_time = 0;
 		onInit();
 		setAnimationState(ePPEAnimationStates.PLAYING);
@@ -30,7 +30,7 @@ class SPPEffectAnimated : SPPEffect {
 	/**
 	* @brief Reset values to default and prepare to stop
 	*/
-	void stop(){
+	void stop() {
 		resetAllToDefault();
 		setAnimationState(ePPEAnimationStates.STOPPED);
 	}
@@ -38,14 +38,14 @@ class SPPEffectAnimated : SPPEffect {
 	/**
 	* @brief Pause the animation from animating without resetting the time
 	*/
-	void pause(){
+	void pause() {
 		setAnimationState(ePPEAnimationStates.PAUSED);
 	}
 	
 	/**
 	* @brief Resume the animation
 	*/
-	void resume(){
+	void resume() {
 		setAnimationState(ePPEAnimationStates.PLAYING);
 	}
 	
@@ -53,27 +53,27 @@ class SPPEffectAnimated : SPPEffect {
 	* @brief Get the time elapsed from the animation start
 	* 	@return \p float - time elapsed
 	*/
-	float getTime(){
+	float getTime() {
 		return m_time;
 	}
 	
-	bool isPlaying(){
+	bool isPlaying() {
 		return m_animationState == ePPEAnimationStates.PLAYING;
 	}
 	
-	bool isPaused(){
+	bool isPaused() {
 		return m_animationState == ePPEAnimationStates.PAUSED;
 	}
 	
-	bool hasStopped(){
+	bool hasStopped() {
 		return m_animationState == ePPEAnimationStates.STOPPED;
 	}
 	
-	ePPEAnimationStates getAnimationState(){
+	ePPEAnimationStates getAnimationState() {
 		return m_animationState;
 	}
 	
-	protected void setAnimationState(ePPEAnimationStates state){
+	protected void setAnimationState(ePPEAnimationStates state) {
 		m_animationState = state;
 	}
 }

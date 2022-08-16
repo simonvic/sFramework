@@ -26,7 +26,7 @@ class SJSONSerializable : Managed {
 	*	@brief Abstract. Deserialization method to be implemented.
 	*	       It's needed because of how Enforce handles script variables
 	*	 @code
-	*	 	override void deserialize(string data, out string error){
+	*	 	override void deserialize(string data, out string error) {
 	*			auto cfg = this;
 	*			getSerializer().ReadFromString(cfg, data, error);
 	*		}
@@ -38,7 +38,7 @@ class SJSONSerializable : Managed {
 	*	@brief Abstract. Serialization method to be implemented.
 	*	       It's needed because of how Enforce handles script variables
 	*	 @code
-	*	 	override string serialize(){
+	*	 	override string serialize() {
 	*	 		string result;
 	*	 		auto cfg = this;
 	*	 		getSerializer().WriteToString(cfg, true, result);
@@ -51,13 +51,13 @@ class SJSONSerializable : Managed {
 	/**
 	*	@brief Deserialize the file and load it
 	*/
-	void load(){
+	void load() {
 		string data = SFileHelper.cat(getPath());
-		if(data == string.Empty) return;
+		if (data == string.Empty) return;
 		
 		string error;
 		deserialize(data, error);
-		if(error != string.Empty){
+		if (error != string.Empty) {
 			SLog.e(error);
 		}
 	}
@@ -65,7 +65,7 @@ class SJSONSerializable : Managed {
 	/**
 	*	@brief Serialize the object and write it
 	*/
-	void save(){
+	void save() {
 		SFileHelper.touch(getPath());
 		SFileHelper.echo(serialize(), getPath());
 	}

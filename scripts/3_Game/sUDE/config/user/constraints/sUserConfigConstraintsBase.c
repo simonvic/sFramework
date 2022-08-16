@@ -1,6 +1,6 @@
 class SUserConfigConstraintsBase : SJSONSerializable {
 	
-	bool isValid(){
+	bool isValid() {
 		return SUserConfigConstraintsValidator.isValid(getPath());
 	}
 	

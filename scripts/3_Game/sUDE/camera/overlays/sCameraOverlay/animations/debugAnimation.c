@@ -3,7 +3,7 @@ class SCOAnimationDebug : SCameraOverlayAnimated {
 	protected float m_velX[1];
 	protected float m_velY[1];
 	
-	override void onInit(){
+	override void onInit() {
 		//setImage(SCOMasks.DEBUG);
 		//setMask(SCOMasks.DEBUG);
 		setImage("MyMODS/sFramework/GUI/icons/logo/sUDE.paa");
@@ -11,11 +11,11 @@ class SCOAnimationDebug : SCameraOverlayAnimated {
 		setPriority(eSCOPriority.UI);
 	}
 	
-	override void onPreBuild(){
+	override void onPreBuild() {
 		getWidget().ClearFlags(WidgetFlags.STRETCH);
 	}
 	
-	override void onAnimate(float deltaTime){
+	override void onAnimate(float deltaTime) {
 		getWidget().SetFlags(WidgetFlags.STRETCH);
 		getWidget().ClearFlags(WidgetFlags.EXACTPOS);
 		int mouseX, mouseY, screenSizeX, screenSizeY;
@@ -39,13 +39,13 @@ class SCOAnimationDebug : SCameraOverlayAnimated {
 
 class SCOTimedDebug : SCameraOverlayTimed {
 	
-	override void onInit(){
+	override void onInit() {
 		setImage("MyMODS/sFramework/GUI/icons/logo/sUDE.paa");
 		setMask(SCOMasks.CIRCULAR);
 		setDuration(60);
 	}
 	
-	override void onAnimate(float deltaTime){
+	override void onAnimate(float deltaTime) {
 		float revolution = Math.AbsFloat(Math.Sin(getTime())) * 360;
 		setImage("MyMODS/sFramework/GUI/icons/logo/sUDE.paa");
 		setSize(0.075, 0.1);
@@ -58,19 +58,19 @@ class SCOTimedDebug : SCameraOverlayTimed {
 
 class SCOAnimationLogo : SCameraOverlayAnimated {
 	
-	override void onInit(){
+	override void onInit() {
 		setImage("MyMODS/sFramework/GUI/icons/logo/sUDE.paa");
 		setSize(0.05, 0.1);
 		setPosition(0.45, -0.45);
 		setPriority(999);
 	}
 	
-	override void onAnimate(float deltaTime){
+	override void onAnimate(float deltaTime) {
 		setRotation(Math.Sin(getTime()) * 360, 0, 0);
 	}
 	
 	/*
-	protected vector followCursor(){
+	protected vector followCursor() {
 		int mouseX, mouseY, sizeX, sizeY;
 		float posX, posY;
 		GetMousePos(mouseX,mouseY);

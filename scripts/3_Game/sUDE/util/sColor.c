@@ -22,7 +22,7 @@ class SColor {
 	*	@brief Set current color using RGB value (e.g. 0xF0544C)
 	*	 @param rgb \p int - Color represented in RGB format
 	*/
-	SColor setRGB(int rgb){
+	SColor setRGB(int rgb) {
 		setARGB((getAlpha() << 24 ) | rgb);
 		return this;
 	}
@@ -44,7 +44,7 @@ class SColor {
 	*	@brief Set current color using RGBA value (e.g. 0xF0544Caa)
 	*	 @param rgba \p int - Color represented in RGBA format
 	*/
-	SColor setRGBA(int rgba){
+	SColor setRGBA(int rgba) {
 		argbValue = toARGB(rgba);
 		return this;
 	}
@@ -66,7 +66,7 @@ class SColor {
 	*	@brief Set current color using ARGB value (e.g. 0xaaF0544C)
 	*	 @param argb \p int - Color represented in ARGB format
 	*/
-	SColor setARGB(int argb){
+	SColor setARGB(int argb) {
 		argbValue = argb;
 		return this;
 	}
@@ -77,7 +77,7 @@ class SColor {
 	*	 @param saturation \p float - Saturation of color [0 - 1]
 	*	 @param brightness \p float - Brightness of color [0 - 1]
 	*/
-	SColor setHSB(float hue, float saturation, float brightness){
+	SColor setHSB(float hue, float saturation, float brightness) {
 		setARGB((getAlpha() << 24) | SColor.HSBtoRGB(hue, saturation, brightness));
 		return this;
 	}
@@ -185,7 +185,7 @@ class SColor {
 	*	@brief Get the current color represented in RGB format
 	*	 @return int - RGB color
 	*/
-	int getRGB(){
+	int getRGB() {
 		return (getRGBA() >> 8) & 0xFFFFFF; //@todo masked to reset sign bit. Find general solution to make it unsigned
 	}
 		
@@ -193,7 +193,7 @@ class SColor {
 	*	@brief Get the current color represented in RGBA format
 	*	 @return int - RGBA color
 	*/
-	int getRGBA(){
+	int getRGBA() {
 		return SColor.toRGBA(getARGB());
 	}
 	
@@ -242,19 +242,19 @@ class SColor {
 	*	@brief Get the current color name (if present in RGBColors)
 	*	 @return string - Color name
 	*/
-	string getRGBName(){
+	string getRGBName() {
 		return SColor.getRGBName(this);
 	}
 	
-	bool equals(SColor color){
+	bool equals(SColor color) {
 		return SColor.equals(this, color);
 	}
 	
-	bool equals(int argb){
+	bool equals(int argb) {
 		return SColor.equals(getARGB(), argb);
 	}
 	
-	SColor debugPrint(bool verbose = false){
+	SColor debugPrint(bool verbose = false) {
 		SLog.d(string.Format("R: %1 | G: %2 | B: %3 | A: %4", getRed(), getGreen(), getBlue(), getAlpha()), ""+this);
 		SLog.d(string.Format("RGB: %1 | RGBA: %2 | ARGB: %3 ", getRGB(), getRGBA(), getARGB()), "", 1, verbose);
 		SLog.d(string.Format("Name: %1 | Hex: %2 ", getRGBName(), "#696969"), "", 1, verbose);
@@ -324,7 +324,7 @@ class SColor {
 	*	 @param b \p int - Blue
 	*	 @return SColor
 	*/
-	static SColor argb(int a, int r, int g, int b){
+	static SColor argb(int a, int r, int g, int b) {
 		return (new SColor()).setARGB(a, r, g, b);
 	}
 	
@@ -336,7 +336,7 @@ class SColor {
 	*	 @param brightness \p float - Brightness of color [0 - 1]
 	*	 @return SColor
 	*/
-	static SColor hsb(float hue, float saturation, float brightness){
+	static SColor hsb(float hue, float saturation, float brightness) {
 		return (new SColor()).setHSB(hue, saturation, brightness);
 	}
 	
@@ -381,7 +381,7 @@ class SColor {
 	*	 @param argb \p int - Color
 	*	 @return int - Color in RGBA
 	*/
-	static int toRGBA(int argb){
+	static int toRGBA(int argb) {
 		//remove alpha by shifting left, add alpha at the end
 		return ((argb << 8) | ((argb >> 24) & 0xff));
 	}
@@ -391,7 +391,7 @@ class SColor {
 	*	 @param rgba \p int - Color
 	*	 @return int - Color in ARGB
 	*/
-	static int toARGB(int rgba){
+	static int toARGB(int rgba) {
 		//get the alpha bits, move them to the left, move rgba to the right, insert alpha bits
 		return (((rgba >> 8) & 0x00ffffff) | ((rgba & 0x000000ff) << 24)));
 	}
@@ -492,13 +492,13 @@ class SColor {
 		}
 	}
 	
-	static string getRGBName(SColor color){
+	static string getRGBName(SColor color) {
 		return typename.EnumToString(RGBColors, Math.AbsInt(color.getRGB()));
 	}
 	
 	static bool equals(SColor color1, SColor color2) {
-		if(color1 == color2) return true;
-		if(color1 == null || color2 == null) return false;
+		if (color1 == color2) return true;
+		if (color1 == null || color2 == null) return false;
 		return equals(color1.getARGB(), color2.getARGB());
 	}
 	
@@ -512,7 +512,7 @@ class SColor {
 // COLORS PRESETS
 // Colors from https://www.w3schools.com/cssref/css_colors.asp
 
-enum RGBColors{
+enum RGBColors {
 	ALICE_BLUE               = 0xF0F8FF ,
 	ANTIQUE_WHITE            = 0xFAEBD7 ,
 	AQUA                     = 0x00FFFF ,

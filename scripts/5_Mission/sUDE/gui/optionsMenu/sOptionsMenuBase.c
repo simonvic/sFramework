@@ -23,6 +23,15 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	protected void onInit() {
 	}
 	
+	void setRoot(Widget root) {
+		m_root = root;
+		m_root.SetHandler(this);
+	}
+	
+	/**
+	*	@brief Set the user config this menu is related to
+	*	@param user config
+	*/
 	void setUserConfig(SUserConfigBase userConfig) {
 		m_sUserConfig = userConfig;
 	}
@@ -31,11 +40,9 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		return m_sUserConfig;
 	}
 	
-	void setRoot(Widget root) {
-		m_root = root;
-		m_root.SetHandler(this);
-	}
-	
+	/**
+	*	@brief Called when the menu root has been built
+	*/
 	void onBuild() {
 		m_infoBoxRoot = m_root.FindAnyWidget(getInfoBoxRootContainer());
 		if (m_infoBoxRoot) {
@@ -45,13 +52,18 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		}
 	}
 	
-	
+	/**
+	*	@brief Init slider widget with a float option
+	*	@param widget to initialize
+	*	@param widget name
+	*	@param option to initialize widget with
+	*/
 	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOption<float> option) {		
 		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
 		slider.SetCurrent(option.get());
 		slider.SetHandler(this);
 		
-		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name+"_value")); //@todo hardcode goes brrrr. Change this
+		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name + "_value")); //@todo hardcode goes brrrr. Change this
 		if (!txt) return;
 		txt.SetText(slider.GetCurrent().ToString());
 		txt.SetHandler(this);
@@ -59,14 +71,13 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		m_optionsWidgets.Set(slider, option);
 	}
 	
-	protected void initOptionWidget(out CheckBoxWidget checkbox, string name, SUserConfigOption<bool> option) {
-		checkbox = CheckBoxWidget.Cast(m_root.FindAnyWidget( name ));
-		checkbox.SetChecked(option.get());
-		checkbox.SetHandler(this);
-		
-		m_optionsWidgets.Set(checkbox, option);
-	}
-	
+	/**
+	*	@brief Init slider widget with a float array option
+	*	@param widget to initialize
+	*	@param widget name
+	*	@param option to initialize widget with
+	*	@param indeces of the array option that the slider will change
+	*/
 	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, array<int> indices) {
 		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
 		
@@ -79,7 +90,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		}
 		slider.SetHandler(this);
 				
-		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name+"_value")); //@todo hardcode goes brrrr. Change this
+		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name + "_value")); //@todo hardcode goes brrrr. Change this
 		if (!txt) return;
 		txt.SetText(slider.GetCurrent().ToString());
 		txt.SetHandler(this);
@@ -87,42 +98,50 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		m_optionsWidgets.Set(slider, option);
 	}
 	
+	/**
+	*	@brief Init slider widget with a float array option
+	*	@param widget to initialize
+	*	@param widget name
+	*	@param option to initialize widget with
+	*	@param index of the array option that the slider will change
+	*/
 	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, int index) {		
 		array<int> indeces = {index};
 		initOptionWidget(slider, name, option, indeces);
 	}
 	
-	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, array<string> channels) {
-		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
-		array<int> indices = {};
-		foreach (string channel : channels) {
-			indices.Insert(getColorChannelIndex(channel));
-		}
-		initOptionWidget(slider, name, option, indices);
-	}	
-	
-	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, string channel) {		
-		array<string> channels = {channel};
-		initOptionWidget(slider, name, option, channels);
+	/**
+	*	@brief Init Checkbox widget with a bool option
+	*	@param widget to initialize
+	*	@param widget name
+	*	@param option to initialize widget with
+	*/
+	protected void initOptionWidget(out CheckBoxWidget checkbox, string name, SUserConfigOption<bool> option) {
+		checkbox = CheckBoxWidget.Cast(m_root.FindAnyWidget( name ));
+		checkbox.SetChecked(option.get());
+		checkbox.SetHandler(this);
+		
+		m_optionsWidgets.Set(checkbox, option);
 	}
 	
-	static int getColorChannelIndex(string channel) {
-		switch (channel) {	
-			case "red": return 0;
-			case "green": return 1;
-			case "blue": return 2;
-			case "alpha": return 3;
-		}
-		return -1;
-	}	
-	
-	protected void initOptionWidget(out XComboBoxWidget combo, string name, SUserConfigOption<int> option) {		
+	/**
+	*	@brief Init combo widget with an int option (index of combo item)
+	*	@param widget to initialize
+	*	@param widget name
+	*	@param option to initialize widget with
+	*	@param array of items
+	*/
+	protected void initOptionWidget(out XComboBoxWidget combo, string name, SUserConfigOption<int> option, array<string> items) {
 		combo = XComboBoxWidget.Cast(m_root.FindAnyWidget(name));
 		combo.SetCurrentItem(option.get());
-		//combo.SetHandler(this); //what?!
-		
+		//combo.SetHandler(this); //@todo what?!
+		if (items) {
+			combo.ClearAll();
+			foreach (string item : items) {
+				combo.AddItem(item);
+			}
+		}
 		m_optionsWidgets.Set(combo, option);
-		
 	}
 
 	override bool OnMouseEnter(Widget w, int x, int y) {

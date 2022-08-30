@@ -622,11 +622,10 @@ class SPPEManager {
 	*	 @param immediate \p bool - immediately reset the DoF
 	*/
 	static void resetDDOF(bool immediate = false) {
+		m_targetDOF.blurStrength = 0;
+		m_targetDOF.focusDistance = 0;
 		if (immediate) {
 			resetDOF();
-		} else {
-			m_targetDOF.blurStrength = 0;
-			m_targetDOF.focusDistance = 0;
 		}
 	}
 	

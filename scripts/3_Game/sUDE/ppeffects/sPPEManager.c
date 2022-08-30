@@ -733,13 +733,13 @@ class SPPEManager {
 	}
 	
 	static void requestOpticLens(float intensity, float centerX, float centerY, float chromAberIntensity) {
-		m_vanillaPPE.setLens(intensity, centerX, centerY, chromAberIntensity);
+		PPEffects.SetLensEffect(intensity, chromAberIntensity, centerX, centerY);
 		m_defaultPPE.setLens(intensity, centerX, centerY, chromAberIntensity);
 		m_resultPPE.setLens(intensity, centerX, centerY, chromAberIntensity);
 	}
 	
 	static void resetOpticLens() {
-		m_vanillaPPE.setLens(0, 0, 0, 0);
+		PPEffects.SetLensEffect(0, 0, 0, 0);
 		m_defaultPPE.setLens(0, 0, 0, 0);
 		m_resultPPE.setLens(0, 0, 0, 0);
 	}

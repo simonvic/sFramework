@@ -12,6 +12,8 @@ class SLog {
 	static bool filePrintEnabled = true;
 	static bool beautify = true;
 	
+	static bool headerPrinted;
+	
 	/**
 	*	$profile
 	*	$saves
@@ -321,10 +323,10 @@ class SLog {
 		GetYearMonthDayUTC(year,month,day);
 		string today = ""+year+"-"+month+"-"+day;
 		string filePath = LOG_PATH+"\\"+today+".slog";
-		
-		if (!FileExist(filePath)) {
-			SFileHelper.touch(filePath);
+		SFileHelper.touch(filePath);
+		if (!headerPrinted) {
 			text = buildHeader() + text;
+			headerPrinted = true;
 		}
 		
 		FileHandle file = OpenFile(filePath, FileMode.APPEND);

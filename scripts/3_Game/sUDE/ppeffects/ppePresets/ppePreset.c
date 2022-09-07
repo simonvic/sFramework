@@ -1,7 +1,7 @@
 ////////////////////////////////////////////
 // VALUE based presets
 ////////////////////////////////////////////
-class PPEPresetBase {
+class PPEPresetBase : Managed {
 	void PPEPresetBase() {
 		init();
 	}

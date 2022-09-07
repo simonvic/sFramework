@@ -598,24 +598,6 @@ class SPPEManager {
 	static bool isDDOFEnabled() {
 		return m_DDOF_Enabled && m_DDOF.blurStrength != 0;
 	}
-	
-	static void setDDOFEnabledIn3PP(bool enabled) {
-		if (enabled) {
-			enableDDOF();
-		} else {
-			disableDDOF();
-			resetDDOF(true);
-		}
-	}
-	
-	static void setDDOFEnabledInVehicle(bool enabled) {
-		if (enabled) {
-			enableDDOF();
-		} else {
-			disableDDOF();
-			resetDDOF(true);
-		}
-	}
 
 	/**
 	*	@brief Reset Dynamic Depth of Field
@@ -742,6 +724,13 @@ class SPPEManager {
 		PPEffects.SetLensEffect(0, 0, 0, 0);
 		m_defaultPPE.setLens(0, 0, 0, 0);
 		m_resultPPE.setLens(0, 0, 0, 0);
+	}
+	
+	static void debugOverride(string mat, string param, float value) {
+		TPPEMaterial m = mat;
+		TPPEParamName n = param;
+		m_resultPPE.setParam(m, n, value);
+		m_defaultPPE.setParam(m, n, value);
 	}
 
 }

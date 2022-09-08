@@ -1,0 +1,17 @@
+MetaFileClass {
+ Name "{8236FA49FD2A065B}MyMODS/sFramework/GUI/icons/logo/sFramework.edds"
+ Author "simonvic-pc"
+ ChangeDate -458461912
+ Configurations {
+  PNGResourceClass PC {
+   SourceFile "sFramework.png"
+   Conversion ColorHQCompression
+  }
+  PNGResourceClass XBOX_ONE : PC {
+  }
+  PNGResourceClass PS4 : PC {
+  }
+  PNGResourceClass LINUX : PC {
+  }
+ }
+}

@@ -1,0 +1,10 @@
+name = "sFramework";
+picture = "MyMODS/sFramework/GUI/icons/logo/sFramework.edds";
+logoSmall = "MyMODS/sFramework/GUI/icons/logo/sFramework.edds";
+logo = "MyMODS/sFramework/GUI/icons/logo/sFramework.edds";
+logoOver = "MyMODS/sFramework/GUI/icons/logo/sFramework.edds";
+tooltip = "$STR_SUDE_MOD_INFO_TOOLTIP_SFRAMEWORK";
+overview = "$STR_SUDE_MOD_INFO_OVERVIEW";
+action = "https://github.com/simonvic/sFramework";
+author = "simonvic";
+version = "1.2.0";

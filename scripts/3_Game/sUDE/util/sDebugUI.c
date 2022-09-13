@@ -164,6 +164,19 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 	
 	/**
+	*	@brief Create a rich text widget
+	*	@param text -
+	*	@return RichTextWidget
+	*/
+	RichTextWidget textrich(string text) {
+		if (isServer() || disabled) return null;
+		RichTextWidget w  = RichTextWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/textrich.layout"));
+		if (!w) return null;
+		w.SetText(text);
+		return w;
+	}
+	
+	/**
 	*	@brief Create a slider
 	*	@param name - name of the slider
 	*	@param float - value to link to the slider

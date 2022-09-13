@@ -1,7 +1,6 @@
 typedef array<ref SCameraOverlay> TSCameraOverlaysList;
 typedef set<ref SCameraOverlay> TSCameraOverlaySet;
 
-//@todo add SFlagOperator to interact with widget flags
 class SCameraOverlay : Managed {
 	
 	/**

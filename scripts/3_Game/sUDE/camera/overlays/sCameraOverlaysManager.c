@@ -240,7 +240,6 @@ class SCameraOverlaysManager {
 					performActivate(overlay, root);
 					break;
 				case eSCameraOverlayState.PENDING_DELETION:
-					//@todo decrease alpha until 0 then perform deactivate
 					performDeactivate(overlay, root);
 					break;
 			}

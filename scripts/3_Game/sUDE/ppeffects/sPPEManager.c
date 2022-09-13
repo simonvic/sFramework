@@ -99,8 +99,6 @@ class SPPEManager {
 	////////////////////////////////////////////////////////////
 	//				ACTIVATION / DEACTIVATION
 	
-	//@todo check for IsClient inside activate/deactivate ?
-	
 	/**
 	* @brief Add a post process effect 
 	* 	@params params \p SPPEffect - Parameters to be added

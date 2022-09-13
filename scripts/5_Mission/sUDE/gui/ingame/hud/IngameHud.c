@@ -19,9 +19,8 @@ modded class IngameHud {
 	
 	override void RefreshHudVisibility() {
 		super.RefreshHudVisibility();
-		m_cameraOverlayManager.setIngameHUDVisibility(m_HudState);
-		
+		m_cameraOverlayManager.setIngameHUDVisibility(!m_HudHidePlayer);
 	}
-	
+
 
 }

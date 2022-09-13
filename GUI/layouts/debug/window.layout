@@ -51,6 +51,15 @@ GridSpacerWidgetClass root_window {
      Columns 2
      Rows 1
      {
+      CheckBoxWidgetClass disable {
+       size 32 32
+       hexactpos 0
+       vexactpos 0
+       hexactsize 1
+       vexactsize 1
+       style Default
+       checked 1
+      }
       TextWidgetClass title {
        ignorepointer 1
        size 1 1
@@ -66,53 +75,6 @@ GridSpacerWidgetClass root_window {
        "size to text h" 0
        "size to text v" 0
        "text valign" center
-      }
-      GridSpacerWidgetClass buttons {
-       ignorepointer 1
-       size 64 32
-       hexactpos 0
-       vexactpos 0
-       hexactsize 1
-       vexactsize 1
-       Padding 8
-       "Size To Content H" 1
-       content_halign right
-       content_valign center
-       Rows 1
-       {
-        ButtonWidgetClass collapse {
-         color 0.9412 0.3294 0.298 1
-         position 0 0
-         size 32 32
-         hexactpos 0
-         vexactpos 0
-         hexactsize 1
-         vexactsize 1
-         style Default
-         text "-"
-        }
-        ButtonWidgetClass maximize {
-         color 0.9412 0.3294 0.298 1
-         position 0 0
-         size 32 32
-         hexactpos 0
-         vexactpos 0
-         hexactsize 1
-         vexactsize 1
-         style Default
-         text "[]"
-        }
-        ButtonWidgetClass close {
-         color 0.9412 0.3294 0.298 1
-         position 0 0
-         size 32 32
-         hexactpos 0
-         vexactpos 0
-         hexactsize 1
-         vexactsize 1
-         text "X"
-        }
-       }
       }
      }
     }

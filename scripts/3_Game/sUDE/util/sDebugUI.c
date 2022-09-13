@@ -31,6 +31,7 @@
 		}
 		
 */
+// @todo add a default static SDebugUI and window instance for quick debug
 class SDebugUI : ScriptedWidgetEventHandler {
 	
 	static const ref array<int>   DEFAULT_WINDOW_SIZE  = {512 + 24, 512};
@@ -57,6 +58,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	
+	
+	bool disabled;
 	Widget root;
 	
 	/**
@@ -102,6 +105,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		
 		TextWidget.Cast(w.FindAnyWidget("title")).SetText(title);
 		windows.push(w);
+		
+		CheckBoxWidget.Cast(w.FindAnyWidget("disable")).SetChecked(!disabled);
 		return w;
 	}
 		
@@ -113,7 +118,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return CheckBoxWidget
 	*/
 	CheckBoxWidget check(string name, out bool variable) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
 		if (!w) return null;
 		w.SetName(name);
@@ -135,7 +140,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return ButtonWidget
 	*/
 	ButtonWidget button(string text, Class instance, string function, Param params = null) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		ButtonWidget w  = ButtonWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/button.layout"));
 		if (!w) return null;
 		w.SetText(text);
@@ -151,7 +156,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return TextWidget
 	*/
 	TextWidget text(string text) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		TextWidget w  = TextWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/text.layout"));
 		if (!w) return null;
 		w.SetText(text);
@@ -168,7 +173,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return SliderWidget
 	*/
 	SliderWidget slider(string name, out float value, float step = 0.1, float min = 0, float max = 1) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		SliderWidget w = SliderWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/slider.layout"));
 		if (!w) return null;
 		w.SetName(name);
@@ -190,7 +195,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return WrapSpacerWidget
 	*/
 	WrapSpacerWidget table(array<ref array<string>> data, array<int> sizePx = null) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		WrapSpacerWidget w = WrapSpacerWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/table.layout"));
 		if (!w) return null;
@@ -230,7 +235,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return CanvasWidget
 	*/
 	CanvasWidget plotlive(string title, float y, float min = 0, float max = 1, array<int> sizePx = null, int historySize = 50, array<float> scale = null, array<float> offset = null, int widthPx = 3, SColor color = null) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		if (!scale  || scale.Count()  < 2) scale  = DEFAULT_PLOT_SCALE;
 		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
@@ -283,7 +288,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return CanvasWidget
 	*/
 	CanvasWidget plot(string title = "", array<ref array<ref array<float>>> lines = null, array<int> sizePx = null, array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor color = null) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		if (!scale  || scale.Count()  < 2) scale  = DEFAULT_PLOT_SCALE;
 		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
@@ -312,7 +317,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return CanvasWidget
 	*/
 	CanvasWidget canvas(array<int> sizePx = null, string title = "") {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		Widget r = widget("MyMODS/sFramework/GUI/layouts/debug/canvas.layout");
 		if (!r) return null;
@@ -329,7 +334,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return Widget
 	*/
 	Widget spacer(array<float> size = null) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		if (!size || size.Count() < 2) size = DEFAULT_SPACER_SIZE;
 		Widget w = GetGame().GetWorkspace().CreateWidget(FrameWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, windows.peek().FindAnyWidget("body"));		
 		w.SetSize(size[0], size[1]);
@@ -343,7 +348,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return Widget
 	*/
 	Widget newline(int sizePx = 1) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		Widget w = spacer();
 		w.SetFlags(WidgetFlags.VEXACTSIZE);
 		w.SetSize(1.0, sizePx);
@@ -357,7 +362,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@return Widget
 	*/
 	Widget widget(string layout, string name = string.Empty) {
-		if (isServer()) return null;
+		if (isServer() || disabled) return null;
 		Widget window = windows.peek();
 		if (!window) {
 			SLog.e("No window to place widget on! ("+name+")",""+this);
@@ -408,12 +413,14 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	
 	override bool OnClick(Widget w, int x, int y, int button) {
+		//                    reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+		Widget rootWindow = w.GetParent().GetParent().GetParent().GetParent();
 		switch (w.Type()) {
 			case ButtonWidget:
 			ButtonWidget btn = ButtonWidget.Cast(w);
 			switch (w.GetName()) {
 				case "collapse":
-				Widget body = w.GetParent().GetParent().GetParent().GetParent().FindAnyWidget("body");
+				Widget body = rootWindow.FindAnyWidget("body");
 				if (body.IsVisible()) {
 					btn.SetText("+");
 				} else {
@@ -432,8 +439,17 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			
 			case CheckBoxWidget:
 			CheckBoxWidget chk = CheckBoxWidget.Cast(w);
-			if (statesCheckbox.Contains(chk.GetName())) {
-				statesCheckbox.Set(chk.GetName(), !statesCheckbox.Get(chk.GetName()));
+			string name = chk.GetName();
+			switch (name) {
+				case "disable":
+				rootWindow.FindAnyWidget("body").Show(disabled);
+				disabled = !disabled;
+				break;
+				
+				default:
+				if (statesCheckbox.Contains(name)) {
+					statesCheckbox.Set(name, !statesCheckbox.Get(name));
+				}
 			}
 			break;
 			

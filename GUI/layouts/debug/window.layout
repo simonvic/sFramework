@@ -3,13 +3,13 @@ GridSpacerWidgetClass root_window {
  ignorepointer 1
  color 0 0 0 0.5529
  position 0 0
- size 923.56897 523.12402
+ size 256 256
  hexactpos 1
  vexactpos 1
  hexactsize 1
  vexactsize 1
- scaled 1
- style DayZDefaultPanel
+ scaled 0
+ style Colorable
  Padding 0
  Margin 0
  "Size To Content H" 1
@@ -52,6 +52,7 @@ GridSpacerWidgetClass root_window {
      Rows 1
      {
       CheckBoxWidgetClass disable {
+       color 0.9412 0.3294 0.298 1
        size 32 32
        hexactpos 0
        vexactpos 0
@@ -90,7 +91,7 @@ GridSpacerWidgetClass root_window {
    hexactsize 0
    vexactsize 0
    Padding 0
-   Margin 4
+   Margin 0
    "Size To Content H" 1
    "Size To Content V" 1
    Columns 1
@@ -104,7 +105,8 @@ GridSpacerWidgetClass root_window {
      vexactpos 0
      hexactsize 0
      vexactsize 0
-     Padding 8
+     style Colorable
+     Padding 0
      Margin 0
      "Size To Content H" 1
      "Size To Content V" 1

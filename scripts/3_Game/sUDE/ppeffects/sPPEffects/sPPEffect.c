@@ -961,10 +961,11 @@ class SPPEffect : Managed {
 		}
 	}
 	
+	/*
 	void debugUI() {
 		auto dui = SDebugUI.of(ClassName());
 		dui.begin();
-		dui.window(ClassName(), {(256+12)*4, 0}, {300, 0});
+		dui.window(ClassName());
 		bool enable;
 		dui.check("Enable", enable);
 		if (!enable) return;
@@ -981,5 +982,6 @@ class SPPEffect : Managed {
 		}
 		dui.end();
 	}
+	*/
 	
 }

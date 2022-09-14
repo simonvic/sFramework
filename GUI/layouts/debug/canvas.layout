@@ -19,7 +19,7 @@ GridSpacerWidgetClass root_canvas {
   CanvasWidgetClass canvas {
    ignorepointer 1
    position 0 0
-   size 512 512
+   size 256 256
    hexactpos 0
    vexactpos 0
    hexactsize 1

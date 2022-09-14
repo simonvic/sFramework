@@ -2,13 +2,14 @@
 class SDebugCheats {
 	static bool weapon_noDamage = true;
 	static bool weapon_infAmmo = true;
+	static bool weapon_infMags = true;
 	static bool weapon_noJam = true;
 	static bool player_noDamage = false;
 }
 
 modded class Weapon_Base {
 	
-	override void EEFired(int muzzleType, int mode, string ammoType){
+	override void EEFired(int muzzleType, int mode, string ammoType) {
 		super.EEFired(muzzleType, mode, ammoType);
 		if (SDebugCheats.weapon_noDamage) {
 			if (GetGame().IsServer() || !GetGame().IsMultiplayer()) {
@@ -24,14 +25,16 @@ modded class Weapon_Base {
 		if (SDebugCheats.weapon_infAmmo) {
 			Magazine magazine = GetMagazine(GetCurrentMuzzle());
 			if (magazine == null) {
+				FillChamber();
 				SpawnAmmo();
 			} else {
-				if (GetGame().IsServer() || !GetGame().IsMultiplayer()) {
-					magazine.ServerSetAmmoMax();
-				}
-				
-				if (GetGame().IsClient() || !GetGame().IsMultiplayer()) {
-					magazine.LocalSetAmmoMax();
+				if (SDebugCheats.weapon_infMags || magazine.GetAmmoCount() == 0) {
+					if (GetGame().IsServer() || !GetGame().IsMultiplayer()) {
+						magazine.ServerSetAmmoMax();
+					}
+					if (GetGame().IsClient() || !GetGame().IsMultiplayer()) {
+						magazine.LocalSetAmmoMax();
+					}
 				}
 			}
 		}
@@ -45,18 +48,24 @@ modded class Weapon_Base {
 	
 }
 
+
 class PluginSDebug : PluginBase {
 	
 	protected float m_time;
 	
 	static PlayerBase simonvic;
 	static Weapon_Base weapon;
+	static int simonvicServerWeight;
+	
+	static string steamID64;
 	
 	static ref array<SurvivorBase> theBoris = {};
 	static ref array<Object> spawnedItems = {};
 	
 	
 	static ref SDebugUI dui;
+		
+	
 	
 	void PluginSDebug() {
 		if (GetGame().IsClient()) {
@@ -69,7 +78,7 @@ class PluginSDebug : PluginBase {
 		deleteAll();
 	}
 	
-	override void OnUpdate(float delta_time){
+	override void OnUpdate(float delta_time) {
 		m_time += delta_time;
 		if (GetGame().IsClient() || !GetGame().IsMultiplayer()) {
 			simonvic = PlayerBase.Cast(GetGame().GetPlayer());
@@ -93,13 +102,22 @@ class PluginSDebug : PluginBase {
 	}
 	
 	void onUpdateBoth(float delta_time) {
+		//SPPEManager.m_resultPPE.debugUI();
+		//SPPEManager.debugOverride("Graphics/Materials/postprocess/glow", "TargetBrightness", 0.5);
+		
 	}
 	
 	void onUpdateServer(float delta_time) {
+		if (!simonvic) return;
+		if (simonvicServerWeight != simonvic.GetWeight()) {
+			simonvicServerWeight = simonvic.GetWeight();
+			GetGame().RPCSingleParam(null, RPCID_DEBUG_SYNC, new Param2<string, string>("simonvicServerWeight", ""+simonvicServerWeight), true);
+		}
 	}
 	
 	static bool weapon_noDamage = SDebugCheats.weapon_noDamage;
 	static bool weapon_infAmmo = SDebugCheats.weapon_infAmmo;
+	static bool weapon_infMags = SDebugCheats.weapon_infMags;
 	static bool weapon_noJam = SDebugCheats.weapon_noJam;
 	static bool player_noDamage = SDebugCheats.player_noDamage;
 
@@ -107,37 +125,42 @@ class PluginSDebug : PluginBase {
 	void onUpdateClient(float delta_time) {
 		if (!simonvic) return;
 		dui.begin();
-		dui.window("Debug", {256+24,0}, {(256+12)*8,0});
-		
-		dui.text("[NUMPAD *] to enable cursor\n[NUMPAD /] to disable cursor");
-		dui.text("[NUMPAD +] to enable UI\n[NUMPAD -] to disable UI");
+		dui.window("Debug");
+		string keybindings;
+		keybindings += "[NUMPAD *] to enable cursor<br/>";
+		keybindings += "[NUMPAD /] to disable cursor<br/>";
+		keybindings += "[NUMPAD +] to enable UI<br/>";
+		keybindings += "[NUMPAD -] to disable UI";
+		dui.size("256px 64px").textrich(keybindings);
 		SoftSkillsManager ssm = simonvic.GetSoftSkillsManager();
 		float strength;
-		dui.slider("Strength", strength, 0.1, -1, 1);
+		dui.slider("Strength (soft skill)", strength, 0.1, -1, 1);
 		if (ssm.GetSpecialtyLevel() != strength) {
-			sendToServer("specialty", ""+strength);
+			debugRPC("specialty", ""+strength);
 		}
 		ssm.SetSpecialtyLevel(strength);
 		simonvic.GetStatSpecialty().Set(strength);
-		dui.newline();
-		dui.table({
-			{"playerStats"}
-			{"weight",  ""+simonvic.GetWeight()}
-			{"wetness", ""+simonvic.GetStatWet().Get()}
-			
-		}, {256,128});
-		dui.newline();
+		
+		dui.size("128px 64px").table({
+			{"Weight(grams)"}
+			{"client", ""+simonvic.GetWeight()}
+			{"server", ""+simonvicServerWeight}
+			{"desync", ""+(simonvic.GetWeight() - simonvicServerWeight)}
+		});
 		dui.text("Debug menus------------------");
 		dui.check("Recoil", AimingModelFilterRecoil.debugMonitor);
-		dui.check("Inertia", AimingModelFilterInertia.debugMonitor);
 		dui.check("RecoilControl", RecoilControl.debugMonitor);
+		dui.check("Inertia", AimingModelFilterInertia.debugMonitor);
 		dui.newline();
-		dui.text("Cheats------------------");
+		dui.text("Debug toggles------------------");
 		dui.check("weapon_noDamage", weapon_noDamage);
 		syncDebugCheat("weapon_noDamage", weapon_noDamage, SDebugCheats.weapon_noDamage);
 		
 		dui.check("weapon_infAmmo", weapon_infAmmo);
 		syncDebugCheat("weapon_infAmmo", weapon_infAmmo, SDebugCheats.weapon_infAmmo);
+		
+		dui.check("weapon_infMags", weapon_infMags);
+		syncDebugCheat("weapon_infMags", weapon_infMags, SDebugCheats.weapon_infMags);
 		
 		dui.check("weapon_noJam", weapon_noJam);
 		syncDebugCheat("weapon_noJam", weapon_noJam, SDebugCheats.weapon_noJam);
@@ -148,55 +171,83 @@ class PluginSDebug : PluginBase {
 		dui.newline();
 		
 		dui.button("player_heal", this, "heal");
-		dui.button("spawn_weapons", this, "sendToServer", new Param1<string>("spawn_weapons"));
-		dui.button("spawn_boris", this, "sendToServer", new Param1<string>("spawn_boris"));
-		dui.button("delete_all", this, "sendToServer", new Param1<string>("delete_all"));
-		
-		dui.newline();
+		dui.button("spawn_weapons", this, "debugRPC", new Param1<string>("spawn_weapons"));
+		dui.button("spawn_boris", this, "debugRPC", new Param1<string>("spawn_boris"));
+		dui.button("delete_all", this, "debugRPC", new Param1<string>("delete_all"));
 	}
 	
 	private void syncDebugCheat(string name, bool localCheat, out bool cheat) {
 		if (localCheat != cheat) {
-			sendToServer(name, ""+localCheat);
+			debugRPC(name, ""+localCheat);
 		}
 		cheat = localCheat;
 	}
 	
 	static int RPCID_DEBUG_SYNC = SRPCIDs.SYNC_USER_CONFIG_CONSTRAINTS + 1;
 	
-	private void sendToServer(string name, string value = "") {
-		SLog.d(name + " = " + value, "sendToServer");
+	private void debugRPC(string name, string value = "") {
+		SLog.d(name + " = " + value, "debugRPC");
 		GetGame().RPCSingleParam(null, RPCID_DEBUG_SYNC, new Param2<string, string>(name, value), true);
 	}
 
 	void onRPC(PlayerIdentity sender, Object target, int rpcId, ParamsReadContext ctx) {
-		if (rpcId != RPCID_DEBUG_SYNC || GetGame().IsClient()) return;
+		if (rpcId != RPCID_DEBUG_SYNC) return;
 		Param2<string, string> p;
-		ctx.Read(p);
-		switch (p.param1) {
-			case "specialty":
-			ctx.Read(CachedObjectsParams.PARAM1_FLOAT);
-			simonvic.GetSoftSkillsManager().SetSpecialtyLevel(CachedObjectsParams.PARAM1_FLOAT.param1);
-			simonvic.GetStatSpecialty().Set(CachedObjectsParams.PARAM1_FLOAT.param1);
-			break;
-			case "weapon_noDamage": SDebugCheats.weapon_noDamage = p.param2 == "true"; break;
-			case "weapon_infAmmo": SDebugCheats.weapon_infAmmo = p.param2 == "true"; break;
-			case "weapon_noJam": SDebugCheats.weapon_noJam = p.param2 == "true"; break;
-			case "player_noDamage": godmode(p.param2 == "true"); break;
-			case "player_heal": heal(); break;
-			case "player_teleport": teleport(p.param2.ToVector()); break;
-			case "spawn_infected": spawnInfected(p.param2.ToVector()); break;
-			case "spawn_weapons": spawnWeaponsSet(simonvic.GetPosition() + "0 1 0"); break;
-			case "spawn_boris": spawnDefaultBorisDummies(); break;
-			case "delete_all": deleteAll(); break;
-			
-			default: Print("unknown cheat");
+		if (ctx.Read(p)) {
+			onDebugRPC(p.param1, p.param2, sender, target);
+		} else {
+			SLog.c("Can't read debug sync param!");
 		}
+		
+		
+	}
+	
+	void onDebugRPC(string name, string value, PlayerIdentity sender, Object target) {
+		if (GetGame().IsServer()) {
+			switch (name) {
+				case "specialty":
+				simonvic.GetSoftSkillsManager().SetSpecialtyLevel(value.ToFloat());
+				simonvic.GetStatSpecialty().Set(value.ToFloat());
+				break;
+				case "weapon_noDamage": SDebugCheats.weapon_noDamage = value == "true"; break;
+				case "weapon_infAmmo":  SDebugCheats.weapon_infAmmo = value == "true"; break;
+				case "weapon_infMags":  SDebugCheats.weapon_infMags = value == "true"; break;
+				case "weapon_noJam":    SDebugCheats.weapon_noJam = value == "true"; break;
+				case "player_noDamage": godmode(value == "true"); break;
+				case "player_heal":     heal(); break;
+				case "player_teleport": teleport(value.ToVector()); break;
+				case "spawn_infected":  spawnInfected(value.ToVector()); break;
+				case "spawn_weapons":   spawnWeaponsSet(getPlayerByIdentity(sender).GetPosition() + "0 1 0"); break;
+				case "spawn_boris":     spawnDefaultBorisDummies(); break;
+				case "delete_all":      deleteAll(); break;
+				case "exchangeSteamID": GetGame().RPCSingleParam(null, RPCID_DEBUG_SYNC, new Param2<string, string>("exchangeSteamID", sender.GetPlainId()), true, sender); break;				
+				case "debugSpawn":      debugSpawn(value);
+				default:                Print("unknown cheat");
+			}
+		}
+		
+		if (GetGame().IsClient()) {
+			switch (name) {
+				case "exchangeSteamID": steamID64 = value; break;
+				case "simonvicServerWeight": simonvicServerWeight = value.ToInt(); break;
+			}
+		}
+	}
+	
+	private static PlayerBase getPlayerByIdentity(PlayerIdentity identity) {
+		array<Man> players = {};
+		GetGame().GetPlayers(players);
+		foreach (Man player : players) {
+			if (player.GetIdentity() == identity) {
+				return PlayerBase.Cast(player);
+			}
+		}
+		return null;
 	}
 	
 	private void spawnInfected(vector target) {
 		if (GetGame().IsClient()) {
-			sendToServer("spawn_infected", string.Format("%1 %2 %3", target[0], target[1], target[2]));
+			debugRPC("spawn_infected", string.Format("%1 %2 %3", target[0], target[1], target[2]));
 			return;
 		}
 		GetGame().CreateObject("ZmbM_NBC_Yellow", target, false, true);
@@ -206,7 +257,7 @@ class PluginSDebug : PluginBase {
 		SDebugCheats.player_noDamage = enable;
 		player_noDamage = enable;
 		if (GetGame().IsClient()) {
-			sendToServer("player_noDamage", ""+enable);
+			debugRPC("player_noDamage", ""+enable);
 			return;
 		}
 		simonvic.SetAllowDamage(!enable);
@@ -214,7 +265,7 @@ class PluginSDebug : PluginBase {
 	
 	private void heal() {
 		if (GetGame().IsClient()) {
-			sendToServer("player_heal");
+			debugRPC("player_heal");
 			return;
 		}
 		simonvic.SetHealth(simonvic.GetMaxHealth("", ""));
@@ -235,7 +286,7 @@ class PluginSDebug : PluginBase {
 	
 	private void teleport(vector target) {
 		if (GetGame().IsClient()) {
-			sendToServer("player_teleport", string.Format("%1 %2 %3", target[0], target[1], target[2]));
+			debugRPC("player_teleport", string.Format("%1 %2 %3", target[0], target[1], target[2]));
 			return;
 		}
 		simonvic.SetPosition(target);
@@ -282,7 +333,7 @@ class PluginSDebug : PluginBase {
 
 	static void setupShootingDebugArea() {
 		
-		if (!simonvic){
+		if (!simonvic) {
 			array<Man> players = new array<Man>;
 			GetGame().GetPlayers(players);
 			simonvic = PlayerBase.Cast(players[0]);
@@ -297,6 +348,7 @@ class PluginSDebug : PluginBase {
 	static ref array<ref array<string>> weaponsByCat = {
 		{"M4A1","M16A2","AK101","AK74","AKM","AKS74U","FAL","VSS","ASVAL","Aug","AugShort","FAMAS","SawedOffFAMAS"}
 		{"B95","CZ527","Winchester70","Mosin9130","SawedoffMosin9130","Repeater","Ruger1022","SVD","SKS","Izh18","SawedoffIzh18"}
+		{"Mp133Shotgun", "Saiga", "Izh43Shotgun", "SawedoffIzh43Shotgun"}
 		{"MP5K","CZ61","UMP45","PP19"}
 		{"Magnum","MakarovIJ70","MKII","Colt1911","CZ75","FNX45","Deagle","LongHorn"}
 	};
@@ -312,27 +364,36 @@ class PluginSDebug : PluginBase {
 					Print("Can't spawn " + w);
 				} else {
 					Print("spawning " + w);
-					e.SetOrientation("90 0 90");
+					e.SetOrientation("180 0 90");
 					e.OnDebugSpawn();
 					spawnedItems.Insert(e);
-					pos = pos + "0.5 0 0.5";
+					pos = pos + "1 0 0";
 				}
 			}
-			pos = Vector(position[0] - 0.5, position[1], pos[2] - 0.5);
+			pos = Vector(position[0] - 3, position[1], pos[2] - 2);
 		}
 	}
 	
-	static void spawnBorisDummies(vector startPosition, array<float> distances, vector direction){
-		foreach (float dis : distances){
+	static void debugSpawn(string type) {
+		if (GetGame().IsClient()) {
+			PluginSDebug.Cast(GetPluginManager().GetPluginByType(PluginSDebug)).debugRPC("debugSpawn", type);
+			return;
+		}
+		vector pos = simonvic.GetPosition();
+		EntityAI.Cast(GetGame().CreateObject(type, pos)).OnDebugSpawn();
+	}
+	
+	static void spawnBorisDummies(vector startPosition, array<float> distances, vector direction) {
+		foreach (float dis : distances) {
 			Object boris = GetGame().CreateObject("SurvivorM_Boris", startPosition + direction * dis, false, true, true);
-			if (boris != null){
+			if (boris != null) {
 				boris.SetAllowDamage(false);
 				theBoris.Insert(SurvivorBase.Cast(boris));
 			}
 		}
 	}
 	
-	static void spawnDefaultBorisDummies(){
+	static void spawnDefaultBorisDummies() {
 		PluginSDebug.spawnBorisDummies(simonvic.GetPosition(), {
 			25,
 			50,
@@ -346,8 +407,8 @@ class PluginSDebug : PluginBase {
 	}
 	
 
-	static void setTheBorisInvincibility(bool invincible){
-		foreach (SurvivorBase boris : theBoris){
+	static void setTheBorisInvincibility(bool invincible) {
+		foreach (SurvivorBase boris : theBoris) {
 			boris.SetAllowDamage(!invincible);
 		}
 	}
@@ -356,14 +417,14 @@ class PluginSDebug : PluginBase {
 	
 
 	
-	static void deleteTheBoris(){
+	static void deleteTheBoris() {
 		foreach (auto o : theBoris) {
 			GetGame().ObjectDelete(o);
 			GetGame().ObjectDeleteOnClient(o);
 		}
 	}
 	
-	static void deleteSpawnedItems(){
+	static void deleteSpawnedItems() {
 		foreach (auto o : spawnedItems) {
 			GetGame().ObjectDelete(o);
 			GetGame().ObjectDeleteOnClient(o);
@@ -376,7 +437,7 @@ class PluginSDebug : PluginBase {
 	}
 	
 
-	static void updateMovementSettings(){
+	static void updateMovementSettings() {
 		SHumanCommandMoveSettings hcm = simonvic.GetDayZPlayerType().CommandMoveSettingsW();
 
 		//! run sprint (SHIFT HOLD) filter 
@@ -398,6 +459,11 @@ class PluginSDebug : PluginBase {
 		hcm.m_fHeadingChangeLimiterRun = 1500;				//!<		
 		hcm.m_fLeaningSpeed = 3.0;
 		simonvic.StartCommand_Move();
+	}
+	
+	static void logAllRecoilsCSV(string path = "$saves://sGunplay_recoils.csv") {
+		SFileHelper.touch(path);
+		SFileHelper.echo(RecoilBase.toCSVStringAll(), path);
 	}
 	
 	

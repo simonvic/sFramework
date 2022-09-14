@@ -1,7 +1,7 @@
 /*
-modded class PluginManager{
+modded class PluginManager {
 	
-	override void Init(){
+	override void Init() {
 		super.Init();
 		
 		//----------------------------------------------------------------------
@@ -11,7 +11,7 @@ modded class PluginManager{
 		//----------------------------------------------------------------------
 				
 		//=========== Debug =============
-		//RegisterPlugin( "PluginSDebug",						true, 	true ); //server false?
+		RegisterPlugin( "PluginSDebug",						true, 	true ); //server false?
 	}
 }
 */

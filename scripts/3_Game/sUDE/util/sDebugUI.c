@@ -6,23 +6,32 @@
 	@code
 		// Example usage for per-frame update
 		void OnUpdate(float timeslice) {
-			SDebugUI dui = SDebugUI.of(ClassName());
+			auto dui = SDebugUI.of("TestDebugUI");
 			dui.begin();
 			dui.window("Debug monitor");
-			dui.text("Time : " + GetGame().GetDayTime());
-			dui.newline();
-			dui.slider(0.5, 0.1, 0, 1);
-			dui.check("some text");
-			dui.button("click me", this, "printSum", new Param2<int,int>(69, 420));
-			dui.newline();
-			dui.table({
-				{"Attribute",    "Value"},
-				{"Time",         ""+m_time},
-				{"Radio volume", ""+GetGame().GetSoundScene().GetRadioVolume()},
-				{"VoIP volume",  ""+GetGame().GetSoundScene().GetVOIPVolume()},
-				{"VoIP level",   ""+GetGame().GetSoundScene().GetAudioLevel()}
-			});
-			dui.plotlive("Sin", Math.AbsFloat(Math.Sin(GetGame().GetTickTime())));
+				dui.text("Day Time : " + GetGame().GetDayTime());
+				dui.newline();
+				
+				dui.textrich("<image set='dayz_gui' name='icon_pin' /> ");
+				dui.textrich("You can click on the slider, or you can use the mouse wheel");
+				dui.textrich("If you hold shift while using mouse wheel, it will go wrooom!");
+				float sliderValue;
+				dui.slider("mySlider", sliderValue);
+				dui.textrich("The value of <font name='gui/fonts/amorserifpro'>sliderValue</font> is: <b>"+ sliderValue +"</b>");
+				
+				bool checkValue
+				dui.check("myCheck", checkValue);
+				dui.text("CheckValue: " + checkValue);
+				dui.button("click me", this, "printSum", new Param2<int,int>(69, 420));
+				dui.newline();
+				dui.table({
+					{"Attribute",    "Value"},
+					{"Time",         ""+GetGame().GetTickTime()},
+					{"Radio volume", ""+GetGame().GetSoundScene().GetRadioVolume()},
+					{"VoIP volume",  ""+GetGame().GetSoundScene().GetVOIPVolume()},
+					{"VoIP level",   ""+GetGame().GetSoundScene().GetAudioLevel()}
+				});
+				dui.plotlive("Sin", Easing.EaseInBounce(Math.AbsFloat(Math.Sin(m_time))));
 			dui.end();
 		}
 
@@ -49,6 +58,11 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	static ref map<string, ref SDebugUI> instances = new map<string, ref SDebugUI>;
 	
+	/**
+	*	@brief Get an instance of SDebugUI
+	*	@param name of instance
+	*	@return instance of name, or new one if it doesn't exists
+	*/
 	static SDebugUI of(string name) {				
 		SDebugUI dui = instances.Get(name);
 		if (dui) return dui;
@@ -58,8 +72,6 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	
-	
-	bool disabled;
 	Widget root;
 	
 	/**
@@ -67,13 +79,25 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	The first element is the last created window
 	*/
 	ref SStack<Widget> windows;
-
+	
+	/**
+	*	Disable the debug ui
+	*/
+	bool disabled;
+	
 	ref map<ButtonWidget, ref SDebugButtonCallback> buttonsCallbacks;
 	
 	ref map<string, bool> statesCheckbox;
 	ref map<string, float> statesSlider;
 	ref map<string, ref array<ref array<float>>> plotsHistory;
-	
+
+	ref SColor color;
+	/**
+	* <value, isPixel>
+	*/
+	ref Param2<float, bool> size[2];
+	ref Param2<float, bool> pos[2];
+
 	private void SDebugUI() {
 		if (isServer()) return;
 		root = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/root.layout");
@@ -85,6 +109,144 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		statesSlider = new map<string, float>;
 		plotsHistory = new map<string, ref array<ref array<float>>>;
 	}
+
+	/**
+	*	@brief Specify widget color
+	*	@param color
+	*	@code
+	*	dui.color(SColor.rgba(0xFF0000aa)).window() // semi transparent red window
+	*/
+	SDebugUI color(SColor col) {
+		color = col;
+		return this;
+	}
+	
+	/**
+	*	@brief Specify widget size in pixel or percentage
+	*	@param size with unit suffix
+	*	@code
+	*	dui.size("69px 420px").window(); //69px width and 420px height
+	*	dui.size("0.5 0.42").window();   //69% width and 42% height
+	*	dui.size("69px 0.42").window();  //69px width and 42% height
+	*	dui.size("69px").window();       //69px width and height
+	*	dui.size("69").window();         //69% width and height
+	*/
+	SDebugUI size(string words) {
+		array<string> temp = {};
+		words.Split(" ", temp);
+		if (!temp || temp.Count() < 1) return this;
+		
+		Param2<float, bool> x = parseSizePos(temp[0]);
+		size[0] = x;
+		if (temp.Count() < 2) {
+			size[1] = x;
+		} else {
+			size[1] = parseSizePos(temp[1]);
+		}
+		
+		return this;
+	}
+	
+	/**
+	*	@brief Specify widget position in pixel or percentage
+	*	@param position with unit suffix
+	*	@code
+	*	dui.pos("69px 420px").window(); //69px x and 420px y
+	*	dui.pos("0.5 0.42").window();   //69% x and 42% y
+	*	dui.pos("69px 0.42").window();  //69px x and 42% y
+	*	dui.pos("69px").window();       //69px x and y
+	*	dui.pos("69").window();         //69% x and y
+	*/
+	SDebugUI pos(string words) {
+		array<string> temp = {};
+		words.Split(" ", temp);
+		if (!temp || temp.Count() < 1) return this;
+		
+		
+		Param2<float, bool> x = parseSizePos(temp[0]);
+		pos[0] = x;
+		if (temp.Count() < 2) {
+			pos[1] = x;
+		} else {
+			pos[1] = parseSizePos(temp[1]);
+		}
+		
+		return this;
+	}
+	
+	/**
+	*	@brief This little boy is rudimentary. He's trying his hardest :)
+	*/
+	protected static Param2<float, bool> parseSizePos(string word) {
+		bool exact = word.Contains("px");
+		word.Replace("px", "");
+		return new Param2<float, bool>(word.ToFloat(), exact);
+	}
+
+
+	/**
+	*	@brief Recolor the widget and consume the color
+	*	@param widget to color
+	*/
+	protected void recolor(Widget w) {
+		if (!color) return;
+		w.SetColor(color.getARGB());
+		color = null;
+	}
+	
+	/**
+	*	@brief Resize the widget and consume the size
+	*	@param widget to resize
+	*/
+	protected void resize(Widget w) {
+		if (size[0] && size[1]) {
+		
+			if (size[0].param2) {
+				w.SetFlags(WidgetFlags.HEXACTSIZE);
+			} else {
+				w.ClearFlags(WidgetFlags.HEXACTSIZE);
+			}
+			
+			if (size[1].param2) {
+				w.SetFlags(WidgetFlags.VEXACTSIZE);
+			} else {
+				w.ClearFlags(WidgetFlags.VEXACTSIZE);
+			}
+			
+			w.SetSize(size[0].param1, size[1].param1);
+			
+		}
+		size[0] = null;
+		size[1] = null;
+	}
+	
+	/**
+	*	@brief Reposition the widget and consume the position
+	*	@param widget to reposition
+	*/
+	protected void reposition(Widget w) {
+		if (pos[0] && pos[1]) {
+			
+			if (pos[0].param2) {
+				w.SetFlags(WidgetFlags.HEXACTPOS);
+			} else {
+				w.ClearFlags(WidgetFlags.HEXACTPOS);
+			}
+			
+			if (pos[1].param2) {
+				w.SetFlags(WidgetFlags.VEXACTPOS);
+			} else {
+				w.ClearFlags(WidgetFlags.VEXACTPOS);
+			}
+			
+			w.SetPos(pos[0].param1, pos[1].param1);
+		}
+		pos[0] = null;
+		pos[1] = null;
+	}
+
+	
+	
 	
 	/**
 	*	@brief Build a new window
@@ -93,15 +255,14 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param posPx - X and Y position defined in pixels
 	*	@return Widget - new window created
 	*/
-	Widget window(string title = "", array<int> sizePx = null, array<int> posPx = null) {	
+	Widget window(string title = "") {
 		if (isServer()) return null;
-		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WINDOW_SIZE;
-		if (!posPx || posPx.Count() < 2) posPx = DEFAULT_WINDOW_POS;
-		
+
 		Widget w = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/window.layout", root);
 		w.SetHandler(this);
-		w.SetSize(sizePx[0], sizePx[1]);
-		w.SetPos(posPx[0], posPx[1]);
+		resize(w);
+		reposition(w);
+		recolor(w);
 		
 		TextWidget.Cast(w.FindAnyWidget("title")).SetText(title);
 		windows.push(w);
@@ -109,7 +270,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		CheckBoxWidget.Cast(w.FindAnyWidget("disable")).SetChecked(!disabled);
 		return w;
 	}
-		
+	
 	
 	/**
 	*	@brief Create a checkbox
@@ -207,12 +368,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param data - matrix of rows and columns of string data
 	*	@return WrapSpacerWidget
 	*/
-	WrapSpacerWidget table(array<ref array<string>> data, array<int> sizePx = null) {
+	WrapSpacerWidget table(array<ref array<string>> data) {
 		if (isServer() || disabled) return null;
-		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		WrapSpacerWidget w = WrapSpacerWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/table.layout"));
 		if (!w) return null;
-		w.SetSize(sizePx[0], sizePx[1]);
 
 		if (data == null || data.Count() == 0) return w;
 		
@@ -247,12 +406,12 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param color - color of the line
 	*	@return CanvasWidget
 	*/
-	CanvasWidget plotlive(string title, float y, float min = 0, float max = 1, array<int> sizePx = null, int historySize = 50, array<float> scale = null, array<float> offset = null, int widthPx = 3, SColor color = null) {
+	CanvasWidget plotlive(string title, float y, float min = 0, float max = 1, array<int> sizePx = null, int historySize = 50, array<float> scale = null, array<float> offset = null, int widthPx = 3, SColor lineColor = null) {
 		if (isServer() || disabled) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		if (!scale  || scale.Count()  < 2) scale  = DEFAULT_PLOT_SCALE;
 		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
-		if (!color)                        color  = DEFAULT_PLOT_COLOR;
+		if (!lineColor) lineColor = DEFAULT_PLOT_COLOR;
 		historySize = Math.Clamp(historySize, PLOT_HISTORY_MIN, PLOT_HISTORY_MAX);
 		CanvasWidget c = canvas(sizePx, title);
 		if (!c) return null;
@@ -283,7 +442,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 				SMath.mapTo(offset[0] + scale[0] * x + precision,  0,   1,   0,         sizePx[0]),
 				SMath.mapTo(offset[1] + scale[1] * line[i - 1][1], min, max, sizePx[1], 0),
 				widthPx,
-				color.getARGB());
+				lineColor.getARGB());
 			x += precision;
 		}
 		return c;
@@ -300,12 +459,12 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param color - color of the line
 	*	@return CanvasWidget
 	*/
-	CanvasWidget plot(string title = "", array<ref array<ref array<float>>> lines = null, array<int> sizePx = null, array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor color = null) {
+	CanvasWidget plot(string title = "", array<ref array<ref array<float>>> lines = null, array<int> sizePx = null, array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor lineColor = null) {
 		if (isServer() || disabled) return null;
 		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
 		if (!scale  || scale.Count()  < 2) scale  = DEFAULT_PLOT_SCALE;
 		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
-		if (!color)                        color  = DEFAULT_PLOT_COLOR;
+		if (!lineColor) lineColor = DEFAULT_PLOT_COLOR;
 		CanvasWidget c = canvas(sizePx, title);
 		if (!c) return null;
 		
@@ -317,7 +476,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 					SMath.mapTo(offset[0] + scale[0] * line[i+1][0], 0, 1, 0,         sizePx[0]),
 					SMath.mapTo(offset[1] + scale[1] * line[i+1][1], 0, 1, sizePx[1], 0),
 					widthPx,
-					color.getARGB());
+					lineColor.getARGB());
 			}
 		}
 		return c;
@@ -346,12 +505,9 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param size - X and Y size defined in screen space (0.0 - 1.0)
 	*	@return Widget
 	*/
-	Widget spacer(array<float> size = null) {
+	Widget spacer() {
 		if (isServer() || disabled) return null;
-		if (!size || size.Count() < 2) size = DEFAULT_SPACER_SIZE;
-		Widget w = GetGame().GetWorkspace().CreateWidget(FrameWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, windows.peek().FindAnyWidget("body"));		
-		w.SetSize(size[0], size[1]);
-		return w;
+		return widget("MyMODS/sFramework/GUI/layouts/debug/spacer.layout");
 	}
 	
 	
@@ -360,12 +516,9 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param sizePx - height in pixels of the empty line
 	*	@return Widget
 	*/
-	Widget newline(int sizePx = 1) {
+	Widget newline(string height = "1px") {
 		if (isServer() || disabled) return null;
-		Widget w = spacer();
-		w.SetFlags(WidgetFlags.VEXACTSIZE);
-		w.SetSize(1.0, sizePx);
-		return w;
+		return size("1 " + height).spacer();
 	}
 	
 	/**
@@ -386,6 +539,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			w.SetName(name);
 		}
 		w.SetHandler(this);
+		resize(w);
+		recolor(w);
 		return w;
 	}
 	

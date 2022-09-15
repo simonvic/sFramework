@@ -1,4 +1,4 @@
-modded class MissionGameplay{
+modded class MissionGameplay {
 	
 	void MissionGameplay() {
 		SPPEManager.onInit();		

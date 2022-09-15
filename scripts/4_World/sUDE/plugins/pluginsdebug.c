@@ -48,6 +48,14 @@ modded class Weapon_Base {
 	
 }
 
+modded class PluginManager {
+	override void Init() {
+		super.Init();
+		//                              client, server
+		RegisterPlugin( "PluginSDebug", true,   true);
+	}
+}
+
 
 class PluginSDebug : PluginBase {
 	
@@ -125,16 +133,16 @@ class PluginSDebug : PluginBase {
 	void onUpdateClient(float delta_time) {
 		if (!simonvic) return;
 		dui.begin();
-		dui.window("Debug");
+		dui.size("175px 1").window("Debug");
 		string keybindings;
 		keybindings += "[NUMPAD *] to enable cursor<br/>";
 		keybindings += "[NUMPAD /] to disable cursor<br/>";
 		keybindings += "[NUMPAD +] to enable UI<br/>";
 		keybindings += "[NUMPAD -] to disable UI";
-		dui.size("256px 64px").textrich(keybindings);
+		dui.size("1 64px").textrich(keybindings);
 		SoftSkillsManager ssm = simonvic.GetSoftSkillsManager();
 		float strength;
-		dui.slider("Strength (soft skill)", strength, 0.1, -1, 1);
+		dui.size("1 24px").slider("Strength (soft skill)", strength, 0.1, -1, 1);
 		if (ssm.GetSpecialtyLevel() != strength) {
 			debugRPC("specialty", ""+strength);
 		}
@@ -147,12 +155,7 @@ class PluginSDebug : PluginBase {
 			{"server", ""+simonvicServerWeight}
 			{"desync", ""+(simonvic.GetWeight() - simonvicServerWeight)}
 		});
-		dui.text("Debug menus------------------");
-		dui.check("Recoil", AimingModelFilterRecoil.debugMonitor);
-		dui.check("RecoilControl", RecoilControl.debugMonitor);
-		dui.check("Inertia", AimingModelFilterInertia.debugMonitor);
-		dui.newline();
-		dui.text("Debug toggles------------------");
+		dui.text("Debug toggles");
 		dui.check("weapon_noDamage", weapon_noDamage);
 		syncDebugCheat("weapon_noDamage", weapon_noDamage, SDebugCheats.weapon_noDamage);
 		
@@ -471,4 +474,5 @@ class PluginSDebug : PluginBase {
 
 	}
 }
+
 */

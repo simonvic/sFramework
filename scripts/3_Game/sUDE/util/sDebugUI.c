@@ -1,3 +1,4 @@
+#ifdef DIAG_DEVELOPER
 /**
 
 	@brief Create a simple interface for debugging purposes
@@ -705,3 +706,5 @@ class SDebugButtonCallback : Managed {
 		params = p;
 	}
 }
+
+#endif

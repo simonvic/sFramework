@@ -245,13 +245,6 @@ Implement the `SUserConfigBase` as follows:
 ```csharp
 class MySUserConfig : SUserConfigBase {
 
-    // Configuration options (and their default values) you want to store
-    float myFloatValue = 0.69;
-    //int myIntValue = 69;
-    //bool myBooleanValue = true;
-    //float myArray[4] = {0.69, 42.0, 420.69, 0.42069};
-    //any other options 
-
     /**
     *   Where the config will be saved
     */
@@ -270,23 +263,41 @@ class MySUserConfig : SUserConfigBase {
     *   Implement the deserialization
     */
     override void deserialize(string data, out string error){
-        MySUserConfig cfg = this;
+        auto cfg = this;
         m_serializer.ReadFromString(cfg, data, error);
     }
     
     /**
     *   Implement the serialization
     */
-    override string serialize(bool serializeDefault = false){
+    override string serialize() {
         string result;
-        MySUserConfig cfg;
-        if (serializeDefault) {
-            cfg = new MySUserConfig();
-        } else {
-            cfg = this;
-        }
-        m_serializer.WriteToString(cfg, true, result);
+        auto cfg = this;
+        getSerializer().WriteToString(cfg, true, result);
         return result;
+    }
+    
+    override string serializeDefault() {
+        string result;
+        auto cfg = new MySUserConfig();
+        getSerializer().WriteToString(cfg, true, result);
+        return result;
+    }
+
+    // Configuration options (and their default values) you want to store
+    float myFloatOption = 0.69;
+    //bool myBoolOption = true;
+    //int myIntOption = 69;
+    //ref array<float> myarrayOption = {0.69, 42.0, 420.69, 0.42069};
+    //any other options 
+
+    override void registerOptions() {
+        super.registerOptions();
+        registerOption("myFloatOption",     new SUserConfigOption<float>(myFloatOption));
+        // registerOption("myBoolOption",   new SUserConfigOption<bool>(myBoolOption));
+        // registerOption("myIntOption",    new SUserConfigOption<int>(myIntOption));
+        // registerOption("myarrayOption",  new SUserConfigOptionArray<float>(myarrayOption));
+        // any other option
     }
 }
 ```
@@ -295,10 +306,40 @@ you can now save it, load it and more with few lines
 
 ```csharp
 MyUserConfig myCfg = new MyUserConfig();
-myCfg.save();
 myCfg.load();
+myCfg.save();
 //myCfg.isValid()
 // etc.
+```
+
+Making a user interface for changing those option is very easy too.
+```csharp
+class MyOptionsMenu : SOptionsMenuBase {
+    
+    override string getName() {
+        return "MyOptionsName";
+    }
+    
+    override string getLayout() {
+        return "path/to/interface.layout";	
+    }
+        
+    ref SliderWidget    myFloatOptionSlider;
+    ref CheckBoxWidget  myBoolOptionCheckbox;
+    
+    override void onInit() {
+        super.onInit();
+        setUserConfig(instanceOfYourConfig());
+    }
+    
+    override void onBuild() {
+        super.onBuild();
+        //               Widget to link          name of widget in your layout      option to link
+        initOptionWidget(myFloatOptionSlider,    "myFloatOption",                    getUserConfig().getOptionFloat("myFloatOption"));
+        initOptionWidget(myBoolOptionCheckbox,   "myBoolOption",                     getUserConfig().getOptionBool("myBoolOption"));
+    }
+    
+}
 ```
 
 ## SGameConfig
@@ -473,6 +514,48 @@ void testSomethingComplex() {
 <br>
 
 # Utilities
+
+## SDebugUI
+
+A fully featured API for quick creation of debug intefaces.
+
+```csharp
+class SomeClass {
+    void OnUpdate(float timeslice) {
+        auto dui = SDebugUI.of("TestDebugUI");
+        dui.begin();
+        dui.window("Debug monitor");
+            dui.text("Day Time : " + GetGame().GetDayTime());
+            dui.newline();
+            
+            dui.textrich("<image set='dayz_gui' name='icon_pin' /> ");
+            dui.textrich("You can click on the slider, or you can use the mouse wheel");
+            dui.textrich("If you hold shift while using mouse wheel, it will go wrooom!");
+            float sliderValue;
+            dui.slider("mySlider", sliderValue);
+            dui.textrich("The value of <font name='gui/fonts/amorserifpro'>sliderValue</font> is: <b>"+ sliderValue +"</b>");
+            
+            bool checkValue
+            dui.check("myCheck", checkValue);
+            dui.text("CheckValue: " + checkValue);
+            dui.button("click me", this, "printSum", new Param2<int,int>(69, 420));
+            dui.newline();
+            dui.table({
+                {"Attribute",    "Value"},
+                {"Time",         ""+GetGame().GetTickTime()},
+                {"Radio volume", ""+GetGame().GetSoundScene().GetRadioVolume()},
+                {"VoIP volume",  ""+GetGame().GetSoundScene().GetVOIPVolume()},
+                {"VoIP level",   ""+GetGame().GetSoundScene().GetAudioLevel()}
+            });
+            dui.plotlive("Sin", Easing.EaseInBounce(Math.AbsFloat(Math.Sin(m_time))));
+        dui.end();
+    }
+
+    void printSum(int x, int y) {
+        Print(x + y);
+    }
+}
+```
 
 ## SColor
 

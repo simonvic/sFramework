@@ -673,6 +673,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 	
 	override bool OnDragging(Widget w, int x, int y, Widget reciever) {
+		w.GetParent().SetFlags(WidgetFlags.EXACTPOS);
 		w.GetParent().SetPos(x - dragOffset[0], y - dragOffset[1]);
 		return true;
 	}

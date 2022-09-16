@@ -62,6 +62,7 @@ class PluginSDebug : PluginBase {
 	protected float m_time;
 	
 	static PlayerBase simonvic;
+	static ItemBase itemInHands;
 	static Weapon_Base weapon;
 	static int simonvicServerWeight;
 	
@@ -91,7 +92,8 @@ class PluginSDebug : PluginBase {
 		if (GetGame().IsClient() || !GetGame().IsMultiplayer()) {
 			simonvic = PlayerBase.Cast(GetGame().GetPlayer());
 			if (simonvic) {
-				Class.CastTo(weapon, simonvic.GetItemInHands());
+				itemInHands = simonvic.GetItemInHands();
+				Class.CastTo(weapon, itemInHands);
 			}
 			onUpdateClient(delta_time);
 		}
@@ -101,7 +103,8 @@ class PluginSDebug : PluginBase {
 			GetGame().GetPlayers(players);
 			simonvic = PlayerBase.Cast(players[0]);
 			if (simonvic) {
-				Class.CastTo(weapon, simonvic.GetItemInHands());
+				itemInHands = simonvic.GetItemInHands();
+				Class.CastTo(weapon, itemInHands);
 			}
 			onUpdateServer(delta_time);
 		}
@@ -149,7 +152,7 @@ class PluginSDebug : PluginBase {
 		ssm.SetSpecialtyLevel(strength);
 		simonvic.GetStatSpecialty().Set(strength);
 		
-		dui.size("128px 64px").table({
+		dui.size("1 64px").table({
 			{"Weight(grams)"}
 			{"client", ""+simonvic.GetWeight()}
 			{"server", ""+simonvicServerWeight}
@@ -177,6 +180,29 @@ class PluginSDebug : PluginBase {
 		dui.button("spawn_weapons", this, "debugRPC", new Param1<string>("spawn_weapons"));
 		dui.button("spawn_boris", this, "debugRPC", new Param1<string>("spawn_boris"));
 		dui.button("delete_all", this, "debugRPC", new Param1<string>("delete_all"));
+		
+		
+		if (weapon) {
+			dui.pos("200px 0").size("300px").window(weapon.GetDebugName());
+			array<ref array<string>> recoilTable = {{"No data available."}, {"Shoot once to show recoil stats"}};
+			RecoilBase recoil = simonvic.GetAimingModel().getRecoil();
+			if (recoil) {
+				recoilTable = recoil.toDebugTable();
+			}
+			dui.table(recoilTable);
+			dui.spacer();			
+			auto m = weapon.GetPropertyModifierObject();
+			dui.size("300px 64px").table({
+				{"Attachments modifiers"}
+				{"mouse",        string.Format("-%1%% -%2%%", (1-m.recoilControlMouseX)*100,        (1-m.recoilControlMouseY)*100)}
+				{"stability",    string.Format("-%1%% -%2%%", (1-m.recoilControlHandsX)*100,        (1-m.recoilControlHandsY)*100)}
+				{"misalignment", string.Format("-%1%% -%2%%", (1-m.recoilControlMisalignmentX)*100, (1-m.recoilControlMisalignmentY)*100)}
+				{"kick",         string.Format("-%1%%",       (1-m.recoilControlKick)*100)}
+			});
+		}
+		
+		
+		
 	}
 	
 	private void syncDebugCheat(string name, bool localCheat, out bool cheat) {

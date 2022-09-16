@@ -1,7 +1,7 @@
 GridSpacerWidgetClass root_window {
  clipchildren 1
  ignorepointer 1
- color 0 0 0 0.5529
+ color 0 0 0 0.5373
  position 0 0
  size 256 256
  hexactpos 1
@@ -9,7 +9,7 @@ GridSpacerWidgetClass root_window {
  hexactsize 1
  vexactsize 1
  scaled 0
- style Colorable
+ style outline
  Padding 0
  Margin 0
  "Size To Content H" 1
@@ -19,7 +19,7 @@ GridSpacerWidgetClass root_window {
  {
   WrapSpacerWidgetClass c_header {
    ignorepointer 0
-   color 0 0 0 0
+   color 0 0 0 0.5176
    position 0 0
    size 1 32
    hexactpos 0
@@ -28,6 +28,7 @@ GridSpacerWidgetClass root_window {
    vexactsize 1
    scaled 1
    draggable 1
+   style Colorable
    Padding 0
    Margin 0
    "Size To Content H" 1
@@ -90,6 +91,7 @@ GridSpacerWidgetClass root_window {
    vexactpos 0
    hexactsize 0
    vexactsize 0
+   style Colorable
    Padding 0
    Margin 0
    "Size To Content H" 1
@@ -99,6 +101,7 @@ GridSpacerWidgetClass root_window {
    {
     WrapSpacerWidgetClass body {
      ignorepointer 1
+     color 0 0 0 0.4706
      position 0 0
      size 1 1
      hexactpos 0

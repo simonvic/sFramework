@@ -1,6 +1,7 @@
 class SMath {
 	
 	static const float e = 2.7182818284;
+	static const float PI_SQ = 9.8696;
 	
 	static float Exp(float x) {
 		return Math.Pow(e,x);

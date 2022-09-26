@@ -1,19 +1,18 @@
 typedef set<ref SPPEffect> TSPPEffectsList;
 typedef set<ref SPPEffectAnimated> TSPPEffectsAnimatedList;
 
+//@fixme Who wrote this shit? Me? Was I on drugs?
 class SPPEManager {
 	
 	protected static float m_time;
 	
 	//=========== Depth of Field ==============
-	protected static ref DDOFPreset m_DDOF = new DDOFPreset(); //default Dynamic Depth of Field values 
+	protected static ref DDOFPreset m_DDOF; // default Dynamic Depth of Field values 
 	protected static bool m_DDOF_Enabled = true;
 	protected static float m_DDOFVelocity[1];
-	protected static float m_DDOFBlurVelocity[1];
-	
-	protected static ref DoFPreset m_targetDOF = new DoFPreset(); //target Depth of field values
-
-	protected static ref DoFPreset m_resultDOF = new DoFPreset(); //final DOF calculated
+	protected static float m_DDOFBlurVelocity[1];	
+	protected static ref DoFPreset m_targetDOF; // target Depth of field values
+	protected static ref DoFPreset m_resultDOF; // final DOF calculated
 
 	//=========== Motion Blur ==============
 	protected static bool m_MotionBlur_Enabled = true;
@@ -30,14 +29,14 @@ class SPPEManager {
 	protected static Material filmgrain;
 	
 	//=========== PostProcess Effects Parameters ==============
-	protected static ref SPPEffect m_defaultPPE = new SPPEffect(); //default params with no modifiers
-	protected static ref SPPEffect m_vanillaPPE = new SPPEffect(); // used by vanilla PPEffects class
+	protected static ref SPPEffect m_defaultPPE; // default params with no modifiers
+	protected static ref SPPEffect m_vanillaPPE; // used by vanilla PPEffects class
 	
-	protected static ref TSPPEffectsList m_persistentPPE = new TSPPEffectsList; //all "non-animated" params
-	protected static ref TSPPEffectsAnimatedList m_animatedPPE = new TSPPEffectsAnimatedList; //all animated params
+	protected static ref TSPPEffectsList m_persistentPPE; // all "non-animated" params
+	protected static ref TSPPEffectsAnimatedList m_animatedPPE; // all animated params
 	
-	protected static ref SPPEffect m_requestedPPE = new SPPEffect(); // merged values of requested ppe
-	protected static ref SPPEffect m_resultPPE = new SPPEffect(); // final ppe params after the merge
+	protected static ref SPPEffect m_requestedPPE; // merged values of requested ppe
+	protected static ref SPPEffect m_resultPPE; // final ppe params after the merge
 	
 	//=========================================================
 	
@@ -55,6 +54,15 @@ class SPPEManager {
 	}
 	
 	static void onInit() {
+		m_DDOF = new DDOFPreset();
+		m_targetDOF = new DoFPreset();
+		m_resultDOF = new DoFPreset();
+		m_defaultPPE = new SPPEffect();
+		m_vanillaPPE = new SPPEffect();
+		m_persistentPPE = new TSPPEffectsList;
+		m_animatedPPE = new TSPPEffectsAnimatedList;
+		m_requestedPPE = new SPPEffect();
+		m_resultPPE = new SPPEffect();
 		initDOF();
 		loadMaterials();	
 		loadDefaultParams();	

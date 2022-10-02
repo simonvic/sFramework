@@ -317,12 +317,8 @@ class SLog {
 	}
 	
 	private static void logToFile(string text) {
-		int year;
-		int month;
-		int day;
-		GetYearMonthDayUTC(year,month,day);
-		string today = ""+year+"-"+month+"-"+day;
-		string filePath = LOG_PATH+"\\"+today+".slog";
+		string today = buildTimestamp("%1-%2-%3");
+		string filePath = LOG_PATH + "\\" + today + ".slog";
 		SFileHelper.touch(filePath);
 		if (!headerPrinted) {
 			text = buildHeader() + text;

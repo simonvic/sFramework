@@ -115,7 +115,6 @@ class PluginSDebug : PluginBase {
 	void onUpdateBoth(float delta_time) {
 		//SPPEManager.m_resultPPE.debugUI();
 		//SPPEManager.debugOverride("Graphics/Materials/postprocess/glow", "TargetBrightness", 0.5);
-		
 	}
 	
 	void onUpdateServer(float delta_time) {
@@ -143,6 +142,11 @@ class PluginSDebug : PluginBase {
 		keybindings += "[NUMPAD +] to enable UI<br/>";
 		keybindings += "[NUMPAD -] to disable UI";
 		dui.size("1 64px").textrich(keybindings);
+		#ifdef DAYZ_1_19
+		float sprintFilter;
+		dui.size("1 24px").slider("sprintFilter", sprintFilter, 0.1, 0.1, 10);
+		dui.button("syncSprintFilter", this, "debugRPC", new Param2<string, string>("sprintFilter", ""+sprintFilter));
+		#endif
 		SoftSkillsManager ssm = simonvic.GetSoftSkillsManager();
 		float strength;
 		dui.size("1 24px").slider("Strength (soft skill)", strength, 0.1, -1, 1);
@@ -151,6 +155,7 @@ class PluginSDebug : PluginBase {
 		}
 		ssm.SetSpecialtyLevel(strength);
 		simonvic.GetStatSpecialty().Set(strength);
+		
 		
 		dui.size("1 64px").table({
 			{"Weight(grams)"}
@@ -194,10 +199,17 @@ class PluginSDebug : PluginBase {
 			auto m = weapon.GetPropertyModifierObject();
 			dui.size("300px 64px").table({
 				{"Attachments modifiers"}
-				{"mouse",        string.Format("-%1%% -%2%%", (1-m.recoilControlMouseX)*100,        (1-m.recoilControlMouseY)*100)}
-				{"stability",    string.Format("-%1%% -%2%%", (1-m.recoilControlHandsX)*100,        (1-m.recoilControlHandsY)*100)}
-				{"misalignment", string.Format("-%1%% -%2%%", (1-m.recoilControlMisalignmentX)*100, (1-m.recoilControlMisalignmentY)*100)}
-				{"kick",         string.Format("-%1%%",       (1-m.recoilControlKick)*100)}
+				{"mouse",        string.Format("%1%% %2%%", m.recoilControlMouseX*100,        m.recoilControlMouseY*100)}
+				{"stability",    string.Format("%1%% %2%%", m.recoilControlHandsX*100,        m.recoilControlHandsY*100)}
+				{"misalignment", string.Format("%1%% %2%%", m.recoilControlMisalignmentX*100, m.recoilControlMisalignmentY*100)}
+				{"kick",         string.Format("%1%%",      m.recoilControlKick*100)}
+			});
+			
+			dui.spacer();
+			dui.table({
+				{"Stats"}
+				{"weight", ""+weapon.GetWeight()}
+				{"length", ""+weapon.getWeaponLength()}
 			});
 		}
 		
@@ -217,6 +229,11 @@ class PluginSDebug : PluginBase {
 	private void debugRPC(string name, string value = "") {
 		SLog.d(name + " = " + value, "debugRPC");
 		GetGame().RPCSingleParam(null, RPCID_DEBUG_SYNC, new Param2<string, string>(name, value), true);
+		#ifdef DAYZ_1_19
+		switch (name) {
+			case "sprintFilter":    simonvic.GetCommand_Move().SetRunSprintFilterModifier(value.ToFloat()); break;
+		}
+		#endif
 	}
 
 	void onRPC(PlayerIdentity sender, Object target, int rpcId, ParamsReadContext ctx) {
@@ -238,6 +255,9 @@ class PluginSDebug : PluginBase {
 				simonvic.GetSoftSkillsManager().SetSpecialtyLevel(value.ToFloat());
 				simonvic.GetStatSpecialty().Set(value.ToFloat());
 				break;
+				#ifdef DAYZ_1_19
+				case "sprintFilter":    simonvic.GetCommand_Move().SetRunSprintFilterModifier(value.ToFloat()); break;
+				#endif
 				case "weapon_noDamage": SDebugCheats.weapon_noDamage = value == "true"; break;
 				case "weapon_infAmmo":  SDebugCheats.weapon_infAmmo = value == "true"; break;
 				case "weapon_infMags":  SDebugCheats.weapon_infMags = value == "true"; break;
@@ -246,6 +266,7 @@ class PluginSDebug : PluginBase {
 				case "player_heal":     heal(); break;
 				case "player_teleport": teleport(value.ToVector()); break;
 				case "spawn_infected":  spawnInfected(value.ToVector()); break;
+				case "spawn_apple":     spawnApple(value.ToVector()); break;
 				case "spawn_weapons":   spawnWeaponsSet(getPlayerByIdentity(sender).GetPosition() + "0 1 0"); break;
 				case "spawn_boris":     spawnDefaultBorisDummies(); break;
 				case "delete_all":      deleteAll(); break;
@@ -280,6 +301,17 @@ class PluginSDebug : PluginBase {
 			return;
 		}
 		GetGame().CreateObject("ZmbM_NBC_Yellow", target, false, true);
+	}
+	
+	private void spawnApple(vector target) {
+		if (GetGame().IsClient()) {
+			debugRPC("spawn_apple", string.Format("%1 %2 %3", target[0], target[1], target[2]));
+			return;
+		}
+		Object apple = GetGame().CreateObject("Apple", target);
+		dBodyDestroy(apple);
+		autoptr PhysicsGeomDef geoms[] = {PhysicsGeomDef("", dGeomCreateSphere( 0.1 ), "material/default", 0xffffffff)};
+		dBodyCreateDynamicEx(apple, "0 0 0", 1.0, geoms);
 	}
 	
 	private void godmode(bool enable = true) {
@@ -347,6 +379,7 @@ class PluginSDebug : PluginBase {
 			//case KeyCode.KC_NUMPAD2: godmode(!player_noDamage); break;
 			case KeyCode.KC_NUMPAD5: teleport(getLookingPosition(10000)); break;
 			case KeyCode.KC_NUMPAD7: spawnInfected(getLookingPosition(500)); break;
+			case KeyCode.KC_M: spawnApple(getLookingPosition(1)); break;
 		}		
 		//Print(typename.EnumToString(KeyCode, keycode));
 	}

@@ -5,15 +5,15 @@
 */
 class SConstraintBase : Managed {
 	
-	protected bool enabled = false;
+	protected bool constrain = false;
 	protected string message = "#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED";
 				
 	bool isEnabled() {
-		return enabled;
+		return constrain;
 	}
 	
 	void setEnabled(bool enable) {
-		enabled = enable;
+		constrain = enable;
 	}
 	
 	void enable() {

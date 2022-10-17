@@ -115,6 +115,7 @@ class SMath {
 	}
 	
 	/**
+	*	@DEPRECATED
 	* @brief Map a value from a range to another
 	* 	@param value \p float - Value to map
 	* 	@param min \p float - Value minimum range
@@ -125,6 +126,32 @@ class SMath {
 	*/
 	static float mapTo(float value, float min, float max, float mappedMin = 0, float mappedMax = 1) {
 		return ((value - min) / (max - min)) * (mappedMax - mappedMin) + mappedMin;
+	}
+	
+	/**
+	* @brief Map a value from a range to another
+	* 	@param value \p float - Value to map
+	* 	@param min \p float - Value minimum range
+	* 	@param max \p float - Value maximum range
+	* 	@param mappedMin \p float - Mapped value maximum range
+	* 	@param mappedMax \p float - Mapped value maximum range
+	* 	@return \p float - mapped value
+	*/
+	static float map(float value, float min, float max, float mappedMin, float mappedMax) {
+		return ((value - min) / (max - min)) * (mappedMax - mappedMin) + mappedMin;
+	}
+	
+	/**
+	* @brief Map a value from a range to another (clamped)
+	* 	@param value \p float - Value to map
+	* 	@param min \p float - Value minimum range
+	* 	@param max \p float - Value maximum range
+	* 	@param mappedMin \p float - Mapped value maximum range
+	* 	@param mappedMax \p float - Mapped value maximum range
+	* 	@return \p float - mapped value
+	*/
+	static float mapClamp(float value, float min, float max, float mappedMin, float mappedMax) {
+		return Math.Clamp(SMath.map(value, min, max, mappedMin, mappedMax), mappedMin, mappedMax);
 	}
 	
 	/**

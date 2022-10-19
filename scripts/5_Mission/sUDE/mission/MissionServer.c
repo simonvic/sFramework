@@ -1,7 +1,8 @@
 modded class MissionServer {
 	
-	void MissionServer() {
-		preloadSUserConfigConstraints();
+	override void OnInit() {
+		super.OnInit();
+		SUserConfigConstraints.getInstance().onPreload();
 	}
 	
 	override PlayerBase OnClientNewEvent(PlayerIdentity identity, vector pos, ParamsReadContext ctx) {
@@ -17,9 +18,6 @@ modded class MissionServer {
 	
 	protected void syncSUserConfigConstraints(PlayerIdentity playerIdentity) {
 		SUserConfigConstraints.getInstance().syncWith(playerIdentity);
-	}
-	
-	protected void preloadSUserConfigConstraints() {
 	}
 	
 }

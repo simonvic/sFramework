@@ -22,6 +22,10 @@ class SUserConfigConstraints {
 	protected ref TSUserConfigConstraintsModules modulesCfgConstraints;
 	protected ref SyncSUserConfigConstraintsRPC m_syncRPC;
 	
+
+	void onPreload() {
+	}
+
 	/**
 	*	@brief Load a module config constraint file
 	*	 @param moduleType typename - Typename of the module to load

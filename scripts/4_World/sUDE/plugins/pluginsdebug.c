@@ -74,11 +74,14 @@ class PluginSDebug : PluginBase {
 	
 	static ref SDebugUI dui;
 		
-	
+	static ref SCOAnimationDebug scoAnimated;
+	static ref SCOTimedDebug scoTimed;
 	
 	void PluginSDebug() {
 		if (GetGame().IsClient()) {
 			dui = SDebugUI.of(ClassName());
+			scoAnimated = new SCOAnimationDebug();
+			scoTimed = new SCOTimedDebug();
 		}
 		DayZGame.Event_OnRPC.Insert(this.onRPC);
 	}
@@ -142,11 +145,6 @@ class PluginSDebug : PluginBase {
 		keybindings += "[NUMPAD +] to enable UI<br/>";
 		keybindings += "[NUMPAD -] to disable UI";
 		dui.size("1 64px").textrich(keybindings);
-		#ifdef DAYZ_1_19
-		float sprintFilter;
-		dui.size("1 24px").slider("sprintFilter", sprintFilter, 0.1, 0.1, 10);
-		dui.button("syncSprintFilter", this, "debugRPC", new Param2<string, string>("sprintFilter", ""+sprintFilter));
-		#endif
 		SoftSkillsManager ssm = simonvic.GetSoftSkillsManager();
 		float strength;
 		dui.size("1 24px").slider("Strength (soft skill)", strength, 0.1, -1, 1);
@@ -229,11 +227,6 @@ class PluginSDebug : PluginBase {
 	private void debugRPC(string name, string value = "") {
 		SLog.d(name + " = " + value, "debugRPC");
 		GetGame().RPCSingleParam(null, RPCID_DEBUG_SYNC, new Param2<string, string>(name, value), true);
-		#ifdef DAYZ_1_19
-		switch (name) {
-			case "sprintFilter":    simonvic.GetCommand_Move().SetRunSprintFilterModifier(value.ToFloat()); break;
-		}
-		#endif
 	}
 
 	void onRPC(PlayerIdentity sender, Object target, int rpcId, ParamsReadContext ctx) {
@@ -255,9 +248,6 @@ class PluginSDebug : PluginBase {
 				simonvic.GetSoftSkillsManager().SetSpecialtyLevel(value.ToFloat());
 				simonvic.GetStatSpecialty().Set(value.ToFloat());
 				break;
-				#ifdef DAYZ_1_19
-				case "sprintFilter":    simonvic.GetCommand_Move().SetRunSprintFilterModifier(value.ToFloat()); break;
-				#endif
 				case "weapon_noDamage": SDebugCheats.weapon_noDamage = value == "true"; break;
 				case "weapon_infAmmo":  SDebugCheats.weapon_infAmmo = value == "true"; break;
 				case "weapon_infMags":  SDebugCheats.weapon_infMags = value == "true"; break;
@@ -343,6 +333,7 @@ class PluginSDebug : PluginBase {
 		simonvic.AddHealth("RightFoot","Health",(simonvic.GetMaxHealth("RightFoot", "Health") - simonvic.GetHealth("RightFoot", "Health")));
 		simonvic.AddHealth("LeftFoot","Health",(simonvic.GetMaxHealth("LeftFoot", "Health") - simonvic.GetHealth("LeftFoot", "Health")));
 		simonvic.GetBleedingManagerServer().RemoveAllSources();
+		simonvic.RemoveAllAgents();
 	}
 	
 	private void teleport(vector target) {

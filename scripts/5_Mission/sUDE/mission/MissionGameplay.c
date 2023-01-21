@@ -27,19 +27,4 @@ modded class MissionGameplay {
 		}
 	}
 	
-	/*
-	override void OnInit() {
-		super.OnInit();
-	}
-	
-	override void OnUpdate(float timeslice) {
-		super.OnUpdate(timeslice);
-	}
-	
-
-	override void OnKeyPress(int key) {
-		super.OnKeyPress(key);
-		PluginSDebug.Cast(GetPluginManager().GetPluginByType(PluginSDebug)).onKeyPress(key);
-	}
-	*/
 }

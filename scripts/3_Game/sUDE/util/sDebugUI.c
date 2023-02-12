@@ -54,53 +54,35 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	static const int PLOT_HISTORY_MIN = 5;
 	static const int PLOT_HISTORY_MAX = 1000;
-	static const int DEFAULT_PLOT_HISTORY = 50;
+	static const int DEFAULT_PLOT_HISTORY = 50;	
 	
+	private static ref map<string, ref SDebugUI> instances = new map<string, ref SDebugUI>;
 	
-	static ref map<string, ref SDebugUI> instances = new map<string, ref SDebugUI>;
-	
-	/**
-	*	@brief Get an instance of SDebugUI
-	*	@param name of instance
-	*	@return instance of name, or new one if it doesn't exists
-	*/
-	static SDebugUI of(string name) {				
-		SDebugUI dui = instances.Get(name);
-		if (dui) return dui;
-		dui = new SDebugUI();
-		instances.Set(name, dui);
-		return dui;
-	}
-
-	
-	Widget root;
+	private Widget root;
+	private string name;
 	
 	/**
 	*	Stack (LIFO) of the instantiated windows.
 	*	The first element is the last created window
 	*/
-	ref SStack<Widget> windows;
+	private ref SStack<Widget> windows;
 	
 	/**
 	*	Disable the debug ui
 	*/
-	bool disabled;
+	private bool disabled;
 	
-	ref map<ButtonWidget, ref SDebugButtonCallback> buttonsCallbacks;
+	private ref map<ButtonWidget, ref SDebugButtonCallback> buttonsCallbacks;
 	
-	ref map<string, bool> statesCheckbox;
-	ref map<string, float> statesSlider;
-	ref map<string, ref array<ref array<float>>> plotsHistory;
-
-	ref SColor color;
-	/**
-	* <value, isPixel>
-	*/
-	ref Param2<float, bool> size[2];
-	ref Param2<float, bool> pos[2];
-
-	private void SDebugUI() {
+	private ref map<string, bool> statesCheckbox;
+	private ref map<string, float> statesSlider;
+	private ref map<string, ref array<ref array<float>>> plotsHistory;
+	
+	private ref map<string, string> options;
+	
+	private void SDebugUI(string n) {
 		if (isServer()) return;
+		name = n;
 		root = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/root.layout");
 		root.SetHandler(this);
 		root.SetSort(999);
@@ -108,146 +90,86 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		buttonsCallbacks = new map<ButtonWidget, ref SDebugButtonCallback>;
 		statesCheckbox = new map<string, bool>;
 		statesSlider = new map<string, float>;
+		options = new map<string, string>;
 		plotsHistory = new map<string, ref array<ref array<float>>>;
 	}
 
 	/**
-	*	@brief Specify widget color
-	*	@param color
-	*	@code
-	*	dui.color(SColor.rgba(0xFF0000aa)).window() // semi transparent red window
+	*	@brief Get an instance of SDebugUI
+	*	@param name of instance
+	*	@return instance of name, or new one if it doesn't exists
 	*/
-	SDebugUI color(SColor col) {
-		color = col;
+	static SDebugUI of(string n) {				
+		SDebugUI dui = instances.Get(n);
+		if (dui) return dui;
+		dui = new SDebugUI(n);
+		instances.Set(n, dui);
+		return dui;
+	}
+	
+	static void hideAll() {
+		foreach (auto dui : instances) {
+			dui.hide();
+		}
+	}
+	
+	static void showAll() {
+		foreach (auto dui : instances) {
+			dui.show();
+		}
+	}
+	
+
+	/**
+	*	@brief Specify an option
+	*	@param key
+	*	@param value
+	*	@code
+	*	dui.withOpt("key", "value");
+	*/
+	SDebugUI withOpt(string key, string value) {
+		options.Set(key.Trim(), value);
 		return this;
 	}
 	
 	/**
-	*	@brief Specify widget size in pixel or percentage
-	*	@param size with unit suffix
+	*	@brief Specify an option
+	*	@param key value pair separated by '=' (uqual sign)
 	*	@code
-	*	dui.size("69px 420px").window(); //69px width and 420px height
-	*	dui.size("0.5 0.42").window();   //69% width and 42% height
-	*	dui.size("69px 0.42").window();  //69px width and 42% height
-	*	dui.size("69px").window();       //69px width and height
-	*	dui.size("69").window();         //69% width and height
+	*	dui.withOpt("key = value");
 	*/
-	SDebugUI size(string words) {
-		array<string> temp = {};
-		words.Split(" ", temp);
-		if (!temp || temp.Count() < 1) return this;
-		
-		Param2<float, bool> x = parseSizePos(temp[0]);
-		size[0] = x;
-		if (temp.Count() < 2) {
-			size[1] = x;
+	SDebugUI withOpt(string opt) {
+		int index = opt.IndexOf("=");
+		if (index == -1) {
+			SLog.w("option malformed: " + opt, ""+this);
 		} else {
-			size[1] = parseSizePos(temp[1]);
+			string lhs = opt.Substring(0, index);
+			string rhs = opt.Substring(index + 1, opt.Length() - 1 - index);
+			options.Set(lhs.Trim(), rhs);
 		}
-		
 		return this;
 	}
 	
 	/**
-	*	@brief Specify widget position in pixel or percentage
-	*	@param position with unit suffix
+	*	@brief Specify a list of options
+	*	@param array of key value pair separated by '=' (uqual sign)
 	*	@code
-	*	dui.pos("69px 420px").window(); //69px x and 420px y
-	*	dui.pos("0.5 0.42").window();   //69% x and 42% y
-	*	dui.pos("69px 0.42").window();  //69px x and 42% y
-	*	dui.pos("69px").window();       //69px x and y
-	*	dui.pos("69").window();         //69% x and y
+	*	dui.with({
+	*		"key = value"
+	*		"key2 = value2"
+	*	});
 	*/
-	SDebugUI pos(string words) {
-		array<string> temp = {};
-		words.Split(" ", temp);
-		if (!temp || temp.Count() < 1) return this;
-		
-		
-		Param2<float, bool> x = parseSizePos(temp[0]);
-		pos[0] = x;
-		if (temp.Count() < 2) {
-			pos[1] = x;
-		} else {
-			pos[1] = parseSizePos(temp[1]);
+	SDebugUI with(array<string> opts) {
+		foreach (string opt : opts) {
+			withOpt(opt);
 		}
-		
 		return this;
 	}
 	
-	/**
-	*	@brief This little boy is rudimentary. He's trying his hardest :)
-	*/
-	protected static Param2<float, bool> parseSizePos(string word) {
-		bool exact = word.Contains("px");
-		word.Replace("px", "");
-		return new Param2<float, bool>(word.ToFloat(), exact);
+	SDebugUI withBg(SColor color) {
+		withOpt("bg", "#" + color.getRGBA());
+		return this;
 	}
-
-
-	/**
-	*	@brief Recolor the widget and consume the color
-	*	@param widget to color
-	*/
-	protected void recolor(Widget w) {
-		if (!color) return;
-		w.SetColor(color.getARGB());
-		color = null;
-	}
-	
-	/**
-	*	@brief Resize the widget and consume the size
-	*	@param widget to resize
-	*/
-	protected void resize(Widget w) {
-		if (size[0] && size[1]) {
-		
-			if (size[0].param2) {
-				w.SetFlags(WidgetFlags.HEXACTSIZE);
-			} else {
-				w.ClearFlags(WidgetFlags.HEXACTSIZE);
-			}
-			
-			if (size[1].param2) {
-				w.SetFlags(WidgetFlags.VEXACTSIZE);
-			} else {
-				w.ClearFlags(WidgetFlags.VEXACTSIZE);
-			}
-			
-			w.SetSize(size[0].param1, size[1].param1);
-			
-		}
-		size[0] = null;
-		size[1] = null;
-	}
-	
-	/**
-	*	@brief Reposition the widget and consume the position
-	*	@param widget to reposition
-	*/
-	protected void reposition(Widget w) {
-		if (pos[0] && pos[1]) {
-			
-			if (pos[0].param2) {
-				w.SetFlags(WidgetFlags.HEXACTPOS);
-			} else {
-				w.ClearFlags(WidgetFlags.HEXACTPOS);
-			}
-			
-			if (pos[1].param2) {
-				w.SetFlags(WidgetFlags.VEXACTPOS);
-			} else {
-				w.ClearFlags(WidgetFlags.VEXACTPOS);
-			}
-			
-			w.SetPos(pos[0].param1, pos[1].param1);
-		}
-		pos[0] = null;
-		pos[1] = null;
-	}
-
-	
-	
 	
 	/**
 	*	@brief Build a new window
@@ -258,17 +180,21 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*/
 	Widget window(string title = "") {
 		if (isServer()) return null;
-
+		
+		title = name + " / " + title;
+		
 		Widget w = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/window.layout", root);
 		w.SetHandler(this);
-		resize(w);
-		reposition(w);
-		recolor(w);
+		consumeOptions(w);
 		
 		TextWidget.Cast(w.FindAnyWidget("title")).SetText(title);
+		if (windows.peek() == null) {
+			CheckBoxWidget.Cast(w.FindAnyWidget("disable")).SetChecked(!disabled);
+		} else {
+			w.FindAnyWidget("disable").Unlink();
+		}
 		windows.push(w);
 		
-		CheckBoxWidget.Cast(w.FindAnyWidget("disable")).SetChecked(!disabled);
 		return w;
 	}
 	
@@ -519,7 +445,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*/
 	Widget newline(string height = "1px") {
 		if (isServer() || disabled) return null;
-		return size("1 " + height).spacer();
+		return withOpt("size", "1 " + height).spacer();
 	}
 	
 	/**
@@ -540,8 +466,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			w.SetName(name);
 		}
 		w.SetHandler(this);
-		resize(w);
-		recolor(w);
+		consumeOptions(w);
 		return w;
 	}
 	
@@ -578,6 +503,127 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			w = windows.pop();
 		}
 	}
+	
+	protected bool consume(string option, out string value) {
+		if (options.Contains(option)) {
+			value = options.Get(option);
+			options.Remove(option);
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	*	@brief Consume options
+	*	@param consumer widget
+	*/
+	protected void consumeOptions(Widget consumer) {
+		consumeBg(consumer);
+		consumeSize(consumer);
+		consumePos(consumer);
+	}
+	
+	/**
+	*	@brief Recolor the widget and consume the color
+	*	@param widget to color
+	*/
+	protected void consumeBg(Widget w) {
+		string value;
+		if (consume("bg", value)) {
+			value.Replace("#", "0x");
+			w.SetColor(SColor.toARGB(value.Trim().HexToInt()));
+		}
+	}
+	
+	/**
+	*	@brief Resize the widget and consume the size
+	*	@param widget to resize
+	*/
+	protected void consumeSize(Widget w) {
+		string value;
+		if (!consume("size", value)) return;
+		
+		array<ref TScreenUnit> units = parseScreenUnits(value);
+		if (units.Count() == 0) return;
+		
+		if (units.Count() == 1) {
+			if (units[0].param2) {
+				w.SetFlags(WidgetFlags.EXACTSIZE);
+			} else {
+				w.ClearFlags(WidgetFlags.EXACTSIZE);
+			}
+			w.SetSize(units[0].param1, units[0].param1);
+			
+		} else if (units.Count() >= 2) {
+			
+			if (units[0].param2) {
+				w.SetFlags(WidgetFlags.HEXACTSIZE);
+			} else {
+				w.ClearFlags(WidgetFlags.HEXACTSIZE);
+			}
+			
+			if (units[1].param2) {
+				w.SetFlags(WidgetFlags.VEXACTSIZE);
+			} else {
+				w.ClearFlags(WidgetFlags.VEXACTSIZE);
+			}
+			
+			w.SetSize(units[0].param1, units[1].param1);
+		}
+		
+	}
+	
+	/**
+	*	@brief Reposition the widget and consume the position
+	*	@param widget to reposition
+	*/
+	protected void consumePos(Widget w) {
+		string value;
+		if (!consume("pos", value)) return;
+		
+		array<ref TScreenUnit> units = parseScreenUnits(value);
+		
+		if (units.Count() == 0) return;
+		
+		if (units.Count() == 1) {
+			if (units[0].param2) {
+				w.SetFlags(WidgetFlags.EXACTPOS);
+			} else {
+				w.ClearFlags(WidgetFlags.EXACTPOS);
+			}
+			w.SetSize(units[0].param1, units[0].param1);
+			
+		} else if (units.Count() >= 2) {
+			
+			if (units[0].param2) {
+				w.SetFlags(WidgetFlags.HEXACTPOS);
+			} else {
+				w.ClearFlags(WidgetFlags.HEXACTPOS);
+			}
+			
+			if (units[1].param2) {
+				w.SetFlags(WidgetFlags.VEXACTPOS);
+			} else {
+				w.ClearFlags(WidgetFlags.VEXACTPOS);
+			}
+			
+			w.SetPos(units[0].param1, units[1].param1);
+		}
+	}
+	
+	protected static array<ref TScreenUnit> parseScreenUnits(string words) {
+		array<ref TScreenUnit> units = {};
+		array<string> temp = {};
+		words.Split(" ", temp);
+		if (!temp || temp.Count() < 1) return units;
+		foreach (string word : temp) {
+			bool isExact = word.Contains("px");
+			word.Replace("px", "");
+			units.Insert(new TScreenUnit(word.ToFloat(), isExact));
+		}
+		return units;
+	}
+	
 	
 	
 	
@@ -664,7 +710,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 	
 	
-	vector dragOffset;
+	private vector dragOffset;
+	
 	override bool OnDrag(Widget w, int x, int y) {
 		float wx,wy;
 		w.GetParent().GetPos(wx,wy);
@@ -706,5 +753,9 @@ class SDebugButtonCallback : Managed {
 		params = p;
 	}
 }
+
+typedef array<float> TPoint;
+typedef array<ref TPoint> TLine;
+typedef Param2<float, bool> TScreenUnit;
 
 #endif

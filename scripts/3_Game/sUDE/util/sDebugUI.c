@@ -59,7 +59,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	private static ref map<string, ref SDebugUI> instances = new map<string, ref SDebugUI>;
 	
 	private Widget root;
-	private string name;
+	private string duiName;
 	
 	/**
 	*	Stack (LIFO) of the instantiated windows.
@@ -80,9 +80,9 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	private ref map<string, string> options;
 	
-	private void SDebugUI(string n) {
+	private void SDebugUI(string name) {
 		if (isServer()) return;
-		name = n;
+		duiName = name;
 		root = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/root.layout");
 		root.SetHandler(this);
 		root.SetSort(999);
@@ -99,11 +99,11 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param name of instance
 	*	@return instance of name, or new one if it doesn't exists
 	*/
-	static SDebugUI of(string n) {				
-		SDebugUI dui = instances.Get(n);
+	static SDebugUI of(string name) {				
+		SDebugUI dui = instances.Get(name);
 		if (dui) return dui;
-		dui = new SDebugUI(n);
-		instances.Set(n, dui);
+		dui = new SDebugUI(name);
+		instances.Set(name, dui);
 		return dui;
 	}
 	
@@ -177,15 +177,28 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param sizePx - X and Y size defined in pixels
 	*	@param posPx - X and Y position defined in pixels
 	*	@return Widget - new window created
+	*
+	*	@note options:
+	*	bg
+	*		type: color
+	*		default:
+	*	size
+	*		type: "dimension dimension"
+	*		default:
+	*	pos
+	*		type: "dimension dimension"
+	*		default:
 	*/
 	Widget window(string title = "") {
 		if (isServer()) return null;
 		
-		title = name + " / " + title;
-		
+		title = duiName + " / " + title;
+				
 		Widget w = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/window.layout", root);
 		w.SetHandler(this);
-		consumeOptions(w);
+		consumeBg(w);
+		consumeSize(w);
+		consumePos(w);
 		
 		TextWidget.Cast(w.FindAnyWidget("title")).SetText(title);
 		if (windows.peek() == null) {
@@ -319,34 +332,88 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		return w;
 	}
 	
+	
+	
+	/**
+	*	@brief Create a plot to draw lines
+	*	@param sizePx - X and Y size defined in pixel
+	*	@param title - title of the plot
+	*	@return CanvasWidget
+	*
+	*	@note options:
+	*	canvas.title
+	*		type: string
+	*		default: ""
+	*/
+	CanvasWidget canvas() {
+		if (isServer() || disabled) return null;
+		Widget w = widget("MyMODS/sFramework/GUI/layouts/debug/canvas.layout", false);
+		if (!w) return null;
+		
+		string title = consume("canvas.title");
+		CanvasWidget c = CanvasWidget.Cast(w.FindAnyWidget("canvas"));		
+		TextWidget t = TextWidget.Cast(w.FindAnyWidget("title"));
+		t.SetText(title);
+		consumeBg(c);
+		consumeSize(c);
+		consumePos(c);
+		return c;
+	}
+	
 	/**
 	*	@brief Plot live data
 	*	@param title - title of the plot
 	*	@param y - y axis data
-	*	@param min - min y
-	*	@param max - max y
-	*	@param sizePx - X and Y size of the plot defined in pixel
-	*	@param historySize - how many points to store and plot
-	*	@param scale - X and Y scale of the plot data
-	*	@param offset - X and Y offset of the plot data
-	*	@param widthPx - width of the lines defined in pixels
-	*	@param color - color of the line
 	*	@return CanvasWidget
+	*	@note options:
+	*	@see canvas()
+	*	plot.min
+	*		type: float
+	*		default: 0.0
+	*	plot.max
+	*		type: float
+	*		default: 1.0
+	*	plot.offset.x
+	*		type: px
+	*		default: 0
+	*	plot.offset.y
+	*		type: px
+	*		default: 0
+	*	plot.scale.x
+	*		type: px
+	*		default: 1
+	*	plot.scale.y
+	*		type: px
+	*		default: 1
+	*	plot.history.size
+	*		type: int
+	*		default: 50
+	*	plot.pen.width
+	*		type: px
+	*		default: 3
+	*	plot.pen.color
+	*		type: "#RRGGBBaa"
+	*		default: "#F0544Cff"
+	*
 	*/
-	CanvasWidget plotlive(string title, float y, float min = 0, float max = 1, array<int> sizePx = null, int historySize = 50, array<float> scale = null, array<float> offset = null, int widthPx = 3, SColor lineColor = null) {
+	CanvasWidget plotlive(string title, float y) {
 		if (isServer() || disabled) return null;
-		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
-		if (!scale  || scale.Count()  < 2) scale  = DEFAULT_PLOT_SCALE;
-		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
-		if (!lineColor) lineColor = DEFAULT_PLOT_COLOR;
-		historySize = Math.Clamp(historySize, PLOT_HISTORY_MIN, PLOT_HISTORY_MAX);
-		CanvasWidget c = canvas(sizePx, title);
+		CanvasWidget c = canvas();
 		if (!c) return null;
-		if (min != 0 || max != 1) {
-			TextWidget.Cast(c.FindAnyWidget("min")).SetText(""+min);
-			TextWidget.Cast(c.FindAnyWidget("max")).SetText(""+max);
-			TextWidget.Cast(c.FindAnyWidget("current")).SetText(""+y);
-		}
+		
+		float min = consumeOrDefault("plot.min", 0.0);
+		float max = consumeOrDefault("plot.max", 1.0);
+		float offsetX = consumeOrDefault("plot.offset.x", 0.0);
+		float offsetY = consumeOrDefault("plot.offset.y", 0.0);
+		float scaleX = consumeOrDefault("plot.scale.x", 1.0);
+		float scaleY = consumeOrDefault("plot.offset.y", 1.0);
+		int penWidthPx = consumeOrDefault("plot.pen.width", 3);
+		SColor penColor = SColor.of(consumeOrDefault("plot.pen.color", "F0544C"));
+		int historySize = consumeOrDefault("plot.history.size", 50);
+		
+		TextWidget.Cast(c.FindAnyWidget("min")).SetText(""+min);
+		TextWidget.Cast(c.FindAnyWidget("max")).SetText(""+max);
+		TextWidget.Cast(c.FindAnyWidget("current")).SetText(""+y);
 		
 		auto line = plotsHistory.Get(title);
 		if (!line) {
@@ -358,18 +425,20 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		line.Remove(line.Count() - 1);
 		line.Resize(historySize);
 
+		float width, height;
+		c.GetSize(width, height);
 		
 		float precision = 1 / historySize;
 		float x;
 		for (int i = line.Count() - 1; i > 0; i--) {
 			if (line[i] == null) continue;
 			c.DrawLine(
-				SMath.mapTo(offset[0] + scale[0] * x,              0,   1,   0,         sizePx[0]),
-				SMath.mapTo(offset[1] + scale[1] * line[i][1],     min, max, sizePx[1], 0),
-				SMath.mapTo(offset[0] + scale[0] * x + precision,  0,   1,   0,         sizePx[0]),
-				SMath.mapTo(offset[1] + scale[1] * line[i - 1][1], min, max, sizePx[1], 0),
-				widthPx,
-				lineColor.getARGB());
+				SMath.mapTo(offsetX + scaleX * x,              0,   1,   0,      width),
+				SMath.mapTo(offsetY + scaleY * line[i][1],     min, max, height, 0),
+				SMath.mapTo(offsetX + scaleX * x + precision,  0,   1,   0,      width),
+				SMath.mapTo(offsetY + scaleY * line[i - 1][1], min, max, height, 0),
+				penWidthPx,
+				penColor.getARGB());
 			x += precision;
 		}
 		return c;
@@ -378,52 +447,64 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	/**
 	*	@brief Create a plot to draw lines
 	*	@param lines - list of lines (which is a list of point (which is a couple of X and Y coordinates))
-	*	@param sizePx - X and Y size defined in pixel
-	*	@param title - title of the plot
-	*	@param scale - X and Y scale of the plot data
-	*	@param offset - X and Y offset of the plot data
-	*	@param widthPx - width of the lines defined in pixels
-	*	@param color - color of the line
 	*	@return CanvasWidget
+	*
+	*	@note options:
+	*	@see canvas()
+	*	plot.min
+	*		type: float
+	*		default: 0.0
+	*	plot.max
+	*		type: float
+	*		default: 1.0
+	*	plot.offset.x
+	*		type: px
+	*		default: 0
+	*	plot.offset.y
+	*		type: px
+	*		default: 0
+	*	plot.scale.x
+	*		type: px
+	*		default: 1
+	*	plot.scale.y
+	*		type: px
+	*		default: 1
+	*	plot.pen.width
+	*		type: px
+	*		default: 3
+	*	plot.pen.color
+	*		type: "#RRGGBBaa"
+	*		default: "#F0544Cff"
+	*
 	*/
-	CanvasWidget plot(string title = "", array<ref array<ref array<float>>> lines = null, array<int> sizePx = null, array<float> scale = null, array<float> offset = null, int widthPx = 5, SColor lineColor = null) {
+	CanvasWidget plot(array<ref TLine> lines = null) {
 		if (isServer() || disabled) return null;
-		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
-		if (!scale  || scale.Count()  < 2) scale  = DEFAULT_PLOT_SCALE;
-		if (!offset || offset.Count() < 2) offset = DEFAULT_PLOT_OFFSET;
-		if (!lineColor) lineColor = DEFAULT_PLOT_COLOR;
-		CanvasWidget c = canvas(sizePx, title);
+		CanvasWidget c = canvas();
 		if (!c) return null;
+		
+		float min = consumeOrDefault("plot.min", 0.0);
+		float max = consumeOrDefault("plot.max", 1.0);
+		float offsetX = consumeOrDefault("plot.offset.x", 0.0);
+		float offsetY = consumeOrDefault("plot.offset.y", 0.0);
+		float scaleX = consumeOrDefault("plot.scale.x", 1.0);
+		float scaleY = consumeOrDefault("plot.offset.y", 1.0);
+		int penWidthPx = consumeOrDefault("plot.pen.width", 3);
+		SColor penColor = SColor.of(consumeOrDefault("plot.pen.color", "F0544C"));
+		
+		float width, height;
+		c.GetSize(width, height);
 		
 		foreach (auto line : lines) {	
 			for (int i = 0; i < line.Count() - 1; i++) {
 				c.DrawLine(
-					SMath.mapTo(offset[0] + scale[0] * line[i][0],   0, 1, 0,         sizePx[0]),
-					SMath.mapTo(offset[1] + scale[1] * line[i][1],   0, 1, sizePx[1], 0),
-					SMath.mapTo(offset[0] + scale[0] * line[i+1][0], 0, 1, 0,         sizePx[0]),
-					SMath.mapTo(offset[1] + scale[1] * line[i+1][1], 0, 1, sizePx[1], 0),
-					widthPx,
-					lineColor.getARGB());
+					SMath.mapTo(offsetX + scaleX * line[i][0],   0, 1, 0,      width),
+					SMath.mapTo(offsetY + scaleY * line[i][1],   0, 1, height, 0),
+					SMath.mapTo(offsetX + scaleX * line[i+1][0], 0, 1, 0,      width),
+					SMath.mapTo(offsetY + scaleY * line[i+1][1], 0, 1, height, 0),
+					penWidthPx,
+					penColor.getARGB());
 			}
 		}
-		return c;
-	}
-	
-	/**
-	*	@brief Create a plot to draw lines
-	*	@param sizePx - X and Y size defined in pixel
-	*	@param title - title of the plot
-	*	@return CanvasWidget
-	*/
-	CanvasWidget canvas(array<int> sizePx = null, string title = "") {
-		if (isServer() || disabled) return null;
-		if (!sizePx || sizePx.Count() < 2) sizePx = DEFAULT_WIDGET_SIZE;
-		Widget r = widget("MyMODS/sFramework/GUI/layouts/debug/canvas.layout");
-		if (!r) return null;
-		CanvasWidget c = CanvasWidget.Cast(r.FindAnyWidget("canvas"));
-		c.SetSize(sizePx[0], sizePx[1]);
-		TextWidget t = TextWidget.Cast(r.FindAnyWidget("title"));
-		t.SetText(title);
 		return c;
 	}
 	
@@ -440,7 +521,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	/**
 	*	@brief Create a new line
-	*	@param sizePx - height in pixels of the empty line
+	*	@param size - height of the empty line
 	*	@return Widget
 	*/
 	Widget newline(string height = "1px") {
@@ -453,24 +534,44 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param layout - .layout file to load
 	*	@param name - name of the root widget
 	*	@return Widget
+	*
+	*	@note options:
+	*	name
+	*		type: string
+	*		default:
+	*	bg
+	*		type: color
+	*		default: #F0544CFF
+	*	size
+	*		type: "dimension dimension"
+	*		default:
+	*	pos
+	*		type: "dimension dimension"
+	*		default:
 	*/
-	Widget widget(string layout, string name = string.Empty) {
+	Widget widget(string layout, bool consumeCommonOptions = true) {
 		if (isServer() || disabled) return null;
 		Widget window = windows.peek();
 		if (!window) {
-			SLog.e("No window to place widget on! ("+name+")",""+this);
+			SLog.e("No window to place widget on!",""+this);
 			return null;
 		}
 		Widget w = GetGame().GetWorkspace().CreateWidgets(layout, window.FindAnyWidget("body"));
-		if (name != string.Empty) {
-			w.SetName(name);
-		}
 		w.SetHandler(this);
-		consumeOptions(w);
+
+		if (consumeCommonOptions) {
+			w.SetName(consumeOrDefault("name", ""));
+			consumeBg(w);
+			consumeSize(w);
+			consumePos(w);
+		}
+		
 		return w;
 	}
 	
-	
+	/**
+	*	@brief Mark the beginning of the DUI scope
+	*/
 	void begin() {
 		if (isServer()) return;
 		foreach (auto button, auto callback : buttonsCallbacks) {
@@ -481,6 +582,9 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		clear();
 	}
 	
+	/**
+	*	@brief Mark the end of the DUI scope
+	*/
 	void end() {
 	}
 	
@@ -504,23 +608,37 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 	}
 	
-	protected bool consume(string option, out string value) {
+	protected string consumeOrDefault(string option, string defaultValue) {
 		if (options.Contains(option)) {
-			value = options.Get(option);
+			string value = options.Get(option);
 			options.Remove(option);
-			return true;
+			return value;
 		}
-		return false;
+		return defaultValue;
 	}
 	
-	/**
-	*	@brief Consume options
-	*	@param consumer widget
-	*/
-	protected void consumeOptions(Widget consumer) {
-		consumeBg(consumer);
-		consumeSize(consumer);
-		consumePos(consumer);
+	protected int consumeOrDefault(string option, int defaultValue) {
+		if (options.Contains(option)) {
+			string value = options.Get(option);
+			options.Remove(option);
+			return value.ToInt();
+		}
+		return defaultValue;
+	}
+	
+	protected float consumeOrDefault(string option, float defaultValue) {
+		if (options.Contains(option)) {
+			string value = options.Get(option);
+			options.Remove(option);
+			return value.ToFloat();
+		}
+		return defaultValue;
+	}
+	
+	protected string consume(string option) {
+		string value = options.Get(option);
+		options.Remove(option);
+		return value;
 	}
 	
 	/**
@@ -528,10 +646,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param widget to color
 	*/
 	protected void consumeBg(Widget w) {
-		string value;
-		if (consume("bg", value)) {
-			value.Replace("#", "0x");
-			w.SetColor(SColor.toARGB(value.Trim().HexToInt()));
+		if (options.Contains("bg")) {
+			string value = consume("bg");
+			value.Replace("#", "");
+			w.SetColor(SColor.of(value).getARGB());
 		}
 	}
 	
@@ -540,8 +658,9 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param widget to resize
 	*/
 	protected void consumeSize(Widget w) {
-		string value;
-		if (!consume("size", value)) return;
+		if (!options.Contains("size")) return;
+		
+		string value = consume("size");
 		
 		array<ref TScreenUnit> units = parseScreenUnits(value);
 		if (units.Count() == 0) return;
@@ -578,9 +697,9 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param widget to reposition
 	*/
 	protected void consumePos(Widget w) {
-		string value;
-		if (!consume("pos", value)) return;
+		if (!options.Contains("pos")) return;
 		
+		string value = consume("pos");
 		array<ref TScreenUnit> units = parseScreenUnits(value);
 		
 		if (units.Count() == 0) return;
@@ -611,6 +730,18 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 	}
 	
+	/**
+	*	@brief Parse a string into an array of dimensions
+	*	@param words to parse
+	*	@return array<(float_value, isInPixel)>
+	*
+	*	@code
+	*	parseScreenUnits("69px");           //69px
+	*	parseScreenUnits("0.69");           //69%
+	*	parseScreenUnits("69px 420px");     //69px, 420px
+	*	parseScreenUnits("0.5 0.42");       //50%, 42%
+	*	parseScreenUnits("69px 0.42 1.0");  //69px, 42%, 100%
+	*/
 	protected static array<ref TScreenUnit> parseScreenUnits(string words) {
 		array<ref TScreenUnit> units = {};
 		array<string> temp = {};

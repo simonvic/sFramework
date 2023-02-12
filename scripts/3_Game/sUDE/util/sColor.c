@@ -265,6 +265,21 @@ class SColor {
 	// STATIC METHODS
 	
 	/**
+	*	@brief Build color from string representation
+	*	@param color - currently supported formats:
+	*		- RRGGBB
+	*		- RRGGBBAA
+	*	@return SColor or white if color is malformed
+	*/
+	static SColor of(string color) {
+		switch (color.Length()) {
+			case 6: return SColor.rgb(color.HexToInt());
+			case 8: return SColor.rgba(color.HexToInt());
+		}
+		return SColor.rgba(0xFFFFFFFF);
+	}
+	
+	/**
 	*	@brief Build a color using another color represented in RGB format
 	*	 @param rgb \p int - Color
 	*	 @return SColor

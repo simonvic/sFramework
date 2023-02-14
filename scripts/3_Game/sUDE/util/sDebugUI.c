@@ -41,20 +41,7 @@
 		}
 		
 */
-// @todo add a default static SDebugUI and window instance for quick debug
 class SDebugUI : ScriptedWidgetEventHandler {
-	
-	static const ref array<int>   DEFAULT_WINDOW_SIZE  = {512 + 24, 512};
-	static const ref array<int>   DEFAULT_WINDOW_POS   = {128, 128};
-	static const ref array<int>   DEFAULT_WIDGET_SIZE  = {256, 256};
-	static const ref array<float> DEFAULT_PLOT_SCALE   = {1.0, 1.0};
-	static const ref array<float> DEFAULT_PLOT_OFFSET  = {0.0, 0.0};
-	static const ref array<float> DEFAULT_SPACER_SIZE  = {0.3, 0.3};
-	static const ref SColor       DEFAULT_PLOT_COLOR   = SColor.rgba(0xF0544Cff);
-	
-	static const int PLOT_HISTORY_MIN = 5;
-	static const int PLOT_HISTORY_MAX = 1000;
-	static const int DEFAULT_PLOT_HISTORY = 50;	
 	
 	private static ref map<string, ref SDebugUI> instances = new map<string, ref SDebugUI>;
 	
@@ -72,12 +59,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*/
 	private bool disabled;
 	
-	private ref map<ButtonWidget, ref SDebugButtonCallback> buttonsCallbacks;
-	
+	private ref map<ButtonWidget, ref SDebugButtonCallback> buttonsCallbacks;	
 	private ref map<string, bool> statesCheckbox;
 	private ref map<string, float> statesSlider;
 	private ref map<string, ref array<ref array<float>>> plotsHistory;
-	
 	private ref map<string, string> options;
 	
 	private void SDebugUI(string name) {
@@ -116,6 +101,18 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	static void showAll() {
 		foreach (auto dui : instances) {
 			dui.show();
+		}
+	}
+	
+	static void disableAll() {
+		foreach (auto dui : instances) {
+			dui.disable();
+		}
+	}
+	
+	static void enableAll() {
+		foreach (auto dui : instances) {
+			dui.enable();
 		}
 	}
 	
@@ -285,11 +282,27 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param float - max value of the slider
 	*	@param float - min value of the slider
 	*	@return SliderWidget
+	*	
+	*	@note options:
+	*	slider.step
+	*		type: float
+	*		default: 0.01
+	*	slider.min
+	*		type: float
+	*		default: 0
+	*	slider.max
+	*		type: float
+	*		default: 1
 	*/
-	SliderWidget slider(string name, out float value, float step = 0.1, float min = 0, float max = 1) {
+	SliderWidget slider(string name, out float value) {
 		if (isServer() || disabled) return null;
 		SliderWidget w = SliderWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/slider.layout"));
 		if (!w) return null;
+		
+		float step = consumeOrDefault("slider.step", 0.01);
+		float min = consumeOrDefault("slider.min", 0);
+		float max = consumeOrDefault("slider.max", 1);
+		
 		w.SetName(name);
 		w.SetStep(step);
 		w.SetMinMax(min, max);
@@ -586,6 +599,16 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@brief Mark the end of the DUI scope
 	*/
 	void end() {
+	}
+	
+	void enable() {
+		disabled = false;
+		show();
+	}
+	
+	void disable() {
+		disabled = true;
+		hide();
 	}
 	
 	void show() {
@@ -888,5 +911,7 @@ class SDebugButtonCallback : Managed {
 typedef array<float> TPoint;
 typedef array<ref TPoint> TLine;
 typedef Param2<float, bool> TScreenUnit;
+typedef array<string> TTableRow;
+typedef array<ref TTableRow> TTable;
 
 #endif

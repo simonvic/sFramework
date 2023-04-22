@@ -1,6 +1,3 @@
-#define S_UDE
-#define S_FRAMEWORK
-
 class CfgPatches {
 	class sFramework {
 		units[] = {};
@@ -26,42 +23,34 @@ class CfgMods {
 		version = "0.1";
 		extra = 0;
 		type = "mod";
+
+		defines[] = {
+			"sUDE",
+			"S_UDE",
+			"S_FRAMEWORK"
+		};
+
 		dependencies[] = {
 			"Game",
 			"World",
 			"Mission"
 		};
 		class defs {
-			class engineScriptModule{
-				value = "";
-				files[] = { 
-					"MyMODS/sFramework/scripts/defines"
-				};
-			};
-			class gameLibScriptModule{
-				value = "";
-				files[] = {
-					"MyMODS/sFramework/scripts/defines"
-				};
-			};
 			class gameScriptModule {
 				value = "";
 				files[] = {
-					"MyMODS/sFramework/scripts/defines",
 					"MyMODS/sFramework/scripts/3_Game"
 				};
 			};
 			class worldScriptModule {
 				value = "";
 				files[] = {
-					"MyMODS/sFramework/scripts/defines",
 					"MyMODS/sFramework/scripts/4_World"
 				};
 			};
 			class missionScriptModule {
 				value = "";
 				files[] = {
-					"MyMODS/sFramework/scripts/defines",
 					"MyMODS/sFramework/scripts/5_Mission"
 				};
 			};

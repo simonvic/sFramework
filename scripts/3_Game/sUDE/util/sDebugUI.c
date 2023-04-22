@@ -163,6 +163,22 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		return this;
 	}
 	
+	/**
+	*	@brief Specify a list of key=value options
+	*	@param map of options
+	*	@code
+	*	auto opts = new map<string, string>();
+	*	opts["pos"] = "69px"
+	*	dui.with(opts);
+	*/
+	SDebugUI withOpts(map<string, string> opts) {
+		if (isServer()) return null;
+		foreach (string key, string value : opts) {
+			withOpt(key, value);
+		}
+		return this;
+	}
+	
 	SDebugUI withBg(SColor color) {
 		withOpt("bg", "#" + color.getRGBA());
 		return this;

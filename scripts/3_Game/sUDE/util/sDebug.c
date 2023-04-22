@@ -41,6 +41,18 @@ class SDebug {
 		}
 	}
 	
+	static string toCsvLine(array<string> a) {
+		if (!a || a.Count() <= 0) return "";
+		string delimiter = "\"";
+		string separator = ",";
+		string csv;
+		csv += string.Format("%1%2%1", delimiter, a[0]);
+		for (int i = 1; i < a.Count(); i++) {
+			csv += string.Format("%3%1%2%1", delimiter, a[i], separator);
+		}
+		return csv;
+	}
+	
 	
 
 }

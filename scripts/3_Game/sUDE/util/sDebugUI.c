@@ -516,7 +516,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		float offsetX = consumeOrDefault("plot.offset.x", 0.0);
 		float offsetY = consumeOrDefault("plot.offset.y", 0.0);
 		float scaleX = consumeOrDefault("plot.scale.x", 1.0);
-		float scaleY = consumeOrDefault("plot.offset.y", 1.0);
+		float scaleY = consumeOrDefault("plot.scale.y", 1.0);
 		int penWidthPx = consumeOrDefault("plot.pen.width", 3);
 		SColor penColor = SColor.of(consumeOrDefault("plot.pen.color", "F0544C"));
 		

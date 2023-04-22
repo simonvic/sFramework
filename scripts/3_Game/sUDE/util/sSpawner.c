@@ -173,7 +173,10 @@ class SSpawnableBundle : Managed {
 	
 	protected ref array<ref SSpawnable> m_bundle = new array<ref SSpawnable>;
 	
-	void SSpawnableBundle() {
+	void SSpawnableBundle(array<string> itemsNames) {
+		foreach (string itemName : itemsNames) {
+			build(itemName);
+		}
 		
 	}
 	

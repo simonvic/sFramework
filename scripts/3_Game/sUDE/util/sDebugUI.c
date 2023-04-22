@@ -125,6 +125,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	dui.withOpt("key", "value");
 	*/
 	SDebugUI withOpt(string key, string value) {
+		if (isServer()) return null;
 		options.Set(key.Trim(), value);
 		return this;
 	}
@@ -136,6 +137,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	dui.withOpt("key = value");
 	*/
 	SDebugUI withOpt(string opt) {
+		if (isServer()) return null;
 		int index = opt.IndexOf("=");
 		if (index == -1) {
 			SLog.w("option malformed: " + opt, ""+this);
@@ -157,6 +159,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	});
 	*/
 	SDebugUI with(array<string> opts) {
+		if (isServer()) return null;
 		foreach (string opt : opts) {
 			withOpt(opt);
 		}

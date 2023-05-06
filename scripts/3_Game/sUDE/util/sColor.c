@@ -285,6 +285,9 @@ class SColor {
 	*	@return SColor or white if color is malformed
 	*/
 	static SColor of(string color) {
+		if (color.Contains("#")) {
+			color.Replace("#", "");
+		}
 		switch (color.Length()) {
 			case 6: return SColor.rgb(color.HexToInt());
 			case 8: return SColor.rgba(color.HexToInt());

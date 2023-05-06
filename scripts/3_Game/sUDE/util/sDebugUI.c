@@ -346,6 +346,14 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param sizePx - X and Y size defined in pixel
 	*	@param data - matrix of rows and columns of string data
 	*	@return WrapSpacerWidget
+	*
+	*	@note options:
+	*	table.cell.flags.set
+	*		type: WidgetFlags
+	*		default:
+	*	table.cell.flags.unset
+	*		type: WidgetFlags
+	*		default:
 	*/
 	WrapSpacerWidget table(array<ref array<string>> data) {
 		if (isServer() || disabled) return null;
@@ -354,14 +362,22 @@ class SDebugUI : ScriptedWidgetEventHandler {
 
 		if (data == null || data.Count() == 0) return w;
 		
+		string cellFlags = consume("table.cell.flags.set");
+		string cellFlagsUnset = consume("table.cell.flags.unset");
+		
 		float height = 1 / data.Count();
 		foreach (auto row : data) {
 			if (row == null || row.Count() == 0) continue;
 			float width = 1 / row.Count();
 			foreach (auto entry : row) {
 				TextWidget t = TextWidget.Cast(GetGame().GetWorkspace().CreateWidget(TextWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, w));
-				t.ClearFlags(WidgetFlags.EXACTSIZE);
 				t.SetFlags(WidgetFlags.CENTER | WidgetFlags.VCENTER | WidgetFlags.IGNOREPOINTER);
+				if (cellFlagsUnset != string.Empty) {
+					t.ClearFlags(cellFlagsUnset.ToInt());
+				}
+				if (cellFlags != string.Empty) {
+					t.SetFlags(cellFlags.ToInt());
+				}
 				t.SetSize(width, height);
 				t.SetText(entry);
 				

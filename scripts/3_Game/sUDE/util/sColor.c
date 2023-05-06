@@ -198,6 +198,19 @@ class SColor {
 	}
 	
 	/**
+	*	@brief Get RGBA color array normalized 
+	*	@return array of {r, g, b, a}
+	*/
+	array<float> getRGBANormalizedArray() {
+		return {
+			SMath.normalize(getRed(), 0, 255),
+			SMath.normalize(getGreen(), 0, 255),
+			SMath.normalize(getBlue(), 0, 255),
+			SMath.normalize(getAlpha(), 0, 255)
+		};
+	}
+	
+	/**
 	*	@brief Get the current color represented in ARGB format
 	*	 @return int - ARGB color
 	*/

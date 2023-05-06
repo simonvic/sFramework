@@ -198,16 +198,21 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@note options:
 	*	bg
 	*		type: color
-	*		default:
+	*		default: #00000088
 	*	size
 	*		type: "dimension dimension"
 	*		default:
 	*	pos
 	*		type: "dimension dimension"
 	*		default:
+	*	body.bg
+	*		type: color
+	*		default: #00000088
 	*/
 	Widget window(string title = "") {
 		if (isServer()) return null;
+		
+		SColor bodyColor = SColor.of(consumeOrDefault("body.bg", "#00000088"));
 		
 		title = duiName + " / " + title;
 				
@@ -223,6 +228,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		} else {
 			w.FindAnyWidget("disable").Unlink();
 		}
+		w.FindAnyWidget("body").SetColor(bodyColor.getARGB());
 		windows.push(w);
 		
 		return w;

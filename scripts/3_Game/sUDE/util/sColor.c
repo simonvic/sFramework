@@ -301,7 +301,9 @@ class SColor {
 	*	 @return SColor
 	*/
 	static SColor rgb(int rgb) {
-		return (new SColor()).setRGB(rgb);
+		SColor c = new SColor();
+		c.setRGB(rgb);
+		return c;
 	}
 	
 	/**
@@ -311,8 +313,10 @@ class SColor {
 	*	 @param b \p int - Blue
 	*	 @return SColor
 	*/
-	static SColor rgb2(int r, int g, int b) {
-		return (new SColor()).setRGB(r, g, b);
+	static SColor rgb(int r, int g, int b) {
+		SColor c = new SColor();
+		c.setRGB(r, g, b);
+		return c;
 	}
 	
 	
@@ -322,7 +326,9 @@ class SColor {
 	*	 @return SColor
 	*/
 	static SColor rgba(int rgba) {
-		return (new SColor()).setRGBA(rgba);
+		SColor c = new SColor();
+		c.setRGBA(rgba);
+		return c;
 	}
 	
 	/**
@@ -334,7 +340,9 @@ class SColor {
 	*	 @return SColor
 	*/
 	static SColor rgba(int r, int g, int b, int a) {
-		return (new SColor()).setRGBA(r, g, b, a);
+		SColor c = new SColor();
+		c.setRGBA(r, g, b, a);
+		return c;
 	}
 	
 	
@@ -344,7 +352,9 @@ class SColor {
 	*	 @return SColor
 	*/
 	static SColor argb(int argb) {
-		return (new SColor()).setARGB(argb);
+		SColor c = new SColor();
+		c.setARGB(argb);
+		return c;
 	}
 	
 	/**
@@ -356,7 +366,9 @@ class SColor {
 	*	 @return SColor
 	*/
 	static SColor argb(int a, int r, int g, int b) {
-		return (new SColor()).setARGB(a, r, g, b);
+		SColor c = new SColor();
+		c.setARGB(a, r, g, b);
+		return c;
 	}
 	
 	
@@ -368,7 +380,9 @@ class SColor {
 	*	 @return SColor
 	*/
 	static SColor hsb(float hue, float saturation, float brightness) {
-		return (new SColor()).setHSB(hue, saturation, brightness);
+		SColor c = new SColor();
+		c.setHSB(hue, saturation, brightness);
+		return c;
 	}
 	
 	/**

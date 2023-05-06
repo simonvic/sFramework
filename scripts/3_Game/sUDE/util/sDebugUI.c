@@ -645,12 +645,12 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	void enable() {
 		disabled = false;
-		show();
+		//show();
 	}
 	
 	void disable() {
 		disabled = true;
-		hide();
+		//hide();
 	}
 	
 	void show() {

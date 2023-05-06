@@ -45,7 +45,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	
 	private static ref map<string, ref SDebugUI> instances = new map<string, ref SDebugUI>;
 	
-	private Widget root;
+	private ref Widget root;
 	private string duiName;
 	
 	/**

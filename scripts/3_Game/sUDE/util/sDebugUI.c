@@ -84,7 +84,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@param name of instance
 	*	@return instance of name, or new one if it doesn't exists
 	*/
-	static SDebugUI of(string name) {				
+	static SDebugUI of(string name) {
 		SDebugUI dui = instances.Get(name);
 		if (dui) return dui;
 		dui = new SDebugUI(name);
@@ -125,7 +125,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	dui.withOpt("key", "value");
 	*/
 	SDebugUI withOpt(string key, string value) {
-		if (isServer()) return null;
+		if (isServer()) return this;
 		options.Set(key.Trim(), value);
 		return this;
 	}
@@ -137,7 +137,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	dui.withOpt("key = value");
 	*/
 	SDebugUI withOpt(string opt) {
-		if (isServer()) return null;
+		if (isServer()) return this;
 		int index = opt.IndexOf("=");
 		if (index == -1) {
 			SLog.w("option malformed: " + opt, ""+this);
@@ -159,7 +159,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	});
 	*/
 	SDebugUI with(array<string> opts) {
-		if (isServer()) return null;
+		if (isServer()) return this;
 		foreach (string opt : opts) {
 			withOpt(opt);
 		}
@@ -175,7 +175,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	dui.with(opts);
 	*/
 	SDebugUI withOpts(map<string, string> opts) {
-		if (isServer()) return null;
+		if (isServer()) return this;
 		foreach (string key, string value : opts) {
 			withOpt(key, value);
 		}
@@ -183,6 +183,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 	
 	SDebugUI withBg(SColor color) {
+		if (isServer()) return this;
 		withOpt("bg", "#" + color.getRGBA());
 		return this;
 	}

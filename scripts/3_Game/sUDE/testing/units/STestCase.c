@@ -71,4 +71,16 @@ class STestCase : Managed {
 
 }
 
+class STestCaseParameterized : STestCase {
+	protected ref Param arguments;
+	
+	void setArguments(Param p) {
+		arguments = p;
+	}
+	
+	Param getArguments() {
+		return arguments;
+	}
+}
+
 #endif

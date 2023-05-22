@@ -14,9 +14,9 @@ class STestUnit : Managed {
 	
 	protected bool hasFailed;
 	
-	protected ref array<ref STestCase> m_testCases = new array<ref STestCase>();
-	protected ref array<ref STestBeforeCallback> m_beforeCallbacks = new array<ref STestBeforeCallback>();
 	protected ref array<ref STestBeforeClassCallback> m_beforeClassCallbacks = new array<ref STestBeforeClassCallback>();
+	protected ref array<ref STestBeforeCallback> m_beforeCallbacks = new array<ref STestBeforeCallback>();
+	protected ref array<ref STestCase> m_testCases = new array<ref STestCase>();
 	protected ref array<ref STestAfterCallback> m_afterCallbacks = new array<ref STestAfterCallback>();
 	protected ref array<ref STestAfterClassCallback> m_afterClassCallbacks = new array<ref STestAfterClassCallback>();
 	
@@ -37,6 +37,14 @@ class STestUnit : Managed {
 	protected void registerTestCases(TStringArray functionsNames) {
 		foreach (string functionName : functionsNames) {
 			m_testCases.Insert(new STestCase(this, functionName));
+		}
+	}
+	
+	protected void registerTestCaseParameterized(string functionName, array<ref Param> argumentsList) {
+		foreach (Param arguments : argumentsList) {
+			STestCaseParameterized testCase = new STestCaseParameterized(this, functionName);
+			testCase.setArguments(arguments);
+			m_testCases.Insert(testCase);
 		}
 	}
 	
@@ -131,7 +139,12 @@ class STestUnit : Managed {
 	}
 	
 	protected void executeTestCase(STestCase testCase) {
-		GetGame().GameScript.CallFunctionParams( testCase.getClass(), testCase.getFunction(), null, null);
+		STestCaseParameterized p = STestCaseParameterized.Cast(testCase);
+		Param arguments;
+		if (p) {
+			arguments = p.getArguments();
+		}
+		GetGame().GameScript.CallFunctionParams(testCase.getClass(), testCase.getFunction(), null, arguments);
 	}
 	
 	protected void executeAfterCallbacks(STestCase lastTestCase) {

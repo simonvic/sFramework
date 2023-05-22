@@ -166,10 +166,12 @@ class STestUnit : Managed {
 	*	@param actual \p array<float>
 	*/
 	protected void assertEqual(array<float> expected, array<float> actual) {
+		string e = string.ToString(expected, true, false, true);
+		string a = string.ToString(actual, true, false, true);
 		if (SMath.equal(expected, actual)) {
-			pass(string.Format("%1", expected), string.Format("%1", actual));
+			pass(e, a);
 		} else {
-			fail(string.Format("%1", expected), string.Format("%1", actual));
+			fail(e, a);
 		}
 	}
 	
@@ -179,10 +181,12 @@ class STestUnit : Managed {
 	*	@param actual \p float
 	*/
 	protected void assertEqual(float expected, float actual) {
+		string e = string.ToString(expected, true, false, true);
+		string a = string.ToString(actual, true, false, true);
 		if (SMath.equal(expected, actual)) {
-			pass(expected.ToString(), actual.ToString());
+			pass(e, a);
 		} else {
-			fail(expected.ToString(), actual.ToString());
+			fail(e, a);
 		}
 	}
 	
@@ -192,10 +196,12 @@ class STestUnit : Managed {
 	*	@param actual \p int
 	*/
 	protected void assertEqual(int expected, int actual) {
+		string e = string.ToString(expected, true, false, true);
+		string a = string.ToString(actual, true, false, true);
 		if (expected == actual) {
-			pass(expected.ToString(), actual.ToString());
+			pass(e, a);
 		} else {
-			fail(expected.ToString(), actual.ToString());
+			fail(e, a);
 		}
 	}
 	
@@ -205,10 +211,12 @@ class STestUnit : Managed {
 	*	@param actual \p string
 	*/
 	protected void assertEqual(string expected, string actual) {
+		string e = string.ToString(expected, true, false, true);
+		string a = string.ToString(actual, true, false, true);
 		if (expected == actual) {
-			pass(expected, actual);
+			pass(e, a);
 		} else {
-			fail(expected, actual);
+			fail(e, a);
 		}
 	}
 	
@@ -218,6 +226,14 @@ class STestUnit : Managed {
 	*	@param actual \p bool
 	*/
 	protected void assertEqual(bool expected, bool actual) {
+		string e = string.ToString(expected, true, false, true);
+		string a = string.ToString(actual, true, false, true);
+		if (expected == actual) {
+			pass(e, a);
+		} else {
+			fail(e, a);
+		}
+	}
 		if (expected == actual) {
 			pass(expected.ToString(), actual.ToString());
 		} else {
@@ -253,11 +269,12 @@ class STestUnit : Managed {
 	*	@brief Assert if the actual value is null
 	*	@param actual \p Class
 	*/
-	protected void assertNull(Class actual) {
+	protected void assertNull(Class actual) {		
+		string a = string.ToString(actual, true, false, true);
 		if (actual == null) {
-			pass("null", actual.ToString());
+			pass("null", a);
 		} else {
-			fail("null", actual.ToString());
+			fail("null", a);
 		}
 	}
 	
@@ -266,10 +283,11 @@ class STestUnit : Managed {
 	*	@param actual \p Class
 	*/
 	protected void assertNotNull(Class actual) {
+		string a = string.ToString(actual, true, false, true);
 		if (actual != null) {
-			pass("(non-null class)", actual.ToString());
+			pass("(non-null class)", a);
 		} else {
-			fail("(non-null class)", actual.ToString());
+			fail("(non-null class)", a);
 		}
 	}
 	

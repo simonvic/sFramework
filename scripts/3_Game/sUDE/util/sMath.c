@@ -93,6 +93,30 @@ class SMath {
 	}
 	
 	/**
+	* @brief Return if two int arrays are equal
+	* 	@param x \p int Frist int array value
+	* 	@param y \p int Second int array value
+	* 	@return \p bool - if are equals
+	*/
+	static bool equal(array<int> x, array<int> y) {
+		if (!x || !y) return false;
+		if (x == y) return true;
+		
+		int xCount = x.Count();
+		if (xCount != y.Count()) {
+			return false;
+		}
+		
+		for (int i = 0; i < xCount; i++) {
+			if (x[i] != y[i]) {
+				return false;			
+			}
+		}
+		
+		return true;
+	}
+	
+	/**
 	* @brief Normalize a value from a range to 0..1 range (non-clamped)
 	* 	@param value \p float - Value to normalize
 	* 	@param min \p float - Value minimum range

@@ -160,6 +160,22 @@ class STestUnit : Managed {
 	}
 
 	
+		
+	/**
+	*	@brief Assert if the actual value is equal to the expected
+	*	@param expected \p array<int>
+	*	@param actual \p array<int>
+	*/
+	protected void assertEqual(array<int> expected, array<int> actual) {
+		string e = string.ToString(expected, true, false, true);
+		string a = string.ToString(actual, true, false, true);
+		if (SMath.equal(expected, actual)) {
+			pass(e, a);
+		} else {
+			fail(e, a);
+		}
+	}
+		
 	/**
 	*	@brief Assert if the actual value is equal to the expected
 	*	@param expected \p array<float>
@@ -234,6 +250,28 @@ class STestUnit : Managed {
 			fail(e, a);
 		}
 	}
+	
+	/**
+	*	@brief Assert if the actual value is equal to the expected
+	*	@param expected \p typename
+	*	@param actual \p typename
+	*/
+	protected void assertEqual(typename expected, typename actual) {
+		string e = string.ToString(expected, true, false, true);
+		string a = string.ToString(actual, true, false, true);
+		if (expected == actual) {
+			pass(e, a);
+		} else {
+			fail(e, a);
+		}
+	}
+	
+	/**
+	*	@brief Assert if the actual value is equal to the expected
+	*	@param expected \p Class
+	*	@param actual \p Class
+	*/
+	protected void assertEqual(Class expected, Class actual) {
 		if (expected == actual) {
 			pass(expected.ToString(), actual.ToString());
 		} else {

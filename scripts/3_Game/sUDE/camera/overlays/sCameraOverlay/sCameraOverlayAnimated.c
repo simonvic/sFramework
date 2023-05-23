@@ -1,6 +1,10 @@
 //if we had interfaces...
 class SCameraOverlayAnimated : SCameraOverlay {
 	
+	static SCameraOverlayAnimatedBuilder builderAnimated() {
+		return new SCameraOverlayAnimatedBuilder();
+	}
+	
 	protected eSAnimableState m_animationState = eSAnimableState.STOPPED;
 	protected float m_time;
 	
@@ -80,4 +84,26 @@ class SCameraOverlayAnimated : SCameraOverlay {
 	protected void setAnimationState(eSAnimableState state) {
 		m_animationState = state;
 	}
+}
+
+class SCameraOverlayAnimatedBuilder : SCameraOverlayBuilder {
+	
+	SCameraOverlayAnimated buildAnimated() {
+		SCameraOverlayAnimated o = new SCameraOverlayAnimated();
+		o.setImage(m_image);
+		o.setAlpha(m_alpha);
+		o.setMask(m_mask);
+		o.setMaskProgress(m_maskProgress);
+		o.setMaskTransitionWidth(m_maskTransitionWidth);
+		o.setPosition(m_position);
+		o.setSize(m_size);
+		o.setRotation(m_rotation);
+		o.setPriority(m_priority);
+		array<typename> temp = {};
+		temp.Copy(m_targetCameras);
+		o.setTargetCameras(temp);
+		o.setHidesWithIngameHUD(m_hidesWithIngameHUD);
+		return o;
+	}
+	
 }

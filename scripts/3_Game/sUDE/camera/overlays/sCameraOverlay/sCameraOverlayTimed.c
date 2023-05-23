@@ -1,29 +1,10 @@
 class SCameraOverlayTimed : SCameraOverlayAnimated {
 	
-	protected float m_duration;
+	protected float m_duration = Math.PI;
 	protected bool m_deactivateOnStop = true;
 	
-	static SCameraOverlayTimed build(
-		float duration,
-		bool deactivateOnStop = true,
-		string image = "",
-		float alpha = 1.0,
-		string mask = "",
-		float maskProgress = 1.0,
-		float maskTransitionWidth = 0.1,
-		vector position = "0 0 0",
-		vector size = "1 1 1",
-		vector rotation = "0 0 0",
-		int priority = 0,
-		array<typename> targetCameras = null,
-		bool hidesWithIngameHUD = false) {
-		
-		SCameraOverlayTimed overlay = new SCameraOverlayTimed(image, alpha, mask, maskProgress, maskTransitionWidth, position, size, rotation, priority, targetCameras, hidesWithIngameHUD);
-		overlay.setDuration(duration);
-		overlay.setDeactivateOnStop(deactivateOnStop);
-		return overlay;
-		
-		// why tf the constructors have to behave like this? :(
+	static SCameraOverlayTimedBuilder builderTimed() {
+		return new SCameraOverlayTimedBuilder();
 	}
 	
 	override void animate(float deltaTime) {
@@ -78,3 +59,43 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	}
 	
 }
+
+class SCameraOverlayTimedBuilder : SCameraOverlayAnimatedBuilder {
+	
+	protected float m_duration = Math.PI;
+	protected bool m_deactivateOnStop = true;
+	
+	SCameraOverlayTimedBuilder duration(float duration) {
+		m_duration = duration;
+		return this;
+	}
+	
+	SCameraOverlayTimedBuilder deativateOnStop(bool deactivateOnStop) {
+		m_deactivateOnStop = deactivateOnStop;
+		return this;
+	}
+	
+	SCameraOverlayTimed buildTimed() {
+		SCameraOverlayTimed o = new SCameraOverlayTimed();
+		o.setImage(m_image);
+		o.setAlpha(m_alpha);
+		o.setMask(m_mask);
+		o.setMaskProgress(m_maskProgress);
+		o.setMaskTransitionWidth(m_maskTransitionWidth);
+		o.setPosition(m_position);
+		o.setSize(m_size);
+		o.setRotation(m_rotation);
+		o.setPriority(m_priority);
+		array<typename> temp = {};
+		temp.Copy(m_targetCameras);
+		o.setTargetCameras(temp);
+		o.setHidesWithIngameHUD(m_hidesWithIngameHUD);
+
+		o.setDuration(m_duration);
+		o.setDeactivateOnStop(m_deactivateOnStop);
+		return o;
+	}
+
+}
+	
+

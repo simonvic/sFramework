@@ -7,12 +7,12 @@ class SCameraOverlay : Managed {
 	*	 	"MyMODS/sFramework/GUI/textures/overlays/blood.edds" // image path
 	*	 	"MyMODS/sFramework/GUI/icons/logo/sUDE.paa"          // image path
 	*/
-	protected string m_image;
+	protected string m_image = "";
 	
 	/**
 	*	@brief Alpha of the widget, [0.0 - 1.0]
 	*/
-	protected float m_alpha;
+	protected float m_alpha = 1.0;
 	
 	/**
 	*	@brief Path of the image to be loaded used as an alpha mask
@@ -21,20 +21,20 @@ class SCameraOverlay : Managed {
 	*	        GREY  : alpha=0.5
 	*	        BLACK : alpha=0.0
 	*/
-	protected string m_mask;
+	protected string m_mask = "";
 	
 	/**
 	*	@brief Progress determines which alpha values are opaque using the mask. For progress x, 
 	*	        pixels with alpha in mask < x will be opaque and alpha in mask > x will be transparent.
 	*	        For smooth transition @see m_maskTransitionWidth.
 	*/
-	protected float m_maskProgress;
+	protected float m_maskProgress = 1.0;
 	
 	/**
 	*	@brief Alpha values will be fully opaque at m_maskProgress. Values between m_maskProgress and
 	*	        m_maskProgress + m_maskTransitionWidth will be smooth
 	*/
-	protected float m_maskTransitionWidth;
+	protected float m_maskTransitionWidth = 0.1;
 	
 	/**
 	*	@brief Position of the widget (ORIGIN) defined in screen space [0.0 - 1.0]
@@ -44,7 +44,7 @@ class SCameraOverlay : Managed {
 	*	        1.0 : bottom right of the screen
 	*	 @note Values lower than 0.0 and higher than 1.0 are accepted
 	*/
-	protected vector m_position;
+	protected vector m_position = "0 0 0";
 	
 	/**
 	*	@brief Size of the widget defined in screen space [0.0 - 1.0]
@@ -53,12 +53,12 @@ class SCameraOverlay : Managed {
 	*	        1.0 : full screen
 	*	 @note Values lower than 0.0 and higher than 1.0 are accepted
 	*/
-	protected vector m_size;
+	protected vector m_size = "1 1 1";
 	
 	/**
 	*	@brief Rotation of the widget defined with Yaw, Pitch and Roll angles
 	*/
-	protected vector m_rotation;
+	protected vector m_rotation = "0 0 0";
 	
 	/**
 	*	@brief Priority of the ImageWidget. It determines how close to the camera will be (also known
@@ -66,7 +66,7 @@ class SCameraOverlay : Managed {
 	*	        Higher priority will bring the image widget closer to the camera
 	*	        @note Vanilla UI priority is ~200. Setting values higher than this may cover the UI 
 	*/
-	protected int m_priority;
+	protected int m_priority = eSCOPriority.DEFAULT;
 	
 	/**
 	*	@brief List of cameras, on which the overlay must be shown
@@ -75,42 +75,21 @@ class SCameraOverlay : Managed {
 	protected ref array<typename> m_targetCameras = {DayZPlayerCamera};
 	
 	/**
-	*	@brief Current visibility status of the overlay (and of the widget if already built)
-	*/
-	protected bool m_isVisible;
-	
-	/**
 	*	@brief Determines if the overlay must hide when players hides ingame HUD
 	*/
-	protected bool m_hidesWithIngameHUD;	
+	protected bool m_hidesWithIngameHUD = false;	
 
-	protected ref ImageWidget m_widget = null;
+	////////////////////////////////////////////////////////////////////////////
 	
-	//maybe use a builder? lol
-	void SCameraOverlay(
-		string image = "",
-		float alpha = 1.0,
-		string mask = "",
-		float maskProgress = 1.0,
-		float maskTransitionWidth = 0.1,
-		vector position = "0.0 0.0 0.0",
-		vector size = "1.0 1.0 1.0",
-		vector rotation = "0.0 0.0 0.0",
-		int priority = 0,
-		array<typename> targetCameras = null,
-		bool hidesWithIngameHUD = false) {
-		
-		m_image = image;
-		m_alpha = alpha;
-		m_mask = mask;
-		m_maskProgress = maskProgress;
-		m_maskTransitionWidth = maskTransitionWidth;
-		m_position = position;
-		m_size = size;
-		m_rotation = rotation;
-		m_priority = priority;
-		if (targetCameras) m_targetCameras = targetCameras;
-		m_hidesWithIngameHUD = hidesWithIngameHUD;
+	
+	static SCameraOverlayBuilder builder() {
+		return new SCameraOverlayBuilder();
+	}
+	
+	protected ref ImageWidget m_widget = null;
+	protected bool m_isVisible = false;
+	
+	void SCameraOverlay() {
 		onInit();
 	}
 	
@@ -151,9 +130,9 @@ class SCameraOverlay : Managed {
 			activate();
 		}
 	}
+
+	//////////////////////////////////////////////////////////////////////////// IMAGE
 	
-	///////////////////////////
-	// IMAGE
 	string getImageName() {
 		return m_image;
 	}
@@ -165,8 +144,8 @@ class SCameraOverlay : Managed {
 	
 	
 	
-	///////////////////////////
-	// ALPHA
+	//////////////////////////////////////////////////////////////////////////// ALPHA
+	
 	float getAlpha() {
 		return m_alpha;
 	}
@@ -178,8 +157,8 @@ class SCameraOverlay : Managed {
 	
 	
 	
-	///////////////////////////
-	// MASK
+	//////////////////////////////////////////////////////////////////////////// MASK
+	
 	string getMask() {
 		return m_mask;
 	}
@@ -209,8 +188,8 @@ class SCameraOverlay : Managed {
 	
 	
 	
-	///////////////////////////
-	// POSITION
+	//////////////////////////////////////////////////////////////////////////// POSITION
+	
 	vector getPosition() {
 		return m_position;
 	}
@@ -226,8 +205,8 @@ class SCameraOverlay : Managed {
 	
 	
 	
-	///////////////////////////
-	// SIZE
+	//////////////////////////////////////////////////////////////////////////// SIZE
+	
 	vector getSize() {
 		return m_size;
 	}
@@ -247,8 +226,8 @@ class SCameraOverlay : Managed {
 	
 	
 	
-	///////////////////////////
-	// ROTATION
+	//////////////////////////////////////////////////////////////////////////// ROTATION
+	
 	vector getRotation() {
 		return m_rotation;
 	}
@@ -264,8 +243,8 @@ class SCameraOverlay : Managed {
 	
 	
 	
-	///////////////////////////
-	// PRIORITY
+	//////////////////////////////////////////////////////////////////////////// PRIORITY
+	
 	int getPriority() {
 		return m_priority;
 	}
@@ -277,8 +256,8 @@ class SCameraOverlay : Managed {
 	
 	
 	
-	///////////////////////////
-	// TARGET CAMAERAS
+	//////////////////////////////////////////////////////////////////////////// TARGET CAMAERAS
+	
 	array<typename> getTargetCameras() {
 		return m_targetCameras;
 	}
@@ -289,8 +268,8 @@ class SCameraOverlay : Managed {
 	
 	
 	
-	///////////////////////////
-	// VISIBILITY
+	//////////////////////////////////////////////////////////////////////////// VISIBILITY
+	
 	bool isVisible() {
 		return m_isVisible;
 	}
@@ -318,8 +297,8 @@ class SCameraOverlay : Managed {
 	
 
 	
-	///////////////////////////
-	// WIDGET
+	//////////////////////////////////////////////////////////////////////////// WIDGET
+	
 	ImageWidget getWidget() {
 		return m_widget;
 	}
@@ -390,4 +369,92 @@ class SCameraOverlay : Managed {
 }
 
 
+class SCameraOverlayBuilder : Managed {
+	
+	protected string m_image = "";
+	protected float m_alpha = 1.0;
+	protected string m_mask = "";
+	protected float m_maskProgress = 1.0;
+	protected float m_maskTransitionWidth = 0.1;
+	protected vector m_position = "0 0 0";
+	protected vector m_size = "1 1 1";
+	protected vector m_rotation = "0 0 0";
+	protected int m_priority = eSCOPriority.DEFAULT;
+	protected ref array<typename> m_targetCameras = {DayZPlayerCamera};
+	protected bool m_hidesWithIngameHUD = false;
+	
+	SCameraOverlayBuilder image(string image) {
+		m_image = image;
+		return this;
+	}
 
+	SCameraOverlayBuilder alpha(float alpha) {
+		m_alpha = alpha;
+		return this;
+	}
+
+	SCameraOverlayBuilder mask(string mask) {
+		m_mask = mask;
+		return this;
+	}
+
+	SCameraOverlayBuilder maskProgress(float maskProgress) {
+		m_maskProgress = maskProgress;
+		return this;
+	}
+
+	SCameraOverlayBuilder maskTransitionWidth(float maskTransitionWidth) {
+		m_maskTransitionWidth = maskTransitionWidth;
+		return this;
+	}
+
+	SCameraOverlayBuilder position(vector position) {
+		m_position = position;
+		return this;
+	}
+
+	SCameraOverlayBuilder size(vector size) {
+		m_size = size;
+		return this;
+	}
+
+	SCameraOverlayBuilder rotation(vector rotation) {
+		m_rotation = rotation;
+		return this;
+	}
+
+	SCameraOverlayBuilder priority(int priority) {
+		m_priority = priority;
+		return this;
+	}
+
+	SCameraOverlayBuilder targetCameras(array<typename> targetCameras) {
+		m_targetCameras = targetCameras;
+		return this;
+	}
+
+	SCameraOverlayBuilder hidesWithIngameHUD(bool hidesWithIngameHUD) {
+		m_hidesWithIngameHUD = hidesWithIngameHUD;
+		return this;
+	}
+	
+	SCameraOverlay build() {
+		SCameraOverlay o = new SCameraOverlay();
+		o.setImage(m_image);
+		o.setAlpha(m_alpha);
+		o.setMask(m_mask);
+		o.setMaskProgress(m_maskProgress);
+		o.setMaskTransitionWidth(m_maskTransitionWidth);
+		o.setPosition(m_position);
+		o.setSize(m_size);
+		o.setRotation(m_rotation);
+		o.setPriority(m_priority);
+		array<typename> temp = {};
+		temp.Copy(m_targetCameras);
+		o.setTargetCameras(temp);
+		o.setHidesWithIngameHUD(m_hidesWithIngameHUD);
+		return o;
+	}
+
+	
+}

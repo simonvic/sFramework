@@ -316,8 +316,8 @@ class SCameraOverlaysManager {
 		return overlays;
 	}
 	
-	set<SCameraOverlayAnimated> getAnimating() {
-		set<SCameraOverlayAnimated> overlays  = new set<SCameraOverlayAnimated>();
+	set<ref SCameraOverlayAnimated> getAnimating() {
+		set<ref SCameraOverlayAnimated> overlays  = new set<ref SCameraOverlayAnimated>();
 		foreach (auto overlay, auto state : m_overlays) {
 			if (overlay.IsInherited(SCameraOverlayAnimated)) {
 				overlays.Insert(SCameraOverlayAnimated.Cast(overlay));
@@ -346,7 +346,7 @@ class SCameraOverlaysManager {
 			SLog.d(p,"",1);
 		}
 		
-		set<SCameraOverlayAnimated> animating = SCameraOverlaysManager.getInstance().getAnimating();
+		set<ref SCameraOverlayAnimated> animating = SCameraOverlaysManager.getInstance().getAnimating();
 		SLog.d(""+animating.Count(),"animating");
 		foreach (SCameraOverlayAnimated ao : animating) {
 			SLog.d(ao,"",1);

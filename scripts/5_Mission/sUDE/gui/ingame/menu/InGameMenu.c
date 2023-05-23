@@ -3,10 +3,10 @@ modded class InGameMenu {
 	protected ref SCOAnimationLogo m_coLogo = new SCOAnimationLogo();
 	
 	void InGameMenu() {
-		SCameraOverlaysManager.getInstance().activate(m_coLogo);
+		m_coLogo.activate();
 	}
 	
 	void ~InGameMenu() {
-		SCameraOverlaysManager.getInstance().deactivate(m_coLogo);
+		m_coLogo.deactivate();
 	}
 }

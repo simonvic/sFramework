@@ -121,7 +121,7 @@ class SCameraOverlay : Managed {
 	}
 	
 	/**
-	*	@brief Activate the overlay if deactivated, deactivated it if it's active
+	*	@brief Activate the overlay if not active, deactivate it otherwise
 	*/
 	void toggle() {
 		if (isActive()) {

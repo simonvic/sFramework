@@ -118,6 +118,39 @@ class SCameraOverlay : Managed {
 	void onPreBuild();
 	void onPostBuild();
 	
+
+	/**
+	*	@brief Check if the overlay is active
+	*	@return true if active, false otherwise
+	*/
+	bool isActive() {
+		return SCameraOverlaysManager.getInstance().isActive(this);
+	}
+
+	/**
+	*	@brief Activate the overlay
+	*/
+	void activate() {
+		SCameraOverlaysManager.getInstance().activate(this);
+	}
+	
+	/**
+	*	@brief Deactivate the overlay
+	*/
+	void deactivate() {
+		SCameraOverlaysManager.getInstance().deactivate(this);
+	}
+	
+	/**
+	*	@brief Activate the overlay if deactivated, deactivated it if it's active
+	*/
+	void toggle() {
+		if (isActive()) {
+			deactivate();
+		} else {
+			activate();
+		}
+	}
 	
 	///////////////////////////
 	// IMAGE

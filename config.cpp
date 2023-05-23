@@ -74,12 +74,12 @@ class CfgVehicles{
 	};
 
 	class SCameraOverlay_Eyewear : SCameraOverlay {
-		priority = 2;
+		priority = 20;
 		targetCameras[] = {"DayZPlayerCamera1stPerson", "DayZPlayerCameraIronsights"};
 	};
 
 	class SCameraOverlay_Headgear : SCameraOverlay {
-		priority = 1;
+		priority = 10;
 		targetCameras[] = {"DayZPlayerCamera1stPerson", "DayZPlayerCameraIronsights"};
 	};
 

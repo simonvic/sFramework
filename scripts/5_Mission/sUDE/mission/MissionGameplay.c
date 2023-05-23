@@ -1,23 +1,13 @@
 modded class MissionGameplay {
 	
-	void MissionGameplay() {
-		SPPEManager.onInit();		
-	}
-	
-
-	void ~MissionGameplay() {
+	override void OnMissionFinish() {
+		super.OnMissionFinish();
 		resetSCameraOverlays();
-		resetSPPE();
 		resetSUserConfigConstraints();
 	}
 	
 	protected void resetSCameraOverlays() {
 		SCameraOverlaysManager.getInstance().deactivateAll();
-	}
-	
-	protected void resetSPPE() {
-		SPPEManager.deactivateAll();
-		SPPEManager.applyDefault();
 	}
 	
 	protected void resetSUserConfigConstraints() {

@@ -286,8 +286,8 @@ class SCameraOverlaysManager {
 		return m_overlays.Contains(overlay));
 	}
 		
-	TSCameraOverlaySet getActive() {
-		TSCameraOverlaySet overlays = new TSCameraOverlaySet();
+	set<ref SCameraOverlay> getActive() {
+		set<ref SCameraOverlay> overlays = new set<ref SCameraOverlay>();
 		foreach (auto overlay, auto state: m_overlays) {
 			if (state == eSCameraOverlayState.ACTIVE) {
 				overlays.Insert(overlay);
@@ -296,8 +296,8 @@ class SCameraOverlaysManager {
 		return overlays;
 	}
 	
-	TSCameraOverlaySet getRequested() {
-		TSCameraOverlaySet overlays = new TSCameraOverlaySet();
+	set<ref SCameraOverlay> getRequested() {
+		set<ref SCameraOverlay> overlays = new set<ref SCameraOverlay>();
 		foreach (auto overlay, auto state: m_overlays) {
 			if (state == eSCameraOverlayState.REQUESTED) {
 				overlays.Insert(overlay);
@@ -306,8 +306,8 @@ class SCameraOverlaysManager {
 		return overlays;
 	}
 	
-	TSCameraOverlaySet getPendingDeletion() {
-		TSCameraOverlaySet overlays = new TSCameraOverlaySet();
+	set<ref SCameraOverlay> getPendingDeletion() {
+		set<ref SCameraOverlay> overlays = new set<ref SCameraOverlay>();
 		foreach (auto overlay, auto state: m_overlays) {
 			if (state == eSCameraOverlayState.PENDING_DELETION) {
 				overlays.Insert(overlay);
@@ -328,19 +328,19 @@ class SCameraOverlaysManager {
 	
 	void debugPrint() {
 		SLog.d("=============== DEBUG PRINT =================");
-		TSCameraOverlaySet requested = SCameraOverlaysManager.getInstance().getRequested();
+		set<ref SCameraOverlay> requested = SCameraOverlaysManager.getInstance().getRequested();
 		SLog.d(""+requested.Count(),"requested");
 		foreach (SCameraOverlay r : requested) {
 			SLog.d(r,"",1);
 		}
 				
-		TSCameraOverlaySet active = SCameraOverlaysManager.getInstance().getActive();
+		set<ref SCameraOverlay> active = SCameraOverlaysManager.getInstance().getActive();
 		SLog.d(""+active.Count(),"active");
 		foreach (SCameraOverlay a : active) {
 			SLog.d(a,"",1);
 		}
 		
-		TSCameraOverlaySet pending = SCameraOverlaysManager.getInstance().getPendingDeletion();
+		set<ref SCameraOverlay> pending = SCameraOverlaysManager.getInstance().getPendingDeletion();
 		SLog.d(""+pending.Count(),"pending deletion");
 		foreach (SCameraOverlay p : pending) {
 			SLog.d(p,"",1);

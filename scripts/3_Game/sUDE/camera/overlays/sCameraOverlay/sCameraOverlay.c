@@ -1,6 +1,3 @@
-typedef array<ref SCameraOverlay> TSCameraOverlaysList;
-typedef set<ref SCameraOverlay> TSCameraOverlaySet;
-
 class SCameraOverlay : Managed {
 	
 	/**

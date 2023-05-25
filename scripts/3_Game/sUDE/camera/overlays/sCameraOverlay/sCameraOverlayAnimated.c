@@ -15,7 +15,7 @@ class SCameraOverlayAnimated : SCameraOverlay {
 	void onResume();
 	
 	/**
-	* @brief Set the animation state to PLAYING and reset the time
+	*	@brief Set the animation state to PLAYING and reset the time
 	*/
 	void start() {
 		m_time = 0;
@@ -34,7 +34,7 @@ class SCameraOverlayAnimated : SCameraOverlay {
 	}
 	
 	/**
-	* @brief Reset values to default and prepare to stop
+	*	@brief Reset values to default and prepare to stop
 	*/
 	void stop() {
 		setAnimationState(eSAnimableState.STOPPED);
@@ -42,7 +42,7 @@ class SCameraOverlayAnimated : SCameraOverlay {
 	}
 	
 	/**
-	* @brief Pause the animation from animating without resetting the time
+	*	@brief Pause the animation from animating without resetting the time
 	*/
 	void pause() {
 		setAnimationState(eSAnimableState.PAUSED);
@@ -50,7 +50,7 @@ class SCameraOverlayAnimated : SCameraOverlay {
 	}
 	
 	/**
-	* @brief Resume the animation
+	*	@brief Resume the animation
 	*/
 	void resume() {
 		setAnimationState(eSAnimableState.PLAYING);
@@ -58,7 +58,7 @@ class SCameraOverlayAnimated : SCameraOverlay {
 	}
 	
 	/**
-	* @brief Get the time elapsed from the animation start
+	*	@brief Get the time elapsed from the animation start
 	* 	@return \p float - time elapsed
 	*/
 	float getTime() {

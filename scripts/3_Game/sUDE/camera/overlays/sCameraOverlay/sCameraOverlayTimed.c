@@ -1,11 +1,11 @@
 class SCameraOverlayTimed : SCameraOverlayAnimated {
 	
-	protected float m_duration = Math.PI;
-	protected bool m_deactivateOnStop = true;
-	
 	static SCameraOverlayTimedBuilder builderTimed() {
 		return new SCameraOverlayTimedBuilder();
 	}
+	
+	protected float m_duration;
+	protected bool m_deactivateOnStop;
 	
 	override void animate(float deltaTime) {
 		if ( !isPlaying() ) {
@@ -20,31 +20,31 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	}
 	
 	/**
-	* @brief Set the duration of the animation
-	* 	@param duration \p float - animation duration (seconds)
+	*	@brief Set the duration of the animation
+	*	@param duration \p float - animation duration (seconds)
 	*/
 	void setDuration(float duration) {
 		m_duration = duration;
 	}
 		
 	/**
-	* @brief Get the animation duration
-	* 	@return \p float - animation duration(seconds)
+	*	@brief Get the animation duration
+	*	@return \p float - animation duration(seconds)
 	*/
 	float getDuration() {
 		return m_duration;
 	}
 		
 	/**
-	* @brief Get the time remaining to the completition
-	* 	@return \p float - time remaining (seconds)
+	*	@brief Get the time remaining to the completition
+	*	@return \p float - time remaining (seconds)
 	*/
 	float getRemaining() {
 		return m_duration - m_time;
 	}
 	
 	/**
-	* @brief Get if the animation should be deactivated when ends
+	*	@brief Get if the animation should be deactivated when ends
 	*/
 	bool shouldDeactivateOnStop() {
 		return m_deactivateOnStop;
@@ -52,7 +52,7 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	
 	/**
 	*	@brief Set if the overlay has to be deactivated on has stopped
-	*	 @param deactivateOnStop \p bool 
+	*	@param deactivateOnStop \p bool 
 	*/
 	void setDeactivateOnStop(bool deactivateOnStop) {
 		m_deactivateOnStop = deactivateOnStop;

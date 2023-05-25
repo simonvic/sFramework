@@ -1,10 +1,7 @@
 modded class DayZPlayerCameraBase {
 
 	
-	protected float m_enteringTransitionTime = DayZPlayerCameras.DEFAULT_UNREGISTERED_TIME; 
-	
-	void DayZPlayerCameraBase(DayZPlayer pPlayer, HumanInputController pInput) {
-	}
+	protected float m_enteringTransitionTime = DayZPlayerCameras.DEFAULT_UNREGISTERED_TIME;
 	
 	override void OnActivate(DayZPlayerCamera pPrevCamera, DayZPlayerCameraResult pPrevCameraResult) {
 		super.OnActivate(pPrevCamera, pPrevCameraResult);

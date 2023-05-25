@@ -98,6 +98,8 @@ class SCameraOverlay : Managed {
 	void onPostBuild();
 	
 
+	// TODO(perfs): cache isActive
+	
 	/**
 	*	@brief Check if the overlay is active
 	*	@return true if active, false otherwise

@@ -647,27 +647,4 @@ class SPPEffect : PPERequesterBase {
 		SetTargetValueColor(ppeType, paramIndex, paramValue.getRGBANormalizedArray(), m_priority, m_operator);
 	}
 	
-	/*
-	void debugUI() {
-		auto dui = SDebugUI.of(ClassName());
-		dui.begin();
-		dui.window(ClassName());
-		bool enable;
-		dui.check("Enable", enable);
-		if (!enable) return;
-		dui.newline();
-		foreach (auto ppeMaterial, auto ppeParam : m_params) {
-			dui.text(ppeMaterial);
-			dui.newline();
-			foreach (auto ppeParamName, auto ppeParamValue : ppeParam) {
-				float newVal = ppeParamValue;
-				dui.slider(ppeParamName, newVal, 0.01, -1, 1);
-				m_params[ppeMaterial][ppeParamName] = newVal;
-			}
-			dui.newline();
-		}
-		dui.end();
-	}
-	*/
-	
 }

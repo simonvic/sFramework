@@ -92,6 +92,18 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		return dui;
 	}
 	
+	static SDebugUI of(string name, bool enabled) {
+		SDebugUI dui = instances.Get(name);
+		if (dui) return dui;
+		dui = new SDebugUI(name);
+		instances.Set(name, dui);
+		if (!enabled) {
+			dui.disable();
+			dui.hide();
+		}
+		return dui;
+	}
+	
 	static void hideAll() {
 		foreach (auto dui : instances) {
 			dui.hide();

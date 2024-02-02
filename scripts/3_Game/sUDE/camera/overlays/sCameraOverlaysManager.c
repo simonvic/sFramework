@@ -326,39 +326,4 @@ class SCameraOverlaysManager {
 		return overlays;
 	}
 	
-	void debugPrint() {
-		SLog.d("=============== DEBUG PRINT =================");
-		set<ref SCameraOverlay> requested = SCameraOverlaysManager.getInstance().getRequested();
-		SLog.d(""+requested.Count(),"requested");
-		foreach (SCameraOverlay r : requested) {
-			SLog.d(r,"",1);
-		}
-				
-		set<ref SCameraOverlay> active = SCameraOverlaysManager.getInstance().getActive();
-		SLog.d(""+active.Count(),"active");
-		foreach (SCameraOverlay a : active) {
-			SLog.d(a,"",1);
-		}
-		
-		set<ref SCameraOverlay> pending = SCameraOverlaysManager.getInstance().getPendingDeletion();
-		SLog.d(""+pending.Count(),"pending deletion");
-		foreach (SCameraOverlay p : pending) {
-			SLog.d(p,"",1);
-		}
-		
-		set<ref SCameraOverlayAnimated> animating = SCameraOverlaysManager.getInstance().getAnimating();
-		SLog.d(""+animating.Count(),"animating");
-		foreach (SCameraOverlayAnimated ao : animating) {
-			SLog.d(ao,"",1);
-			SLog.d(typename.EnumToString(eSAnimableState, ao.getAnimationState()),"",2);
-		}
-		
-		SLog.d("-------------- deep debug --------------");
-		foreach (SCameraOverlay co, eSCameraOverlayState state: m_overlays) {
-			co.debugPrint(1);
-		}
-		SLog.d("-------------- tree debug --------------");
-		SDebug.printLayoutTree(m_root);
-	}		
-
 }

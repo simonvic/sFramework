@@ -64,7 +64,7 @@ class SCameraOverlay : Managed {
 	*	@brief Priority of the ImageWidget. It determines how close to the camera will be (also known
 	*	        as z-depth).
 	*	        Higher priority will bring the image widget closer to the camera
-	*	        @note Vanilla UI priority is ~200. Setting values higher than this may cover the UI 
+	*	        @note Vanilla UI priority is ~100. Setting values higher than this may cover the UI 
 	*/
 	protected int m_priority = eSCOPriority.DEFAULT;
 	

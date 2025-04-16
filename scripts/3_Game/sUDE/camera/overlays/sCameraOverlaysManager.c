@@ -5,9 +5,9 @@ enum eSCameraOverlayState {
 }
 
 
-//@todo Performance: Iterate overlays only once each frame
-//@todo Performance: use ImageWidget pool
-//@todo Performance: pre-cache images on boot
+// TODO(perf): Iterate overlays only once each frame
+// TODO(perf): use ImageWidget pool
+// TODO(perf): pre-cache images on boot
 
 class SCameraOverlaysManager {
 	

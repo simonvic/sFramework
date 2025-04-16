@@ -653,6 +653,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@brief Mark the end of the DUI scope
 	*/
 	void end() {
+		// TODO: add autohide option
 	}
 	
 	void enable() {

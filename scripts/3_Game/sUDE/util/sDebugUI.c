@@ -639,14 +639,15 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	/**
 	*	@brief Mark the beginning of the DUI scope
 	*/
-	void begin() {
-		if (isServer()) return;
+	bool begin() {
+		if (isServer()) return false;
 		foreach (auto button, auto callback : buttonsCallbacks) {
 			if (button.GetState()) {
 				GetGame().GameScript.CallFunctionParams(callback.instance, callback.function, null, callback.params);
 			}
 		}
 		clear();
+		return !disabled;
 	}
 	
 	/**

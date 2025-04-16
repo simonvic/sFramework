@@ -211,7 +211,7 @@ class SSpawner {
 	*	 @return object created (null if not created)
 	*/
 	static EntityAI spawn(string itemName, GameInventory inventory) {
-		return inventory.CreateInInventory(itemName));
+		return inventory.CreateInInventory(itemName);
 	}
 
 }

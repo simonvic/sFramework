@@ -438,7 +438,7 @@ class SColor {
 	*/
 	static int toARGB(int rgba) {
 		//get the alpha bits, move them to the left, move rgba to the right, insert alpha bits
-		return (((rgba >> 8) & 0x00ffffff) | ((rgba & 0x000000ff) << 24)));
+		return (((rgba >> 8) & 0x00ffffff) | ((rgba & 0x000000ff) << 24));
 	}
  
 	/**

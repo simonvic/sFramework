@@ -283,7 +283,7 @@ class SCameraOverlaysManager {
 	}
 	
 	bool isActive(SCameraOverlay overlay) {
-		return m_overlays.Contains(overlay));
+		return m_overlays.Contains(overlay);
 	}
 		
 	set<ref SCameraOverlay> getActive() {

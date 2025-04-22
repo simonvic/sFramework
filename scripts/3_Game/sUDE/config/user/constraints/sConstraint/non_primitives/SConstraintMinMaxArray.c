@@ -22,7 +22,7 @@ class SConstraintMinMaxArray<Class T> : SConstraintNonPrimitiveBase {
 	*	 @return T - constrained value
 	*/
 	array<T> constrained(array<T> toConstrain) {
-		Param1<ref array<T>> p = new Param1<ref array<T>>(toConstrain);
+		Param1<array<T>> p = new Param1<array<T>>(toConstrain);
 		constrain(p);
 		return p.param1;
 	}
@@ -33,7 +33,7 @@ class SConstraintMinMaxArray<Class T> : SConstraintNonPrimitiveBase {
 	*	 @return bool - if the value respects the constraint
 	*/
 	bool isValid(array<T> toValidate) {
-		return isValid(new Param1<ref array<T>>(toValidate));
+		return isValid(new Param1<array<T>>(toValidate));
 	}
 	
 

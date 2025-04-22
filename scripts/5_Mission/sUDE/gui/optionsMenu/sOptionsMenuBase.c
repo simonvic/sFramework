@@ -234,12 +234,13 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		array<int> indices = m_indecesLinks.Get(w);
 		if (!indices || indices.Count() <= 0) return false;
 		
-		float current = w.GetCurrent();
-		array<float> temp = option.get();
+		float newValue = w.GetCurrent();
+		array<float> newOptionValue = {};
+		newOptionValue.Copy(option.get());
 		foreach (int i : indices) {
-			temp.Set(i, current);
+			newOptionValue.Set(i, newValue);
 		}
-		option.set(temp);
+		option.set(newOptionValue);
 		w.SetCurrent(option.get()[indices[0]]);
 		
 		TextWidget txt = TextWidget.Cast(w.FindAnyWidget(w.GetName()+"_value"));

@@ -23,8 +23,8 @@ class SFileHelper {
 		FileHandle file = OpenFile(path, FileMode.WRITE);
 		if (file != 0) {
 			FPrint(file, "");
+			CloseFile(file);
 		}
-		CloseFile(file);
 	}
 	
 	/**
@@ -55,7 +55,6 @@ class SFileHelper {
 		FileHandle handle = OpenFile( path, FileMode.READ );
 		if ( handle == 0 ) {
 			SLog.e("Error when reading [ " + path + " ]","SFileHelper::cat");
-			CloseFile( handle );
 			return string.Empty;
 		}
 		

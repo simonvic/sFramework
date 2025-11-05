@@ -327,9 +327,8 @@ class SLog {
 				headerPrinted = true;
 			}
 			FPrintln(file, text);
+			CloseFile(file);
 		}
-		CloseFile(file);
-		
 	}
 		
 	static string toString(Class variable) {

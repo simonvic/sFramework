@@ -31,7 +31,7 @@ class SCameraOverlaysManager {
 	*/
 	void activate(SCameraOverlay overlay) {
 		if (!overlay) return;
-		if (GetGame().IsServer() && GetGame().IsMultiplayer()) {
+		if (GetGame().IsDedicatedServer()) {
 			SLog.w("ACTIVATING " + overlay + " ON SERVER!","SCameraOverlaysManager::activate");
 			return;
 		}
@@ -46,7 +46,7 @@ class SCameraOverlaysManager {
 	*/
 	void deactivate(SCameraOverlay overlay) {
 		if (!overlay) return;
-		if (GetGame().IsServer() && GetGame().IsMultiplayer()) {
+		if (GetGame().IsDedicatedServer()) {
 			SLog.w("DEACTIVATING " + overlay + " ON SERVER!","SCameraOverlaysManager::deactivate");
 			return;
 		}

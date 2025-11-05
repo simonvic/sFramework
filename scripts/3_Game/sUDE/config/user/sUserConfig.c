@@ -24,7 +24,7 @@ class SUserConfig {
 	*/
 	void load(typename moduleType, bool reload = false) {
 		
-		if (GetGame().IsServer() && GetGame().IsMultiplayer()) {
+		if (GetGame().IsDedicatedServer()) {
 			SLog.w("Trying to load user config from server!, Ignoring...","SUserConfig::load");
 			return;
 		}

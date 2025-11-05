@@ -10,7 +10,6 @@ class SLog {
 		
 	static bool overrideEnabled = true;
 	static bool filePrintEnabled = true;
-	static bool beautify = true;
 	
 	static bool headerPrinted;
 	
@@ -29,7 +28,7 @@ class SLog {
 	*	%6 : caller prefix
 	*	%7 : text prefix
 	*/
-	static const string PRINT_FORMAT = "%5 [%1] %2%6%3%7%4";
+	static const string PRINT_FORMAT = "%5 [%1]\t%2%6%3%7%4";
 	
 	static const string CALLER_PREFIX = "::";
 	static const string TEXT_PREFIX = " : ";
@@ -279,16 +278,11 @@ class SLog {
 		int second;
 		GetYearMonthDayUTC(year,month,day);
 		GetHourMinuteSecondUTC(hour, minute, second);
-		string monthS = ""+month;
-		string dayS = ""+day;
-		string hourS = ""+hour;
-		string minuteS = ""+minute;
-		string secondS  = ""+second;
-		if (month < 10) monthS = "0"+monthS;
-		if (day < 10) dayS = "0"+dayS;
-		if (hour < 10) hourS = "0"+hourS;
-		if (minute < 10) minuteS = "0"+minuteS;
-		if (second < 10) secondS = "0"+secondS;
+		string monthS = month.ToStringLen(2);
+		string dayS = day.ToStringLen(2);
+		string hourS = hour.ToStringLen(2);
+		string minuteS = minute.ToStringLen(2);
+		string secondS  = second.ToStringLen(2);
 		return string.Format(format, year, monthS, dayS, hourS, minuteS, secondS);
 	}
 	
@@ -394,7 +388,7 @@ class SLog {
 			mods.Split(";", modList);
 			foreach (string mod : modList) {
 				// NOTE: mod list may be too big for a single print
-				FPrintln(file, "                  \t- " + mod);
+				FPrintln(file, "                      - " + mod);
 			}
 		}
 		
@@ -403,10 +397,12 @@ class SLog {
 	
 	private static string getIndentation(int indentation) {
 		string temp = "";
-		for (int i=0; i<indentation; i++) {
-			temp += "│\t";
+		if (indentation >= 1) {
+			for (int i = 0; i < indentation - 1; i++) {
+				temp += "|\t";
+			}
+			temp += "|- ";
 		}
-		if (beautify && indentation > 0 ) temp += "├ ";
 		return temp;
 	}
 	

@@ -14,7 +14,7 @@ class SFileHelper {
 		dirs.Remove(dirs.Count() - 1);
 		string parentDir = "";
 		for (int i = 0; i< dirs.Count(); i++) {
-			parentDir += dirs[i] + "\\\";
+			parentDir += dirs[i] + "\\";
 		}
 		
 		// Make parent folder
@@ -37,7 +37,7 @@ class SFileHelper {
 		string temp = dirs[0];
 		MakeDirectory(temp);
 		for (int i = 0; i<dirs.Count() - 1; i++) {
-			temp += "\\\" + dirs[i+1];
+			temp += "\\" + dirs[i+1];
 			MakeDirectory(temp);
 		}
 	}

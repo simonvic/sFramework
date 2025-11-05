@@ -320,13 +320,12 @@ class SLog {
 		string today = buildTimestamp("%1-%2-%3");
 		string filePath = LOG_PATH + "\\" + today + ".slog";
 		SFileHelper.touch(filePath);
-		if (!headerPrinted) {
-			text = buildHeader() + text;
-			headerPrinted = true;
-		}
-		
 		FileHandle file = OpenFile(filePath, FileMode.APPEND);
 		if (file != 0) {
+			if (!headerPrinted) {
+				printHeader(file);
+				headerPrinted = true;
+			}
 			FPrintln(file, text);
 		}
 		CloseFile(file);
@@ -357,8 +356,7 @@ class SLog {
 		return string.Format(VARIABLE_PRINT_FORMAT, "vector", variable.ToString());
 	}	
 	
-	
-	static string buildHeader() {
+	static void printHeader(FileHandle file) {
 		string playerName;
 		float avgFPS = -1;
 		float tickTime = -1;
@@ -375,17 +373,7 @@ class SLog {
 		}
 		profileName = GetProfileName();
 		machineName = GetMachineName();
-		
-		string mods;
-		if (GetCLIParam("mod", mods)) {
-			TStringArray modList = new TStringArray;
-			mods.Split(";",modList);
-			mods = "";
-			foreach (string mod : modList) {
-				mods += "\n                  \t- " + mod;
-			}
-		}
-		
+
 		string header;
 		header += string.Format("====================================================================\n");
 		header += string.Format("                      %1 \n",buildTimestamp("%1/%2/%3 %4:%5:%6"));
@@ -397,10 +385,21 @@ class SLog {
 		header += string.Format("                  Tick time     : %1\n", tickTime);
 		header += string.Format("                  World name    : %1\n", worldName);
 		header += string.Format("                  Game version  : %1\n", version);
-		header += string.Format("                  Mods          : %1\n", mods);
-		header += string.Format("--------------------------------------------------------------------\n\n");
+		header += string.Format("                  Mods          :");
+
+		FPrintln(file, header);
+
+		string mods;
+		if (GetCLIParam("mod", mods)) {
+			array<string> modList = {};
+			mods.Split(";", modList);
+			foreach (string mod : modList) {
+				// NOTE: mod list may be too big for a single print
+				FPrintln(file, "                  \t- " + mod);
+			}
+		}
 		
-		return header;
+		FPrintln(file, "--------------------------------------------------------------------\n\n");
 	}
 	
 	private static string getIndentation(int indentation) {

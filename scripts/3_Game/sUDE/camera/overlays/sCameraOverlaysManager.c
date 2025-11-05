@@ -268,7 +268,7 @@ class SCameraOverlaysManager {
 	*	 @param overlay \p SCameraOverlay - overlay to remove
 	*	 @param root \p Widget - parent of widget to remove
 	*/
-	protected void performDeactivate(SCameraOverlay overlay, Widget parent) { //@todo unnecesary to pass parent
+	protected void performDeactivate(SCameraOverlay overlay, Widget parent) { // TODO: unnecesary to pass parent
 		if (overlay.getWidget()) {
 			parent.RemoveChild(overlay.getWidget());
 		}

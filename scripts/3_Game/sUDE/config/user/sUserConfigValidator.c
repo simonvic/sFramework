@@ -1,6 +1,6 @@
 class SUserConfigValidator : Managed {
 	
-	//@todo why not just a damn serial UID >:(
+	// TODO: why not just a damn serial UID >:(
 	
 	/**
 	*	@brief Check if the UserConfig is valid (exists, can be deserialized and it has the required fields)

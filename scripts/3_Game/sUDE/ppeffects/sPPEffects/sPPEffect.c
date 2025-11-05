@@ -470,7 +470,8 @@ class SPPEffect : PPERequesterBase {
 	
 	
 	
-	////////////// GODRAYS //@todo complete doc
+	////////////// GODRAYS
+	// TODO: complete doc
 	
 	/**
 	*	@brief Quickly set godrays parameters

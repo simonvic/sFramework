@@ -1,4 +1,4 @@
-//@todo refactor this
+// TODO: refactor this
 //forgive me lol, I have to rush
 class OptionsMenuSUDE : ScriptedWidgetEventHandler {
 	

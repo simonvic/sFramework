@@ -1,4 +1,4 @@
-//@todo managed?
+// TODO: managed?
 class SRaycast {
 	
 	protected vector m_startPos;
@@ -109,7 +109,7 @@ class SRaycast {
 		return this;		
 	}
 	
-	//@todo add setters
+	// TODO: add setters
 		
 	bool hasHit() {
 		return m_hasHit;

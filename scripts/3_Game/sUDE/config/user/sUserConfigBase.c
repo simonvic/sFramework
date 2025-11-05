@@ -1,6 +1,7 @@
 
 class SUserConfigBase : SJSONSerializable {
-	//protected float serialVersionUID = 69; //@todo use serialVersionUID instead of checking the fields
+	// TODO: use serialVersionUID instead of checking the fields
+	//protected float serialVersionUID = 69;
 
 	#ifndef DEVELOPER
 	[NonSerialized()]
@@ -86,7 +87,7 @@ class SUserConfigBase : SJSONSerializable {
 	*	@brief Get a semicolon separated list of fields that must not be serialized. Little hacky to circumvent NonSerialized() attribute
 	*	 @return string - list of fields not to serialize
 	*/
-	//@todo lol... find a solution for [NonSerialized()]
+	// TODO: lol... find a solution for [NonSerialized()]
 	string getNonSerializedFields() {
 		return "m_serializer;m_options";
 	}	

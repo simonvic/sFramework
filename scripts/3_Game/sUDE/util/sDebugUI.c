@@ -893,7 +893,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	override bool OnMouseLeave(Widget w, Widget enterW, int x, int y);
 	override bool OnMouseWheel(Widget w, int x, int y, int wheel) {
 		switch (w.Type()) {
-			//@todo make atomic method
+			// TODO: make atomic method
 			case SliderWidget:
 			auto slider = SliderWidget.Cast(w);
 			if (KeyState(KeyCode.KC_LSHIFT)) wheel *= 10;

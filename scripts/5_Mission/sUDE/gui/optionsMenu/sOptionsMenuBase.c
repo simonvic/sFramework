@@ -63,7 +63,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		slider.SetCurrent(option.get());
 		slider.SetHandler(this);
 		
-		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name + "_value")); //@todo hardcode goes brrrr. Change this
+		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name + "_value")); // TODO: hardcode goes brrrr. Change this
 		if (!txt) return;
 		txt.SetText(slider.GetCurrent().ToString());
 		txt.SetHandler(this);
@@ -90,7 +90,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		}
 		slider.SetHandler(this);
 				
-		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name + "_value")); //@todo hardcode goes brrrr. Change this
+		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name + "_value")); // TODO: hardcode goes brrrr. Change this
 		if (!txt) return;
 		txt.SetText(slider.GetCurrent().ToString());
 		txt.SetHandler(this);
@@ -134,7 +134,8 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	protected void initOptionWidget(out XComboBoxWidget combo, string name, SUserConfigOption<int> option, array<string> items) {
 		combo = XComboBoxWidget.Cast(m_root.FindAnyWidget(name));
 		combo.SetCurrentItem(option.get());
-		//combo.SetHandler(this); //@todo what?!
+		// TODO: what?!
+		//combo.SetHandler(this);
 		if (items) {
 			combo.ClearAll();
 			foreach (string item : items) {
@@ -205,7 +206,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		return true;
 	}
 	
-	protected void onConfigChange() { //@todo lol change this shit
+	protected void onConfigChange() { // TODO: lol change this shit
 		m_sUserConfig.save();
 	}
 	

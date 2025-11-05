@@ -23,7 +23,7 @@ class SUserConfigOptionBase : Managed {
 	*	@brief If a constraint is enabled, update the current option value based on it
 	*/
 	void updateConstraint() {
-		setParam(getParam()); //@todo little hack to ensure that the onValueChanged gets called properly. Change this
+		setParam(getParam()); // TODO: little hack to ensure that the onValueChanged gets called properly. Change this
 	}
 	
 	SConstraintBase getConstraint() {
@@ -92,7 +92,7 @@ class SUserConfigOptionBase : Managed {
 	
 	
 	
-	//@todo move this somewhere else
+	// TODO: move this somewhere else
 	
 	static bool equal(float x, float y) {
 		return SMath.equal(x,y);

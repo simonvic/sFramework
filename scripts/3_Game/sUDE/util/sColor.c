@@ -1,4 +1,4 @@
-//@todo use mask when getting values because int are signed
+// TODO: use mask when getting values because int are signed
 class SColor {
 
 	protected int argbValue = 0xff000000; //current color represented in ARGB format
@@ -186,7 +186,7 @@ class SColor {
 	*	 @return int - RGB color
 	*/
 	int getRGB() {
-		return (getRGBA() >> 8) & 0xFFFFFF; //@todo masked to reset sign bit. Find general solution to make it unsigned
+		return (getRGBA() >> 8) & 0xFFFFFF; // TODO: masked to reset sign bit. Find general solution to make it unsigned
 	}
 		
 	/**

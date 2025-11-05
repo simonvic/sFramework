@@ -1,6 +1,6 @@
 typedef map<typename, ref SUserConfigConstraintsBase> TSUserConfigConstraintsModules;
 
-//@todo do proper IsClient/IsServer checks
+// TODO: do proper IsClient/IsServer checks
 
 /*
 *	@Singleton

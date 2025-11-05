@@ -9,6 +9,6 @@ class SGameConfigBase : Managed {
 	}
 	
 	bool isModuleEnabled() {
-		return SGameConfig.getBool(getModulePath() + " enabled"); //@todo add check if module is not present
+		return SGameConfig.getBool(getModulePath() + " enabled"); // TODO: add check if module is not present
 	}
 }

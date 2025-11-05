@@ -27,8 +27,6 @@ class SUserConfigConstraints {
 	 * @return loaded module, null on fail
 	 */
 	SUserConfigConstraintsBase load(typename moduleType, bool reload = false) {
-		SLog.i("Loading " + moduleType, "SUserConfigConstraints::load");
-
 		if (GetGame().IsClient()) {
 			SLog.w("Trying to load user config constraints from client!, Ignoring...","SUserConfigConstraints::load");
 			return null;
@@ -37,6 +35,8 @@ class SUserConfigConstraints {
 		if (isModuleLoaded(moduleType) && !reload) {
 			return null;
 		}
+
+		SLog.i("Loading " + moduleType, "SUserConfigConstraints::load");
 
 		// Check if correct typename
 		SUserConfigConstraintsBase moduleCfgConstraints = SUserConfigConstraintsBase.Cast(moduleType.Spawn());

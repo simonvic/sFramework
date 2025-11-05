@@ -22,8 +22,6 @@ class SUserConfig {
 	 * @return loaded module, null on fail
 	 */
 	SUserConfigBase load(typename moduleType, bool reload = false) {
-		SLog.i("Loading " + moduleType, "SUserConfig::load");
-
 		if (GetGame().IsDedicatedServer()) {
 			SLog.w("Trying to load user config from server!, Ignoring...","SUserConfig::load");
 			return null;
@@ -32,6 +30,8 @@ class SUserConfig {
 		if (isModuleLoaded(moduleType) && !reload) {
 			return null;
 		}
+
+		SLog.i("Loading " + moduleType, "SUserConfig::load");
 
 		//Check if correct typename
 		SUserConfigBase moduleCfg = SUserConfigBase.Cast(moduleType.Spawn());

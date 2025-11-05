@@ -1,3 +1,6 @@
+/**
+ * @brief A single abstract option or preference for user to customize
+ */
 class SUserConfigOptionBase : Managed {
 	
 	protected ref Param m_param;
@@ -9,9 +12,9 @@ class SUserConfigOptionBase : Managed {
 	}
 	
 	/**
-	*	@brief Set the option value and constrain it, if the option is being constrained
-	*	 @param param \p Param - generic Param which holds the option value
-	*/
+	 * @brief Set the option value and constrain it, if the option is being constrained
+	 * @param param generic Param which holds the option value
+	 */
 	void setParam(Param param) {
 		if (isConstrained()) {
 			getConstraint().constrain(param);
@@ -20,8 +23,8 @@ class SUserConfigOptionBase : Managed {
 	} 
 	
 	/**
-	*	@brief If a constraint is enabled, update the current option value based on it
-	*/
+	 * @brief If a constraint is enabled, update the current option value based on it
+	 */
 	void updateConstraint() {
 		setParam(getParam()); // TODO: little hack to ensure that the onValueChanged gets called properly. Change this
 	}
@@ -30,10 +33,9 @@ class SUserConfigOptionBase : Managed {
 		return m_constraint;
 	}
 	
-	
 	/**
-	*	@brief If a constraint is set, enable it and update the option value based on it
-	*/
+	 * @brief If a constraint is set, enable it and update the option value based on it
+	 */
 	void enableConstraint() {
 		if (!hasConstraint()) return;
 		getConstraint().enable();
@@ -42,8 +44,8 @@ class SUserConfigOptionBase : Managed {
 	}
 	
 	/**
-	*	@brief If a constraint is set, disable it
-	*/
+	 * @brief If a constraint is set, disable it
+	 */
 	void disableConstraint() {
 		if (!hasConstraint()) return;
 		getConstraint().disable();
@@ -57,11 +59,18 @@ class SUserConfigOptionBase : Managed {
 		onConstraintChange();
 	}
 	
+	/**
+	 * @brief Remove any constraint on the option
+	 */
 	void removeConstraint() {
 		m_constraint = null;
 		onConstraintRemove();
 	}
 	
+	/**
+	 * @brief Check if option has a constraint and that it is 
+	 * @return true if constrained, false otherwise
+	 */
 	bool isConstrained() {
 		return hasConstraint() && getConstraint().isEnabled();
 	}

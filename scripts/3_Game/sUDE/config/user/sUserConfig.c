@@ -1,3 +1,6 @@
+/**
+ * @brief A "bank" of user configuration modules
+ */
 class SUserConfig {
 
 	private static ref SUserConfig INSTANCE;
@@ -14,8 +17,8 @@ class SUserConfig {
 
 	/**
 	 * @brief Load a module config file
-	 * @param moduleType typename - Typename of the module to load
-	 * @param reload bool - Choose to load even if it's been already loaded
+	 * @param moduleType Typename of the module to load
+	 * @param reload Choose to load even if it's been already loaded
 	 * @return loaded module, null on fail
 	 */
 	SUserConfigBase load(typename moduleType, bool reload = false) {
@@ -51,6 +54,11 @@ class SUserConfig {
 		return moduleCfg;
 	}
 
+	/**
+	 * @brief Check if a module has been loaded
+	 * @param module typename
+	 * @return true if loaded, false otherwise
+	 */
 	protected bool isModuleLoaded(typename module) {
 		return modulesConfigs.Contains(module);
 	}

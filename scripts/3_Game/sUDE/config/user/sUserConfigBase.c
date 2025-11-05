@@ -1,4 +1,6 @@
-
+/**
+ * @brief A set of options and preferences for users to customize
+ */
 class SUserConfigBase : SJSONSerializable {
 
 	#ifndef DEVELOPER
@@ -9,6 +11,7 @@ class SUserConfigBase : SJSONSerializable {
 	void SUserConfigBase() {
 		DayZGame.Event_OnRPC.Insert(this.onRPC);
 		m_options = new	map<string, ref SUserConfigOptionBase>();
+		// TODO: what if we receive RPC before load()?
 	}
 
 	override bool load() {
@@ -24,17 +27,21 @@ class SUserConfigBase : SJSONSerializable {
 		}
 	}
 
+	/**
+	 * @brief Invoked when a set of constraints has been received from the server
+	 * @param ctx
+	 */
 	protected void onConstraintsReceive(ParamsReadContext ctx);
 
 	/**
-	*	@brief Abstract. Apply a set of constraints to the options
-	*	 @param constraints \p SUserConfigConstraintsBase - constraints to apply
-	*/
+	 * @brief Apply a set of constraints to the options
+	 * @param constraints to apply
+	 */
 	void applyConstraints(SUserConfigConstraintsBase constraints);
 
 	/**
-	*	@brief Remove all constraints from all options
-	*/
+	 * @brief Remove all constraints from all options
+	 */
 	void removeConstraints() {
 		foreach (SUserConfigOptionBase option : m_options) {
 			option.removeConstraint();
@@ -45,35 +52,34 @@ class SUserConfigBase : SJSONSerializable {
 	// OPTIONS
 
 	/**
-	*	@brief This will handle all options registering
-	*/
+	 * @brief Perform options registration.
+	 * To be implemented with options registration
+	 */
 	protected void registerOptions();
 
 	/**
-	*	@brief Register a new option
-	*	 @param optionName \p string - name of the option you want to register. It must be UNIQUE!
-	*	 @param option \p SUserConfigOptionBase - option to register
-	*/
+	 * @brief Register a new option
+	 * @param optionName name of the option you want to register. It must be UNIQUE!
+	 * @param option to register
+	 */
 	protected void registerOption(string optionName, SUserConfigOptionBase option) {
 		m_options.Set(optionName, option);
 	}
 
 	/**
-	*	@brief Get an option based on its name.
-	*	 @param optionName \p string - Name of the option
-	*	 @return SUserConfigOptionBase - option found, NULL otherwise
-	*/
+	 * @brief Get an option based on its name.
+	 * @param optionName name of the option
+	 * @return option found, NULL otherwise
+	 */
 	SUserConfigOptionBase getOption(string optionName) {
 		return m_options.Get(optionName);
 	}
 
-
-
 	/**
-	*	@brief Get a float option based on its name.
-	*	 @param optionName \p string - Name of the option
-	*	 @return SUserConfigOption<float> - option found, NULL otherwise
-	*/
+	 * @brief Get a float option based on its name.
+	 * @param optionName
+	 * @return option found, null otherwise
+	 */
 	SUserConfigOption<float> getOptionFloat(string optionName) {
 		return SUserConfigOption<float>.Cast(m_options.Get(optionName));
 	}
@@ -83,10 +89,10 @@ class SUserConfigBase : SJSONSerializable {
 	}
 
 	/**
-	*	@brief Get a int option based on its name.
-	*	 @param optionName \p string - Name of the option
-	*	 @return SUserConfigOption<int> - option found, NULL otherwise
-	*/
+	 * @brief Get a int option based on its name.
+	 * @param optionName
+	 * @return option found, null otherwise
+	 */
 	SUserConfigOption<int> getOptionInt(string optionName) {
 		return SUserConfigOption<int>.Cast(m_options.Get(optionName));
 	}
@@ -96,10 +102,10 @@ class SUserConfigBase : SJSONSerializable {
 	}
 
 	/**
-	*	@brief Get a bool option based on its name.
-	*	 @param optionName \p string - Name of the option
-	*	 @return SUserConfigOption<bool> - option found, NULL otherwise
-	*/
+	 * @brief Get a boolean option based on its name.
+	 * @param optionName
+	 * @return option found, null otherwise
+	 */
 	SUserConfigOption<bool> getOptionBool(string optionName) {
 		return SUserConfigOption<bool>.Cast(m_options.Get(optionName));
 	}
@@ -107,12 +113,12 @@ class SUserConfigBase : SJSONSerializable {
 	void getOption(string optionName, out SUserConfigOption<bool> option) {
 		option = getOptionBool(optionName);
 	}
-
+	
 	/**
-	*	@brief Get a float array option based on its name.
-	*	 @param optionName \p string - Name of the option
-	*	 @return SUserConfigOption<TFloatArray> - option found, NULL otherwise
-	*/
+	 * @brief Get a float array option based on its name.
+	 * @param optionName
+	 * @return option found, null otherwise
+	 */
 	SUserConfigOptionArray<float> getOptionArrayFloat(string optionName) {
 		return SUserConfigOptionArray<float>.Cast(m_options.Get(optionName));
 	}
@@ -121,13 +127,12 @@ class SUserConfigBase : SJSONSerializable {
 		option = getOptionArrayFloat(optionName);
 	}
 
-
 	/**
-	*	@brief Update the value of the value of an option
-	*	 @param optionName \p string - Name of the option
-	*	 @param value \p float - value to assign
-	*	 @return float - new value after being assigned to the option
-	*/
+	 * @brief Update the value of the value of an option
+	 * @param optionName
+	 * @param value
+	 * @return new value after being assigned to the option 
+	 */
 	float updateOptionValue(string optionName, float value) {
 		SUserConfigOption<float> option;
 		getOption(optionName, option);
@@ -137,11 +142,11 @@ class SUserConfigBase : SJSONSerializable {
 	}
 
 	/**
-	*	@brief Update the value of the value of an option
-	*	 @param optionName \p string - Name of the option
-	*	 @param value \p bool - value to assign
-	*	 @return bool - new value after being assigned to the option
-	*/
+	 * @brief Update the value of the value of an option
+	 * @param optionName
+	 * @param value
+	 * @return new value after being assigned to the option
+	 */
 	bool updateOptionValue(string optionName, bool value) {
 		SUserConfigOption<bool> option;
 		getOption(optionName, option);
@@ -150,13 +155,12 @@ class SUserConfigBase : SJSONSerializable {
 		return option.get();
 	}
 
-
 	/**
-	*	@brief Shorthand for getting the value of a float option
-	*	 @param optionName \p string - Name of the option
-	*	 @param value \p float [out] - value of the option
-	*	 @return bool \p - true if option value has been set correctly
-	*/
+	 * @brief Shorthand for getting the value of a float option
+	 * @param optionName
+	 * @param value
+	 * @return true if option value has been set correctly
+	 */
 	bool get(string optionName, out float value) {
 		SUserConfigOption<float> option = SUserConfigOption<float>.Cast(getOption(optionName));
 		if (!option) return false;
@@ -166,11 +170,11 @@ class SUserConfigBase : SJSONSerializable {
 	}
 
 	/**
-	*	@brief Shorthand for getting the value of a bool option
-	*	 @param optionName \p string - Name of the option
-	*	 @param value \p bool [out] - value of the option
-	*	 @return bool \p - true if option value has been set correctly
-	*/
+	 * @brief Shorthand for getting the value of a bool option
+	 * @param optionName
+	 * @param value
+	 * @return true if option value has been set correctly
+	 */
 	bool get(string optionName, out bool value) {
 		SUserConfigOption<bool> option = SUserConfigOption<bool>.Cast(getOption(optionName));
 		if (!option) return false;
@@ -180,11 +184,11 @@ class SUserConfigBase : SJSONSerializable {
 	}
 
 	/**
-	*	@brief Shorthand for setting the value of a float option
-	*	 @param optionName \p string - Name of the option
-	*	 @param value \p float - value of the option
-	*	 @return bool \p - true if option value has been set correctly
-	*/
+	 * @brief Shorthand for setting the value of a float option
+	 * @param optionName
+	 * @param value
+	 * @return true if option value has been set correctly
+	 */
 	bool set(string optionName, float value) {
 		SUserConfigOption<float> option = SUserConfigOption<float>.Cast(getOption(optionName));
 		if (!option) return false;
@@ -194,11 +198,11 @@ class SUserConfigBase : SJSONSerializable {
 	}
 
 	/**
-	*	@brief Shorthand for setting the value of a bool option
-	*	 @param optionName \p string - Name of the option
-	*	 @param value \p bool - value of the option
-	*	 @return bool \p - true if option value has been set correctly
-	*/
+	 * @brief Shorthand for setting the value of a bool option
+	 * @param optionName
+	 * @param value
+	 * @return true if option value has been set correctly
+	 */
 	bool set(string optionName, bool value) {
 		SUserConfigOption<bool> option = SUserConfigOption<bool>.Cast(getOption(optionName));
 		if (!option) return false;

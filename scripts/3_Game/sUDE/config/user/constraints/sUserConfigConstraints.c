@@ -1,3 +1,6 @@
+/**
+ * @brief A "bank" of user configuration constraints
+ */
 class SUserConfigConstraints {
 
 	private static ref SUserConfigConstraints INSTANCE;
@@ -18,8 +21,8 @@ class SUserConfigConstraints {
 	}
 
 	/**
-	 * @brief Load a module config constraint file
-	 * @param moduleType typename - Typename of the module to load
+	 * @brief Load a user config constraint file
+	 * @param moduleType typename of the module to load
 	 * @param reload bool - Choose to load even if it's been already loaded
 	 * @return loaded module, null on fail
 	 */
@@ -63,10 +66,17 @@ class SUserConfigConstraints {
 		return modulesCfgConstraints;
 	}
 
+	/**
+	 * @brief Send the constraints to all clients
+	 */
 	void syncWithEverybody() {
 		syncWith(null);
 	}
 
+	/**
+	 * @brief Send the constraints to a client
+	 * @param playerIdentity of the client; if null, send to all players
+	 */
 	void syncWith(PlayerIdentity playerIdentity) {
 		m_syncRPC.setup();
 		m_syncRPC.sendTo(playerIdentity);

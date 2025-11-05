@@ -1,8 +1,7 @@
 /**
-*	@brief Abstract. Base class to constrain a variable given a certain constraint
-*	       A Param has been used to allow a Generic constraint to
-*	       be extended from other Generic constraints
-*/
+ * @brief Abstract constraint for a user configuration option
+ * A Param has been used to allow a Generic constraint to be extended from other Generic constraints
+ */
 class SConstraintBase : Managed {
 
 	protected bool constrain = false;
@@ -36,9 +35,9 @@ class SConstraintBase : Managed {
 	}
 
 	/**
-	*	@brief If the constraint is enabled, constrain the given value
-	*	 @param param \p Param - A generic param holding the value to constrain
-	*/
+	 * @brief If the constraint is enabled, constrain the given value
+	 * @param param A generic param holding the value to constrain
+	 */
 	void constrain(Param toConstrain) {
 		if (isEnabled()) {
 			performConstrain(toConstrain);
@@ -46,26 +45,26 @@ class SConstraintBase : Managed {
 	}
 
 	/**
-	*	@brief Abstract. Perform the actual constrain.
-	*	 @param param \p Param - A generic param holding the value to constrain
-	*/
+	 * @brief Abstract. Perform the actual constrain.
+	 * @param param A generic param holding the value to constrain
+	 */
 	void performConstrain(Param param);
 
 	/**
-	*	@brief Check if a value respects the constraint
-	*	 @param param \p Param - A generic param holding the value to constrain
-	*	 @return bool - if the value respect the constraint, true if the constrain is disabled
-	*/
+	 * @brief Check if a value respects the constraint
+	 * @param param A generic param holding the value to constrain
+	 * @return true if the value respects the constraint or if the constrain is disabled
+	 */
 	bool isValid(Param param) {
 		if (!isEnabled()) return true;
 		return performValidation(param);
 	}
 
 	/**
-	*	@brief Abstract. Perform the actual validation.
-	*	 @param param \p Param - A generic param holding the value to constrain
-	*	 @return bool - if the value respect the constraint
-	*/
+	 * @brief Perform the actual validation.
+	 * @param param A generic param holding the value to constrain
+	 * @return true if the value respects the constraint
+	 */
 	bool performValidation(Param param);
 
 }

@@ -54,18 +54,10 @@ class SUserConfig {
 	protected void validateModuleCfgFile(SUserConfigBase moduleCfg) {		
 		if (!moduleCfg.isValid()) {
 			string path = moduleCfg.getPath();
-			string defaultPath = moduleCfg.getDefaultPath();
-			if (moduleCfg.isDefaultValid()) {
-				CopyFile(defaultPath, path);
-			} else {
-				SLog.w("Couldn't load neither user config [ " + path + " ] nor default config [ " + defaultPath + " ]", "SUserConfig");
-				SLog.i("Creating " + moduleCfg.Type() + " default config file : " + defaultPath,"SUserConfig",1);
-				moduleCfg.createDefault();
-				SLog.i("Done","",2);
-				SLog.i("Creating " + moduleCfg.Type() + " config file : " + path,"SUserConfig",1);
-				moduleCfg.save();
-				SLog.i("Done","",2);				
-			}
+			SLog.w("Couldn't load user config [ " + path + " ]", "SUserConfig");
+			SLog.i("Creating " + moduleCfg.Type() + " config file : " + path,"SUserConfig",1);
+			moduleCfg.save();
+			SLog.i("Done","",2);				
 		}
 	}
 	

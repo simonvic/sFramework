@@ -1,7 +1,5 @@
 
 class SUserConfigBase : SJSONSerializable {
-	// TODO: use serialVersionUID instead of checking the fields
-	//protected float serialVersionUID = 69;
 
 	#ifndef DEVELOPER
 	[NonSerialized()]
@@ -13,9 +11,10 @@ class SUserConfigBase : SJSONSerializable {
 		m_options = new	map<string, ref SUserConfigOptionBase>();
 	}
 
-	override void load() {
-		super.load();
+	override bool load() {
+		bool success = super.load();
 		registerOptions();
+		return success;
 	}
 
 	void onRPC(PlayerIdentity sender, Object target, int rpc_type, ParamsReadContext ctx) {
@@ -42,36 +41,8 @@ class SUserConfigBase : SJSONSerializable {
 		}
 	}
 
-	TStringArray getFields() {
-		TStringArray fields = new TStringArray;
-		TStringArray nonSerializedFields = new TStringArray;
-		getNonSerializedFields().Split(";",nonSerializedFields);
-
-		for (int i = 0; i<Type().GetVariableCount(); i++) {
-			if (nonSerializedFields.Find(Type().GetVariableName(i)) == -1) { 
-				fields.Insert(Type().GetVariableName(i));
-			}
-		}
-
-		return fields;
-	}
-
-	/**
-	*	@brief Get a semicolon separated list of fields that must not be serialized. Little hacky to circumvent NonSerialized() attribute
-	*	 @return string - list of fields not to serialize
-	*/
-	// TODO: lol... find a solution for [NonSerialized()]
-	string getNonSerializedFields() {
-		return "m_serializer;m_options";
-	}	
-
-	bool isValid() {
-		return SUserConfigValidator.isValid(getPath(), getFields());
-	}
-
 	///////////////////////////////////////////////////////////////////////
 	// OPTIONS
-
 
 	/**
 	*	@brief This will handle all options registering
@@ -234,40 +205,6 @@ class SUserConfigBase : SJSONSerializable {
 
 		option.set(value);
 		return true;
-	}
-
-	/**
-	*	@brief Abstract. Get the path of the file on which the default config will be serialized on.
-	*	       Valid paths:
-	*	        - "$profile:\\path\\to\\your\\file.json"
-	*	        - "$saves:\\path\\to\\your\\file.json"
-	*/
-	[Obsolete("Deprecated for removal")]
-	string getDefaultPath();
-
-	/**
-	*	@brief Abstract. Serialization method to be implemented.
-	*	       It's needed because of how Enforce handles script variables
-	*	 @code
-	*	 	override string serialize() {
-	*	 		string result;
-	*	 		auto cfg = new MyUserConfig();
-	*	 		getSerializer().WriteToString(cfg, true, result);
-	*	 		return result;
-	*	 	}
-	*/
-	[Obsolete("Deprecated for removal")]
-	string serializeDefault();
-
-	[Obsolete("Deprecated for removal")]
-	bool isDefaultValid() {
-		return SUserConfigValidator.isValid(getDefaultPath(), getFields());
-	}
-
-	[Obsolete("Deprecated for removal")]
-	void createDefault() {
-		SFileHelper.touch(getDefaultPath());
-		SFileHelper.echo(serializeDefault(), getDefaultPath());
 	}
 
 }

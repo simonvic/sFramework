@@ -26,48 +26,52 @@ class SJSONSerializable : Managed {
 	*	@brief Abstract. Deserialization method to be implemented.
 	*	       It's needed because of how Enforce handles script variables
 	*	 @code
-	*	 	override void deserialize(string data, out string error) {
-	*			auto cfg = this;
-	*			getSerializer().ReadFromString(cfg, data, error);
+	*	 	override bool deserialize(string data, out string error) {
+	*			auto thiz = this;
+	*			return getSerializer().ReadFromString(thiz, data, error);
 	*		}
 	*/
-	void deserialize(string data, out string error);
+	bool deserialize(string data, out string error);
 	
 	
 	/**
 	*	@brief Abstract. Serialization method to be implemented.
 	*	       It's needed because of how Enforce handles script variables
 	*	 @code
-	*	 	override string serialize() {
-	*	 		string result;
-	*	 		auto cfg = this;
-	*	 		getSerializer().WriteToString(cfg, true, result);
-	*	 		return result;
+	*	 	override bool serialize(out string result) {
+	*	 		auto thiz = this;
+	*	 		return getSerializer().WriteToString(thiz, true, result);
 	*	 	}
 	*/
-	string serialize();
-	
-	
+	bool serialize(out string result);
+
 	/**
 	*	@brief Deserialize the file and load it
+	*	@return true if loaded and deserialized correctly, false otherwise
 	*/
-	void load() {
+	bool load() {
 		string data = SFileHelper.cat(getPath());
-		if (data == string.Empty) return;
-		
 		string error;
-		deserialize(data, error);
-		if (error != string.Empty) {
-			SLog.e(error);
+		if (!deserialize(data, error)) {
+			SLog.e("JSON deserialization error: " + error, "SJSONSerializable");
+			return false;
 		}
+		return true;
 	}
 	
 	/**
-	*	@brief Serialize the object and write it
-	*/
-	void save() {
+	 *	@brief Serialize the object and write it
+	 *	@return true if succesful, false otherwise
+	 */
+	bool save() {
 		SFileHelper.touch(getPath());
-		SFileHelper.echo(serialize(), getPath());
+		string data;
+		if (!serialize(data)) {
+			SLog.e("JSON serialization error", "SJSONSerializable");
+			return false;
+		}
+		SFileHelper.echo(data, getPath());
+		return true;
 	}
 	
 	

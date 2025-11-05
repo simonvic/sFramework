@@ -11,7 +11,7 @@ modded class MissionGameplay {
 	}
 	
 	protected void resetSUserConfigConstraints() {
-		TSUserConfigModules loadedModules = SUserConfig.getInstance().getLoadedModules();
+		map<typename, ref SUserConfigBase> loadedModules = SUserConfig.getInstance().getLoadedModules();
 		foreach (SUserConfigBase cfg : loadedModules) {
 			cfg.removeConstraints();
 		}

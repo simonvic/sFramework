@@ -18,25 +18,28 @@ class SUserConfigConstraints {
 	}
 
 	/**
-	*	@brief Load a module config constraint file
-	*	 @param moduleType typename - Typename of the module to load
-	*	 @param reload bool - Choose to load even if it's been already loaded
-	*/
-	void load(typename moduleType, bool reload = false) {
+	 * @brief Load a module config constraint file
+	 * @param moduleType typename - Typename of the module to load
+	 * @param reload bool - Choose to load even if it's been already loaded
+	 * @return loaded module, null on fail
+	 */
+	SUserConfigConstraintsBase load(typename moduleType, bool reload = false) {
 		SLog.i("Loading " + moduleType, "SUserConfigConstraints::load");
 
 		if (GetGame().IsClient()) {
 			SLog.w("Trying to load user config constraints from client!, Ignoring...","SUserConfigConstraints::load");
-			return;
+			return null;
 		}
 
-		if (isModuleLoaded(moduleType) && !reload) return;
+		if (isModuleLoaded(moduleType) && !reload) {
+			return null;
+		}
 
-		//Check if correct typename
+		// Check if correct typename
 		SUserConfigConstraintsBase moduleCfgConstraints = SUserConfigConstraintsBase.Cast(moduleType.Spawn());
 		if (!moduleCfgConstraints) {
 			SLog.e("Error while loading < " + moduleType + " > Maybe not a module type?. Ignoring....","SUserConfigConstraints::load");
-			return;
+			return null;
 		}
 
 		// Load config
@@ -49,6 +52,7 @@ class SUserConfigConstraints {
 		}
 		modulesCfgConstraints.Set(moduleType, moduleCfgConstraints);
 		SLog.i("Loaded user config constraints: " + moduleCfgConstraints);
+		return moduleCfgConstraints;
 	}
 
 	protected bool isModuleLoaded(typename moduleCfgConstraints) {

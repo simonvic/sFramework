@@ -1,5 +1,5 @@
 class SUserConfig {
-	
+
 	private static ref SUserConfig INSTANCE;
 	static SUserConfig getInstance() {
 		if (!INSTANCE) INSTANCE = new SUserConfig();
@@ -11,27 +11,30 @@ class SUserConfig {
 	private void SUserConfig() {
 		modulesConfigs = new map<typename, ref SUserConfigBase>();
 	}
-	
+
 	/**
-	*	@brief Load a module config file
-	*	 @param moduleType typename - Typename of the module to load
-	*	 @param reload bool - Choose to load even if it's been already loaded
-	*/
-	void load(typename moduleType, bool reload = false) {
+	 * @brief Load a module config file
+	 * @param moduleType typename - Typename of the module to load
+	 * @param reload bool - Choose to load even if it's been already loaded
+	 * @return loaded module, null on fail
+	 */
+	SUserConfigBase load(typename moduleType, bool reload = false) {
 		SLog.i("Loading " + moduleType, "SUserConfig::load");
 
 		if (GetGame().IsDedicatedServer()) {
 			SLog.w("Trying to load user config from server!, Ignoring...","SUserConfig::load");
-			return;
+			return null;
 		}
-		
-		if (isModuleLoaded(moduleType) && !reload) return;
-		
+
+		if (isModuleLoaded(moduleType) && !reload) {
+			return null;
+		}
+
 		//Check if correct typename
 		SUserConfigBase moduleCfg = SUserConfigBase.Cast(moduleType.Spawn());
 		if (!moduleCfg) {
 			SLog.e("Error while loading < " + moduleType + " > Maybe not a module type?. Ignoring....","SUserConfig::load");
-			return;
+			return null;
 		}
 
 		// Load config
@@ -45,15 +48,16 @@ class SUserConfig {
 
 		modulesConfigs.Set(moduleType, moduleCfg);
 		SLog.i("Loaded user config: " + moduleCfg, ""+this);
+		return moduleCfg;
 	}
-	
+
 	protected bool isModuleLoaded(typename module) {
 		return modulesConfigs.Contains(module);
 	}
-	
+
 	// TODO: should return immutable view
 	map<typename, ref SUserConfigBase> getLoadedModules() {
 		return modulesConfigs;
 	}
-	
+
 }

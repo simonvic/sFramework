@@ -52,21 +52,18 @@ class SFileHelper {
 			return string.Empty; 
 		}
 				
-		FileHandle handle = OpenFile( path, FileMode.READ );
-		if ( handle == 0 ) {
+		FileHandle handle = OpenFile(path, FileMode.READ);
+		if (handle == 0) {
 			SLog.e("Error when reading [ " + path + " ]","SFileHelper::cat");
 			return string.Empty;
 		}
 		
 		string fileContent;
 		string lineContent;
-		
-		while ( FGets( handle,  lineContent ) >= 0 ) {
+		while (FGets(handle, lineContent) >= 0) {
 			fileContent += lineContent;
 		}
-		
-		CloseFile( handle );
-
+		CloseFile(handle);
 		return fileContent;
 	}
 	
@@ -76,16 +73,13 @@ class SFileHelper {
 	*	 @param path \p string - path of file to be echoed to
 	*/
 	static void echo(string data, string path) {
-		FileHandle handle = OpenFile( path, FileMode.WRITE );
-		if ( handle == 0 ) {
+		FileHandle handle = OpenFile(path, FileMode.WRITE);
+		if (handle == 0) {
 			SLog.e("Error when opening [ " + path + " ]","SFileHelper::echo");
-			CloseFile( handle );
 			return;
 		}
-		
-		FPrint( handle, data );
-		
-		CloseFile( handle );
+		FPrint(handle, data);
+		CloseFile(handle);
 	}
 	
 }

@@ -28,7 +28,7 @@ class SUserConfig {
 		}
 
 		if (isModuleLoaded(moduleType) && !reload) {
-			return null;
+			return modulesConfigs.Get(moduleType);
 		}
 
 		SLog.i("Loading " + moduleType, "SUserConfig::load");

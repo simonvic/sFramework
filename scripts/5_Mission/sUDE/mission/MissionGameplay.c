@@ -1,4 +1,8 @@
 modded class MissionGameplay {
+
+	void MissionGameplay() {
+		SUserConfig.getInstance().onPreload();
+	}
 	
 	override void OnMissionFinish() {
 		super.OnMissionFinish();

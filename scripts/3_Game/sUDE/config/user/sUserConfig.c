@@ -15,6 +15,9 @@ class SUserConfig {
 		modulesConfigs = new map<typename, ref SUserConfigBase>();
 	}
 
+	void onPreload() {
+	}
+
 	/**
 	 * @brief Load a module config file
 	 * @param moduleType Typename of the module to load

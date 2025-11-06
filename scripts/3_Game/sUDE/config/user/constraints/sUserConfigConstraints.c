@@ -33,7 +33,7 @@ class SUserConfigConstraints {
 		}
 
 		if (isModuleLoaded(moduleType) && !reload) {
-			return null;
+			return modulesCfgConstraints.Get(moduleType);
 		}
 
 		SLog.i("Loading " + moduleType, "SUserConfigConstraints::load");

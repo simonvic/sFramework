@@ -9,9 +9,7 @@ class SUserConfigBase : SJSONSerializable {
 	protected ref map<string, ref SUserConfigOptionBase> m_options;
 
 	void SUserConfigBase() {
-		DayZGame.Event_OnRPC.Insert(this.onRPC);
 		m_options = new	map<string, ref SUserConfigOptionBase>();
-		// TODO: what if we receive RPC before load()?
 	}
 
 	override bool load() {
@@ -19,19 +17,6 @@ class SUserConfigBase : SJSONSerializable {
 		registerOptions();
 		return success;
 	}
-
-	void onRPC(PlayerIdentity sender, Object target, int rpc_type, ParamsReadContext ctx) {
-		switch (rpc_type) {
-			//case sUDE_RPC.DEBUG: onRPCSyncUserConfigConstraint(ctx); break;
-			case SRPCIDs.SYNC_USER_CONFIG_CONSTRAINTS: onConstraintsReceive(ctx); break;
-		}
-	}
-
-	/**
-	 * @brief Invoked when a set of constraints has been received from the server
-	 * @param ctx
-	 */
-	protected void onConstraintsReceive(ParamsReadContext ctx);
 
 	/**
 	 * @brief Apply a set of constraints to the options

@@ -13,9 +13,39 @@ class SUserConfig {
 
 	private void SUserConfig() {
 		modulesConfigs = new map<typename, ref SUserConfigBase>();
+		DayZGame.Event_OnRPC.Insert(this.onRPC);
 	}
 
 	void onPreload() {
+	}
+
+	void onRPC(PlayerIdentity sender, Object target, int rpc_type, ParamsReadContext ctx) {
+		switch (rpc_type) {
+			//case sUDE_RPC.DEBUG: onRPCSyncUserConfigConstraint(ctx); break;
+			case SRPCIDs.SYNC_USER_CONFIG_CONSTRAINTS: onConstraintsReceived(ctx); break;
+		}
+	}
+
+	/**
+	 * @brief Invoked when a set of constraints has been received from the server
+	 * @param ctx
+	 *
+	 * When implementing, make sure to invoke super.onConstraintsReceived first, to ensure the
+	 * correct order
+	 * @code
+	 *	override void onConstraintsReceived(ParamsReadContext ctx) {
+	 *		super.onConstraintsReceived(ctx);
+	 *		YourConstraints constraints;
+	 *		if (!ctx.Read(constraints)) {
+	 *			SLog.c("Error!");
+	 *			return;
+	 *		}
+	 *		// ...
+	 *	}
+	 * @endcode
+	 */
+	protected void onConstraintsReceived(ParamsReadContext ctx) {
+		SLog.d("onConstraintsReceived", ""+this);
 	}
 
 	/**

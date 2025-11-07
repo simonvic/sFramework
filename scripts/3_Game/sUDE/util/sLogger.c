@@ -1,3 +1,4 @@
+[Obsolete("Use SLOG instead")]
 class SLog {
 		
 	static bool overrideEnabled = true;
@@ -48,10 +49,12 @@ class SLog {
 	* 	@param indentation \p int Indentation of the print
 	* 	@param enabled \p bool Enable this print
 	*/
+	[Obsolete()]
 	static void d(string text, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(text,SLoggerLevels.DEBUG,caller,indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void d(Class variable, string caller = "", int indentation = 0, bool enabled = true) {
 		if (variable) {
 			SLog.d(toString(variable), caller, indentation, enabled);
@@ -60,22 +63,27 @@ class SLog {
 		}
 	}
 	
+	[Obsolete()]
 	static void d(typename variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.d(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void d(float variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.d(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void d(int variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.d(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void d(bool variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.d(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void d(vector variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.d(toString(variable), caller, indentation, enabled);
 	}
@@ -87,30 +95,37 @@ class SLog {
 	* 	@param indentation \p int Indentation of the print
 	* 	@param enabled \p bool Enable this print
 	*/
+	[Obsolete()]
 	static void i(string text,string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(text,SLoggerLevels.INFO,caller,indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void i(Class variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.i(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void i(typename variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.i(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void i(float variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.i(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void i(int variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.i(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void i(bool variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.i(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void i(vector variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.i(toString(variable), caller, indentation, enabled);
 	}
@@ -123,30 +138,37 @@ class SLog {
 	* 	@param indentation \p int Indentation of the print
 	* 	@param enabled \p bool Enable this print
 	*/
+	[Obsolete()]
 	static void w(string text,string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(text,SLoggerLevels.WARNING,caller,indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void w(Class variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.w(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void w(typename variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.w(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void w(float variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.w(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void w(int variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.w(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void w(bool variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.w(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void w(vector variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.w(toString(variable), caller, indentation, enabled);
 	}
@@ -158,30 +180,37 @@ class SLog {
 	*	@param indentation \p int Indentation of the print
 	* 	@param enabled \p bool Enable this print
 	*/
+	[Obsolete()]
 	static void e(string text,string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(text,SLoggerLevels.ERROR,caller,indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void e(Class variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.e(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void e(typename variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.e(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void e(float variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.e(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void e(int variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.e(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void e(bool variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.e(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void e(vector variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.e(toString(variable), caller, indentation, enabled);
 	}
@@ -193,30 +222,37 @@ class SLog {
 	* 	@param indentation \p int Indentation of the print
 	* 	@param enabled \p bool Enable this print
 	*/
+	[Obsolete()]
 	static void c(string text, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(text,SLoggerLevels.CRITICAL,caller,indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void c(Class variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.c(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void c(typename variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.c(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void c(float variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.c(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void c(int variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.c(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void c(bool variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.c(toString(variable), caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void c(vector variable, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.c(toString(variable), caller, indentation, enabled);
 	}
@@ -230,6 +266,7 @@ class SLog {
 	* 	@param indentation \p int Indentation of the print
 	* 	@param enabled \p bool Enable this print
 	*/
+	[Obsolete()]
 	static void log(string text, SLoggerLevels level = SLoggerLevels.INFO, string caller = "", int indentation = 0, bool enabled = true) {
 		if (overrideEnabled && enabled) {
 			string output = buildOutput(text, level, caller, indentation);
@@ -244,6 +281,7 @@ class SLog {
 	*	@brief Build a string with formatted output
 	* 	 @return formatted string
 	*/
+	[Obsolete()]
 	static string buildOutput(string text, SLoggerLevels level, string caller, int indentation) {
 		string callerPrefix;
 		string textPrefix;
@@ -261,6 +299,7 @@ class SLog {
 	*	@brief Build a string containing current timestamp
 	* 	 @return formatted string
 	*/
+	[Obsolete()]
 	static string buildTimestamp(string format = DATE_PRINT_FORMAT) {
 		int year;
 		int month;
@@ -278,30 +317,37 @@ class SLog {
 		return string.Format(format, year, monthS, dayS, hourS, minuteS, secondS);
 	}
 	
+	[Obsolete()]
 	static void log(Class variable, SLoggerLevels level = SLoggerLevels.INFO, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(toString(variable), level, caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void log(typename variable, SLoggerLevels level = SLoggerLevels.INFO, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(toString(variable), level,  caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void log(float variable, SLoggerLevels level = SLoggerLevels.INFO, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(toString(variable), level,  caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void log(int variable, SLoggerLevels level = SLoggerLevels.INFO, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(toString(variable), level,  caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void log(bool variable, SLoggerLevels level = SLoggerLevels.INFO, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(toString(variable), level,  caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	static void log(vector variable, SLoggerLevels level = SLoggerLevels.INFO, string caller = "", int indentation = 0, bool enabled = true) {
 		SLog.log(toString(variable), level,  caller, indentation, enabled);
 	}
 	
+	[Obsolete()]
 	private static void logToFile(string text) {
 		string today = buildTimestamp("%1-%2-%3");
 		string filePath = LOG_PATH + "\\" + today + ".slog";
@@ -317,30 +363,37 @@ class SLog {
 		}
 	}
 		
+	[Obsolete()]
 	static string toString(Class variable) {
 		return string.Format(VARIABLE_PRINT_FORMAT, "", variable.ToString());
 	}
 	
+	[Obsolete()]
 	static string toString(typename variable) {
 		return string.Format(VARIABLE_PRINT_FORMAT, "typename", variable.ToString());
 	}
 	
+	[Obsolete()]
 	static string toString(float variable) {
 		return string.Format(VARIABLE_PRINT_FORMAT, "float", variable.ToString());
 	}
 	
+	[Obsolete()]
 	static string toString(int variable) {
 		return string.Format(VARIABLE_PRINT_FORMAT, "int", variable.ToString());
 	}
 	
+	[Obsolete()]
 	static string toString(bool variable) {
 		return string.Format(VARIABLE_PRINT_FORMAT, "bool", variable.ToString());
 	}
 	
+	[Obsolete()]
 	static string toString(vector variable) {
 		return string.Format(VARIABLE_PRINT_FORMAT, "vector", variable.ToString());
 	}	
 	
+	[Obsolete()]
 	static void printHeader(FileHandle file) {
 		string playerName;
 		float avgFPS = -1;
@@ -387,6 +440,7 @@ class SLog {
 		FPrintln(file, "--------------------------------------------------------------------\n\n");
 	}
 	
+	[Obsolete()]
 	private static string getIndentation(int indentation) {
 		string temp = "";
 		if (indentation >= 1) {
@@ -398,6 +452,7 @@ class SLog {
 		return temp;
 	}
 	
+	[Obsolete()]
 	private static string getLevel(SLoggerLevels level) {
 		switch (level) {
 			case SLoggerLevels.DEBUG: return "dd";

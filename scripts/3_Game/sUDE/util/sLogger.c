@@ -1,11 +1,3 @@
-enum SLoggerLevels {
-	DEBUG = 0,
-	INFO,
-	WARNING,
-	ERROR,
-	CRITICAL
-}
-
 class SLog {
 		
 	static bool overrideEnabled = true;

@@ -89,7 +89,11 @@ class SUserConfigOptionBase : Managed {
 	
 	string getWarningMessage() {
 		if (!hasConstraint()) return string.Empty;
-		return getConstraint().getMessage() + "\n\n" + getConstraint().toString();
+		string message = getConstraint().getMessage();
+		if (message == string.Empty) {
+			message = "#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED";
+		}
+		return message + "\n\n" + getConstraint().toString();
 	}
 	
 	protected void onConstraintChange();

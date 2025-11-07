@@ -5,7 +5,7 @@
 class SConstraintBase : Managed {
 
 	protected bool constrain = false;
-	protected string message = "#STR_SUDE_LAYOUT_OPTIONS_CONSTRAINED";
+	protected string message = string.Empty;
 
 	bool isEnabled() {
 		return constrain;

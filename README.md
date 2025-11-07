@@ -602,11 +602,11 @@ class MyClass {
     }
 
     void onChange() {
-        SLog.d("Array has changed");
+        SLOG.d("Array has changed");
     }
 
     void onInsert(int value, int position) {
-        SLog.d("Value " + value + " has been inserted in position " + position);
+        SLOG.d("Value " + value + " has been inserted in position " + position);
     }
 
     void onInsert2(int value, int position) {
@@ -614,11 +614,11 @@ class MyClass {
     }
 
     void onPreRemove(int indexToBeRemoved) {
-        SLog.d("Index " + indexToBeRemoved + " will be removed");
+        SLOG.d("Index " + indexToBeRemoved + " will be removed");
     }
 
     void onClear() {
-        SLog.d("Array has been cleared");
+        SLOG.d("Array has been cleared");
     }
 
 }
@@ -677,7 +677,7 @@ vector contactPositon = ray
     .getContactPosition();
 
 if (ray.hasHit()){
-    SLog.d("Raycast has hit at this position" + contactPositon);
+    SLOG.d("Raycast has hit at this position" + contactPositon);
 }
 ```
 
@@ -695,18 +695,18 @@ enum MyFlags {
 }
 
 SFlagOperator fop = new SFlagOperator(MyFlags.A | MyFlags.C);
-SLog.d("Result : " + fop.collectBinaryString());
+SLOG.d("Result : " + fop.collectBinaryString());
 // Result : 0000 00101
 
 fop.set(MyFlags.B);
 fop.reset(MyFlags.A)
-SLog.d("Result : " + fop.collectBinaryString());
+SLOG.d("Result : " + fop.collectBinaryString());
 // Result : 0000 00110
 
-SLog.d("A is set : " + fop.check(MyFlags.A));
+SLOG.d("A is set : " + fop.check(MyFlags.A));
 //A is set : false
 
-SLog.d("B is set : " + fop.check(MyFlags.B));
+SLOG.d("B is set : " + fop.check(MyFlags.B));
 //B is set : true
 ```
 

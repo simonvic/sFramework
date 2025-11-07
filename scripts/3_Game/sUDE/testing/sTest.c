@@ -12,9 +12,9 @@ class STest : Managed {
 	*/
 	static bool shouldContinueAtFail = false;
 	
-	static string PASSED_OUTPUT  = "[ ✓ ] PASSED  - %1";
-	static string FAILED_OUTPUT  = "[ × ] FAILED  - %1";
-	static string SKIPPED_OUTPUT = "[ - ] SKIPPED - %1";
+	static string PASSED_OUTPUT  = "[ + ] PASSED  - %1";
+	static string FAILED_OUTPUT  = "[ - ] FAILED  - %1";
+	static string SKIPPED_OUTPUT = "[   ] SKIPPED - %1";
 	
 	protected ref array<ref STestUnit> toTest = new array<ref STestUnit>();
 	protected ref map<eSTestCaseStatus, int> results = new map<eSTestCaseStatus, int>();

@@ -28,7 +28,7 @@ class SUserConfigConstraints {
 	 */
 	SUserConfigConstraintsBase load(typename moduleType, bool reload = false) {
 		if (GetGame().IsClient()) {
-			SLog.w("Trying to load user config constraints from client!, Ignoring...","SUserConfigConstraints::load");
+			SLOG.w("SUserConfigConstraints::load", "Trying to load user config constraints from client!, Ignoring...");
 			return null;
 		}
 
@@ -36,25 +36,25 @@ class SUserConfigConstraints {
 			return modulesCfgConstraints.Get(moduleType);
 		}
 
-		SLog.i("Loading " + moduleType, "SUserConfigConstraints::load");
+		SLOG.i("SUserConfigConstraints::load", "Loading " + moduleType);
 
 		// Check if correct typename
 		SUserConfigConstraintsBase moduleCfgConstraints = SUserConfigConstraintsBase.Cast(moduleType.Spawn());
 		if (!moduleCfgConstraints) {
-			SLog.e("Error while loading < " + moduleType + " > Maybe not a module type?. Ignoring....","SUserConfigConstraints::load");
+			SLOG.e("SUserConfigConstraints::load", "Error while loading < " + moduleType + " > Maybe not a module type?. Ignoring....");
 			return null;
 		}
 
 		// Load config
 		if (!moduleCfgConstraints.load()) {
 			string path = moduleCfgConstraints.getPath();
-			SLog.w("Couldn't load user config constraints [ " + path + " ]", "SUserConfigConstraints");
-			SLog.i("Creating " + moduleCfgConstraints.Type() + " constraints file : " + path, "", 1);
+			SLOG.w(""+this, "Couldn't load user config constraints [ " + path + " ]");
+			SLOG.i(1, "Creating " + moduleCfgConstraints.Type() + " constraints file : " + path);
 			moduleCfgConstraints.save();
-			SLog.i("Done", "", 2);
+			SLOG.i(2, "Done");
 		}
 		modulesCfgConstraints.Set(moduleType, moduleCfgConstraints);
-		SLog.i("Loaded user config constraints: " + moduleCfgConstraints);
+		SLOG.i(1, "Loaded user config constraints: " + moduleCfgConstraints);
 		return moduleCfgConstraints;
 	}
 

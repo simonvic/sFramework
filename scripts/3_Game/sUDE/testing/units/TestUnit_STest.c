@@ -36,19 +36,19 @@ class TestUnit_STest : STestUnit {
 	}
 	
 	void beforeClass() {
-		SLog.d("Executed before " + ClassName());
+		SLOG.d("Executed before " + ClassName());
 	}
 	
 	void before(STestCase nextTestCase) {
-		SLog.d("    Executed before '" + nextTestCase.getFunction() + "'");
+		SLOG.d("    Executed before '" + nextTestCase.getFunction() + "'");
 	}
 	
 	void after(STestCase lastTestCase) {
-		SLog.d("    Executed after '" + lastTestCase.getFunction() + "'");
+		SLOG.d("    Executed after '" + lastTestCase.getFunction() + "'");
 	}
 	
 	void afterClass() {
-		SLog.d("Executed after " + ClassName());
+		SLOG.d("Executed after " + ClassName());
 	}
 	
 	void shouldFail() {

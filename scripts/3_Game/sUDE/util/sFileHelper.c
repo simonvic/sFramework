@@ -48,13 +48,13 @@ class SFileHelper {
 	*/
 	static string cat(string path) {
 		if (!FileExist(path)) {
-			SLog.e("The file [ " + path + " ] doesn't exists","SFileHelper::cat");
+			SLOG.e("SFileHelper::cat", "The file [ " + path + " ] doesn't exists");
 			return string.Empty; 
 		}
 				
 		FileHandle handle = OpenFile(path, FileMode.READ);
 		if (handle == 0) {
-			SLog.e("Error when reading [ " + path + " ]","SFileHelper::cat");
+			SLOG.e("SFileHelper::cat", "Error when reading [ " + path + " ]");
 			return string.Empty;
 		}
 		
@@ -75,7 +75,7 @@ class SFileHelper {
 	static void echo(string data, string path) {
 		FileHandle handle = OpenFile(path, FileMode.WRITE);
 		if (handle == 0) {
-			SLog.e("Error when opening [ " + path + " ]","SFileHelper::echo");
+			SLOG.e("SFileHelper::echo", "Error when opening [ " + path + " ]");
 			return;
 		}
 		FPrint(handle, data);

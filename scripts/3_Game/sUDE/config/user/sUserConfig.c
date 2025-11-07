@@ -37,7 +37,7 @@ class SUserConfig {
 	 *		super.onConstraintsReceived(ctx);
 	 *		YourConstraints constraints;
 	 *		if (!ctx.Read(constraints)) {
-	 *			SLog.c("Error!");
+	 *			SLOG.c("Error!");
 	 *			return;
 	 *		}
 	 *		// ...
@@ -45,7 +45,7 @@ class SUserConfig {
 	 * @endcode
 	 */
 	protected void onConstraintsReceived(ParamsReadContext ctx) {
-		SLog.d("onConstraintsReceived", ""+this);
+		SLOG.d(""+this, "onConstraintsReceived");
 	}
 
 	/**
@@ -56,7 +56,7 @@ class SUserConfig {
 	 */
 	SUserConfigBase load(typename moduleType, bool reload = false) {
 		if (GetGame().IsDedicatedServer()) {
-			SLog.w("Trying to load user config from server!, Ignoring...","SUserConfig::load");
+			SLOG.w("SUserConfig::load", "Trying to load user config from server!, Ignoring...");
 			return null;
 		}
 
@@ -64,26 +64,26 @@ class SUserConfig {
 			return modulesConfigs.Get(moduleType);
 		}
 
-		SLog.i("Loading " + moduleType, "SUserConfig::load");
+		SLOG.i("SUserConfig::load", "Loading " + moduleType);
 
 		//Check if correct typename
 		SUserConfigBase moduleCfg = SUserConfigBase.Cast(moduleType.Spawn());
 		if (!moduleCfg) {
-			SLog.e("Error while loading < " + moduleType + " > Maybe not a module type?. Ignoring....","SUserConfig::load");
+			SLOG.e("SUserConfig::load", "Error while loading < " + moduleType + " > Maybe not a module type?. Ignoring....");
 			return null;
 		}
 
 		// Load config
 		if (!moduleCfg.load()) {
 			string path = moduleCfg.getPath();
-			SLog.w("Couldn't load user config [ " + path + " ]", "SUserConfig");
-			SLog.i("Creating " + moduleCfg.Type() + " config file : " + path, "", 1);
+			SLOG.w(""+this, "Couldn't load user config [ " + path + " ]");
+			SLOG.i(1, "Creating " + moduleCfg.Type() + " config file : " + path);
 			moduleCfg.save();
-			SLog.i("Done", "", 2);
+			SLOG.i(2, "Done");
 		}
 
 		modulesConfigs.Set(moduleType, moduleCfg);
-		SLog.i("Loaded user config: " + moduleCfg, ""+this);
+		SLOG.i(1, "Loaded user config: " + moduleCfg);
 		return moduleCfg;
 	}
 

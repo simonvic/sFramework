@@ -157,7 +157,7 @@ class SSpawnable {
 	}
 	
 	void debugPrint(int level = 0) {
-		SLog.d(this, getName(), level);
+		SLOG.d(level, getName(), this);
 		debugPrintAttachments(level + 2);		
 	}
 	

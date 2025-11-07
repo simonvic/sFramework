@@ -42,7 +42,7 @@ class STreeNode<Class T> : Managed {
 	
 	
 	void debugPrint(int maxDepth = -1, int depth = 0) {
-		SLog.d(getData(), "", depth);
+		SLOG.d(depth, getData());
 		if (maxDepth >= 0 && depth > maxDepth) return;
 		foreach (STreeNode<T> child : m_children) {
 			child.debugPrint(maxDepth, depth + 1);

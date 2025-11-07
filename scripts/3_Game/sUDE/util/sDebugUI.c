@@ -152,7 +152,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer()) return this;
 		int index = opt.IndexOf("=");
 		if (index == -1) {
-			SLog.w("option malformed: " + opt, ""+this);
+			SLOG.w(""+this, "option malformed: " + opt);
 		} else {
 			string lhs = opt.Substring(0, index);
 			string rhs = opt.Substring(index + 1, opt.Length() - 1 - index);
@@ -620,7 +620,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer() || disabled) return null;
 		Widget window = windows.peek();
 		if (!window) {
-			SLog.e("No window to place widget on!",""+this);
+			SLOG.e(""+this, "No window to place widget on!");
 			return null;
 		}
 		Widget w = GetGame().GetWorkspace().CreateWidgets(layout, window.FindAnyWidget("body"));

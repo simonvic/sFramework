@@ -76,20 +76,20 @@ class STest : Managed {
 	void run() {
 		clearResults();
 		
-		SLog.d("=======================================================================");
-		SLog.d("Running tests...");
+		SLOG.d("=======================================================================");
+		SLOG.d("Running tests...");
 		
 		foreach (STestUnit unit : toTest) {
 			unit.run();
 			if (unit.hasFailed() && !shouldContinueAtFail) break;
 		}
 		
-		SLog.d("-----------------------------------------------------------------------");
+		SLOG.d("-----------------------------------------------------------------------");
 		foreach (STestUnit unit2 : toTest) {
 			if (unit2.hasFailed()) {
-				SLog.d(string.Format(FAILED_OUTPUT, unit2.ClassName()));
+				SLOG.d(string.Format(FAILED_OUTPUT, unit2.ClassName()));
 			} else {
-				SLog.d(string.Format(PASSED_OUTPUT, unit2.ClassName()));
+				SLOG.d(string.Format(PASSED_OUTPUT, unit2.ClassName()));
 			}
 			array<ref STestCase> testCases = unit2.getTestCases();
 			foreach (STestCase testCase : testCases) {
@@ -100,11 +100,11 @@ class STest : Managed {
 				}
 			}
 		}
-		SLog.d("-----------------------------------------------------------------------");
-		SLog.d("                   PASSED    |    FAILED    |    SKIPPED");
-		SLog.d("                     "+results.Get(eSTestCaseStatus.PASSED) + "              " + results.Get(eSTestCaseStatus.FAILED) + "               " + results.Get(eSTestCaseStatus.SKIPPED));
-		SLog.d("=======================================================================");
-		SLog.c("| NICE! |", "", 0, verbosity == 69);
+		SLOG.d("-----------------------------------------------------------------------");
+		SLOG.d("                   PASSED    |    FAILED    |    SKIPPED");
+		SLOG.d("                     "+results.Get(eSTestCaseStatus.PASSED) + "              " + results.Get(eSTestCaseStatus.FAILED) + "               " + results.Get(eSTestCaseStatus.SKIPPED));
+		SLOG.d("=======================================================================");
+		if (verbosity == 69) SLOG.c("| NICE! |");
 	}
 	
 	
@@ -115,11 +115,17 @@ class STest : Managed {
 	protected void passed(STestCase testCase) {
 		results.Set(eSTestCaseStatus.PASSED, results.Get(eSTestCaseStatus.PASSED) + 1);
 		if (verbosity >= 2) {
-			SLog.d(string.Format(PASSED_OUTPUT, testCase.getFunction()),"", 1);
+			SLOG.d(1, string.Format(PASSED_OUTPUT, testCase.getFunction()));
 			if (verbosity >= 3) {
-				SLog.d("Expected: " + testCase.getExpected(), "", 2, testCase.getExpected() != string.Empty);
-				SLog.d("Actual:   " + testCase.getActual(), "", 2, testCase.getActual() != string.Empty);
-				SLog.d("Message:  " + testCase.getMessage(), "", 2, testCase.getMessage() != string.Empty);
+				if (testCase.getExpected() != string.Empty) {
+					SLOG.d(2, "Expected: " + testCase.getExpected());
+				}
+				if (testCase.getActual() != string.Empty) {
+					SLOG.d(2, "Actual:   " + testCase.getActual());
+				}
+				if (testCase.getMessage() != string.Empty) {
+					SLOG.d(2, "Message:  " + testCase.getMessage());
+				}
 			}
 		}
 	}
@@ -130,10 +136,12 @@ class STest : Managed {
 	*/
 	protected void failed(STestCase testCase) {
 		results.Set(eSTestCaseStatus.FAILED, results.Get(eSTestCaseStatus.FAILED) + 1);
-		SLog.d(string.Format(FAILED_OUTPUT, testCase.getFunction()), "", 1);
-		SLog.d("Expected: " + testCase.getExpected(), "", 2);
-		SLog.d("Actual:   " + testCase.getActual(), "", 2);
-		SLog.d("Message:  " + testCase.getMessage(), "", 2, testCase.getMessage() != string.Empty);
+		SLOG.d(1, string.Format(FAILED_OUTPUT, testCase.getFunction()));
+		SLOG.d(2, "Expected: " + testCase.getExpected());
+		SLOG.d(2, "Actual:   " + testCase.getActual());
+		if (testCase.getMessage() != string.Empty) {
+			SLOG.d(2, "Message:  " + testCase.getMessage());
+		}
 	}
 	
 	/**
@@ -143,8 +151,10 @@ class STest : Managed {
 	protected void skipped(STestCase testCase) {
 		results.Set(eSTestCaseStatus.SKIPPED, results.Get(eSTestCaseStatus.SKIPPED) + 1);
 		if (verbosity >= 1) {
-			SLog.d(string.Format(SKIPPED_OUTPUT, testCase.getFunction()),"", 1);
-			SLog.d("Message:  " + testCase.getMessage(),"",2, testCase.getMessage() != string.Empty);
+			SLOG.d(1, string.Format(SKIPPED_OUTPUT, testCase.getFunction()));
+			if (testCase.getMessage() != string.Empty) {
+				SLOG.d(2, "Message:  " + testCase.getMessage());
+			}
 		}
 	}
 	

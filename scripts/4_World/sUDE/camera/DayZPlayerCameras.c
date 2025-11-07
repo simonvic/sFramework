@@ -135,7 +135,7 @@ modded class DayZPlayerCameras {
 		if (m_TransitionTimes.Find(key, val)) {
 			return val;
 		} else {
-			//SLog.w("Transition time not registered: " + pFrom + " -> " + pTo + " . Using default " + DEFAULT_UNREGISTERED_TIME, "DayZPlayerCameras::GetTransitionTime");
+			// SLOG.w("DayZPlayerCameras::GetTransitionTime", "Transition time not registered: " + pFrom + " -> " + pTo + " . Using default " + DEFAULT_UNREGISTERED_TIME);
 		}
 		return DEFAULT_UNREGISTERED_TIME;
 	}

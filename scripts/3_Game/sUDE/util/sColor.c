@@ -268,9 +268,11 @@ class SColor {
 	}
 	
 	SColor debugPrint(bool verbose = false) {
-		SLog.d(string.Format("R: %1 | G: %2 | B: %3 | A: %4", getRed(), getGreen(), getBlue(), getAlpha()), ""+this);
-		SLog.d(string.Format("RGB: %1 | RGBA: %2 | ARGB: %3 ", getRGB(), getRGBA(), getARGB()), "", 1, verbose);
-		SLog.d(string.Format("Name: %1 | Hex: %2 ", getRGBName(), "#696969"), "", 1, verbose);
+		SLOG.d(""+this, string.Format("R: %1 | G: %2 | B: %3 | A: %4", getRed(), getGreen(), getBlue(), getAlpha()));
+		if (verbose) {
+			SLOG.d(1, string.Format("RGB: %1 | RGBA: %2 | ARGB: %3 ", getRGB(), getRGBA(), getARGB()));
+			SLOG.d(1, string.Format("Name: %1 | Hex: %2 ", getRGBName(), "#696969"));
+		}
 		return this;
 	}
 	

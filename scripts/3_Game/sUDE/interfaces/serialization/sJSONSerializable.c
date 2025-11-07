@@ -71,7 +71,7 @@ class SJSONSerializable : Managed {
 		string data = SFileHelper.cat(getPath());
 		string error;
 		if (!deserialize(data, error)) {
-			SLog.e("JSON deserialization error: " + error, "SJSONSerializable");
+			SLOG.e(""+this, "JSON deserialization error: " + error);
 			return false;
 		}
 		return true;
@@ -85,7 +85,7 @@ class SJSONSerializable : Managed {
 		SFileHelper.touch(getPath());
 		string data;
 		if (!serialize(data)) {
-			SLog.e("JSON serialization error", "SJSONSerializable");
+			SLOG.e(""+this, "JSON serialization error");
 			return false;
 		}
 		SFileHelper.echo(data, getPath());

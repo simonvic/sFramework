@@ -32,7 +32,7 @@ class SCameraOverlaysManager {
 	void activate(SCameraOverlay overlay) {
 		if (!overlay) return;
 		if (GetGame().IsDedicatedServer()) {
-			SLog.w("ACTIVATING " + overlay + " ON SERVER!","SCameraOverlaysManager::activate");
+			SLOG.w("SCameraOverlaysManager::activate", "ACTIVATING " + overlay + " ON SERVER!");
 			return;
 		}
 		
@@ -47,7 +47,7 @@ class SCameraOverlaysManager {
 	void deactivate(SCameraOverlay overlay) {
 		if (!overlay) return;
 		if (GetGame().IsDedicatedServer()) {
-			SLog.w("DEACTIVATING " + overlay + " ON SERVER!","SCameraOverlaysManager::deactivate");
+			SLOG.w("SCameraOverlaysManager::deactivate", "DEACTIVATING " + overlay + " ON SERVER!");
 			return;
 		}
 		
@@ -233,7 +233,7 @@ class SCameraOverlaysManager {
 	
 	protected void updateOverlays(float deltaTime, Widget root) {
 		foreach (SCameraOverlay overlay, eSCameraOverlayState state : m_overlays) {
-			if (!overlay) SLog.w("Found null overlay!","SCameraOverlaysManager");
+			if (!overlay) SLOG.w("SCameraOverlaysManager", "Found null overlay!");
 			
 			switch (m_overlays.Get(overlay)) {
 				case eSCameraOverlayState.REQUESTED:

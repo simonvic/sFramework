@@ -349,23 +349,23 @@ class SCameraOverlay : Managed {
 	}
 	
 	void debugPrint(int depth = 0) {
-		SLog.d(this,"",depth);
+		SLOG.d(depth, this);
 		depth++;
-		SLog.d(getImageName(),"imageName",depth);
-		SLog.d(getAlpha(),"alpha",depth);
-		SLog.d(getMask(),"mask",depth);
-		SLog.d(getMaskProgress(),"maskProgress",depth);
-		SLog.d(getMaskTransitionWidth(),"maskTranstitionWidth",depth);
-		SLog.d(getPosition(),"position",depth);
-		SLog.d(getSize(),"size",depth);
-		SLog.d(getRotation(),"rotation",depth);
-		SLog.d(getPriority(),"priority",depth);
-		SLog.d(getTargetCameras(),"targetCameras",depth);
+		SLOG.d(depth, "imageName", getImageName());
+		SLOG.d(depth, "alpha", getAlpha());
+		SLOG.d(depth, "mask", getMask());
+		SLOG.d(depth, "maskProgress", getMaskProgress());
+		SLOG.d(depth, "maskTranstitionWidth", getMaskTransitionWidth());
+		SLOG.d(depth, "position", getPosition());
+		SLOG.d(depth, "size", getSize());
+		SLOG.d(depth, "rotation", getRotation());
+		SLOG.d(depth, "priority", getPriority());
+		SLOG.d(depth, "targetCameras", getTargetCameras());
 		foreach (typename cam : m_targetCameras) {
-			SLog.d(cam,"",depth+1);
+			SLOG.d(depth+1, cam);
 		}
-		SLog.d(isVisible(),"isVisible",depth);
-		SLog.d(hidesWithIngameHUD(),"hidesWithIngameHUD",depth);
+		SLOG.d(depth, "isVisible", isVisible());
+		SLOG.d(depth, "hidesWithIngameHUD", hidesWithIngameHUD());
 	}
 
 }

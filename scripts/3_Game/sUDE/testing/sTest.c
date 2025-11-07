@@ -32,7 +32,8 @@ class STest : Managed {
 			TestUnit_SConstraints,
 			TestUnit_SUserConfigOption,
 			TestUnit_SUserConfig,
-			TestUnit_SObservableArray
+			TestUnit_SObservableArray,
+			TestUnit_SLOG
 		};
 		STest.run(tests);
 	}

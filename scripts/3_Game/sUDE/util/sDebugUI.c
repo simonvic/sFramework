@@ -271,6 +271,27 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
+	*	@brief Create a checkbox
+	*	@param name - name of the widget
+	*	@return true if checked, false otherwise
+	*/
+	bool check(string name) {
+		if (isServer() || disabled) return false;
+		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
+		if (!w) return false;
+		w.SetName(name);
+		w.SetText(name);
+		bool checked; // TODO: add default flag
+		if (statesCheckbox.Contains(name)) {
+			checked = statesCheckbox.Get(name);
+			w.SetChecked(checked);
+		} else {
+			statesCheckbox.Set(name, checked);
+		}
+		return checked;
+	}
+
+	/**
 	*	@brief Create a button
 	*	@param text - text to show next i nthe button
 	*	@return ButtonWidget

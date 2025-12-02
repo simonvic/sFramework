@@ -10,7 +10,7 @@ modded class DayZPlayerCameras {
 	
 	
 	override static void RegisterCameras(DayZPlayerType pType) {
-
+		// TODO(1.29): use super (finally :D)
 		pType.ResetCameraCreators();
 
 		//! 

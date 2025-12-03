@@ -6,7 +6,8 @@ class SUserConfigOptionBase : Managed {
 	protected ref Param m_param;
 	protected ref SConstraintBase m_constraint;
 	protected ref SUserConfigOptionInfo m_info;
-	
+	protected ref ScriptInvoker m_onValueChange = new ScriptInvoker(); //!< (previousValue, newValue)
+
 	Param getParam() {
 		return m_param;
 	}
@@ -21,7 +22,11 @@ class SUserConfigOptionBase : Managed {
 		}
 		m_param = param;
 	} 
-	
+
+	ScriptInvoker getOnValueChange() {
+		return m_onValueChange;
+	}
+
 	/**
 	 * @brief If a constraint is enabled, update the current option value based on it
 	 */

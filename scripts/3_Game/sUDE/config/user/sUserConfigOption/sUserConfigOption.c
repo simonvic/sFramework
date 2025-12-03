@@ -21,6 +21,7 @@ class SUserConfigOption<Class T> : SUserConfigOptionBase {
 		T newValue = get();
 		if (newValue != previousValue) {
 			onValueChange(previousValue, newValue);
+			m_onValueChange.Invoke(previousValue, newValue);
 		}
 	} 
 	

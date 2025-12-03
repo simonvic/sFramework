@@ -25,6 +25,7 @@ class SUserConfigOptionArray<Class T> : SUserConfigOptionBase {
 		}
 		if (!equal(previousValue, newValue)) {
 			onValueChange(previousValue, newValue);
+			m_onValueChange.Invoke(previousValue, newValue);
 		}
 	}
 	

@@ -1,6 +1,5 @@
 class SUserConfigOption<Class T> : SUserConfigOptionBase {
 	
-	
 	void SUserConfigOption(T value, SConstraintBase constraint = null, SUserConfigOptionInfo info = null) {
 		m_constraint = constraint;
 		super.setParam(new Param1<T>(value));
@@ -26,4 +25,5 @@ class SUserConfigOption<Class T> : SUserConfigOptionBase {
 	} 
 	
 	protected void onValueChange(T previousValue, T newValue);
+
 }

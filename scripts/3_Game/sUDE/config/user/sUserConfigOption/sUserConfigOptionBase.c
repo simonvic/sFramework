@@ -6,7 +6,7 @@ class SUserConfigOptionBase : Managed {
 	protected ref Param m_param;
 	protected ref SConstraintBase m_constraint;
 	protected ref SUserConfigOptionInfo m_info;
-	protected ref ScriptInvoker m_onValueChange = new ScriptInvoker(); //!< (previousValue, newValue)
+	protected ref ScriptInvoker m_onValueChange; //!< (previousValue, newValue)
 
 	Param getParam() {
 		return m_param;
@@ -24,6 +24,9 @@ class SUserConfigOptionBase : Managed {
 	} 
 
 	ScriptInvoker getOnValueChange() {
+		if (!m_onValueChange) {
+			m_onValueChange = new ScriptInvoker();
+		}
 		return m_onValueChange;
 	}
 

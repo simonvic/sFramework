@@ -12,14 +12,14 @@
 			dui.window("Debug monitor");
 				dui.text("Day Time : " + GetGame().GetDayTime());
 				dui.newline();
-				
+
 				dui.textrich("<image set='dayz_gui' name='icon_pin' /> ");
 				dui.textrich("You can click on the slider, or you can use the mouse wheel");
 				dui.textrich("If you hold shift while using mouse wheel, it will go wrooom!");
 				float sliderValue;
 				dui.slider("mySlider", sliderValue);
 				dui.textrich("The value of <font name='gui/fonts/amorserifpro'>sliderValue</font> is: <b>"+ sliderValue +"</b>");
-				
+
 				bool checkValue
 				dui.check("myCheck", checkValue);
 				dui.text("CheckValue: " + checkValue);
@@ -39,32 +39,32 @@
 		void printSum(int x, int y) {
 			Print(x + y);
 		}
-		
+
 */
 class SDebugUI : ScriptedWidgetEventHandler {
-	
+
 	private static ref map<string, ref SDebugUI> instances = new map<string, ref SDebugUI>;
-	
+
 	private ref Widget root;
 	private string duiName;
-	
+
 	/**
 	*	Stack (LIFO) of the instantiated windows.
 	*	The first element is the last created window
 	*/
 	private ref SStack<Widget> windows;
-	
+
 	/**
 	*	Disable the debug ui
 	*/
 	private bool disabled;
-	
+
 	private ref map<ButtonWidget, ref SDebugButtonCallback> buttonsCallbacks;	
 	private ref map<string, bool> statesCheckbox;
 	private ref map<string, float> statesSlider;
 	private ref map<string, ref array<ref array<float>>> plotsHistory;
 	private ref map<string, string> options;
-	
+
 	private void SDebugUI(string name) {
 		if (isServer()) return;
 		duiName = name;
@@ -91,7 +91,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		instances.Set(name, dui);
 		return dui;
 	}
-	
+
 	static SDebugUI of(string name, bool enabled) {
 		SDebugUI dui = instances.Get(name);
 		if (dui) return dui;
@@ -103,31 +103,31 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return dui;
 	}
-	
+
 	static void hideAll() {
 		foreach (auto dui : instances) {
 			dui.hide();
 		}
 	}
-	
+
 	static void showAll() {
 		foreach (auto dui : instances) {
 			dui.show();
 		}
 	}
-	
+
 	static void disableAll() {
 		foreach (auto dui : instances) {
 			dui.disable();
 		}
 	}
-	
+
 	static void enableAll() {
 		foreach (auto dui : instances) {
 			dui.enable();
 		}
 	}
-	
+
 
 	/**
 	*	@brief Specify an option
@@ -141,7 +141,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		options.Set(key.Trim(), value);
 		return this;
 	}
-	
+
 	/**
 	*	@brief Specify an option
 	*	@param key value pair separated by '=' (uqual sign)
@@ -160,7 +160,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return this;
 	}
-	
+
 	/**
 	*	@brief Specify a list of options
 	*	@param array of key value pair separated by '=' (uqual sign)
@@ -177,7 +177,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return this;
 	}
-	
+
 	/**
 	*	@brief Specify a list of key=value options
 	*	@param map of options
@@ -193,13 +193,13 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return this;
 	}
-	
+
 	SDebugUI withBg(SColor color) {
 		if (isServer()) return this;
 		withOpt("bg", "#" + color.getRGBA());
 		return this;
 	}
-	
+
 	/**
 	*	@brief Build a new window
 	*	@param title - title of the window
@@ -223,17 +223,17 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*/
 	Widget window(string title = "") {
 		if (isServer()) return null;
-		
+
 		SColor bodyColor = SColor.of(consumeOrDefault("body.bg", "#00000088"));
-		
+
 		title = duiName + " / " + title;
-				
+
 		Widget w = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/window.layout", root);
 		w.SetHandler(this);
 		consumeBg(w);
 		consumeSize(w);
 		consumePos(w);
-		
+
 		TextWidget.Cast(w.FindAnyWidget("title")).SetText(title);
 		if (windows.peek() == null) {
 			CheckBoxWidget.Cast(w.FindAnyWidget("disable")).SetChecked(!disabled);
@@ -242,11 +242,11 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		w.FindAnyWidget("body").SetColor(bodyColor.getARGB());
 		windows.push(w);
-		
+
 		return w;
 	}
-	
-	
+
+
 	/**
 	*	@brief Create a checkbox
 	*	@param name - name of the widget
@@ -307,10 +307,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		w.SetText(text);
 		w.SetName(text);
 		buttonsCallbacks.Set(w, new SDebugButtonCallback(instance, function, params));
-		
+
 		return w;
 	}
-	
+
 	/**
 	*	@brief Create a text widget
 	*	@param text -
@@ -323,7 +323,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		w.SetText(text);
 		return w;
 	}
-	
+
 	/**
 	*	@brief Create a rich text widget
 	*	@param text -
@@ -336,7 +336,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		w.SetText(text);
 		return w;
 	}
-	
+
 	/**
 	*	@brief Create a slider
 	*	@param name - name of the slider
@@ -361,11 +361,11 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer() || disabled) return null;
 		SliderWidget w = SliderWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/slider.layout"));
 		if (!w) return null;
-		
+
 		float step = consumeOrDefault("slider.step", 0.01);
 		float min = consumeOrDefault("slider.min", 0);
 		float max = consumeOrDefault("slider.max", 1);
-		
+
 		w.SetName(name);
 		w.SetStep(step);
 		w.SetMinMax(min, max);
@@ -377,7 +377,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		TextWidget.Cast(w.FindAnyWidget("value")).SetText(""+value);
 		return w;
 	}
-	
+
 	/**
 	*	@brief Create a table which contains text.
 	*	@param sizePx - X and Y size defined in pixel
@@ -398,10 +398,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (!w) return null;
 
 		if (data == null || data.Count() == 0) return w;
-		
+
 		string cellFlags = consume("table.cell.flags.set");
 		string cellFlagsUnset = consume("table.cell.flags.unset");
-		
+
 		float height = 1 / data.Count();
 		foreach (auto row : data) {
 			if (row == null || row.Count() == 0) continue;
@@ -417,15 +417,15 @@ class SDebugUI : ScriptedWidgetEventHandler {
 				}
 				t.SetSize(width, height);
 				t.SetText(entry);
-				
+
 				//Print(SFlagOperator.from(t.GetFlags()).collectBinaryString());
 			}
 		}
 		return w;
 	}
-	
-	
-	
+
+
+
 	/**
 	*	@brief Create a plot to draw lines
 	*	@param sizePx - X and Y size defined in pixel
@@ -441,7 +441,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer() || disabled) return null;
 		Widget w = widget("MyMODS/sFramework/GUI/layouts/debug/canvas.layout", false);
 		if (!w) return null;
-		
+
 		string title = consume("canvas.title");
 		CanvasWidget c = CanvasWidget.Cast(w.FindAnyWidget("canvas"));		
 		TextWidget t = TextWidget.Cast(w.FindAnyWidget("title"));
@@ -451,7 +451,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		consumePos(c);
 		return c;
 	}
-	
+
 	/**
 	*	@brief Plot live data
 	*	@param title - title of the plot
@@ -492,7 +492,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer() || disabled) return null;
 		CanvasWidget c = canvas();
 		if (!c) return null;
-		
+
 		float min = consumeOrDefault("plot.min", 0.0);
 		float max = consumeOrDefault("plot.max", 1.0);
 		float offsetX = consumeOrDefault("plot.offset.x", 0.0);
@@ -502,11 +502,11 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		int penWidthPx = consumeOrDefault("plot.pen.width", 3);
 		SColor penColor = SColor.of(consumeOrDefault("plot.pen.color", "F0544C"));
 		int historySize = consumeOrDefault("plot.history.size", 50);
-		
+
 		TextWidget.Cast(c.FindAnyWidget("min")).SetText(""+min);
 		TextWidget.Cast(c.FindAnyWidget("max")).SetText(""+max);
 		TextWidget.Cast(c.FindAnyWidget("current")).SetText(""+y);
-		
+
 		auto line = plotsHistory.Get(title);
 		if (!line) {
 			line = {{0.5,0.5}, {0,y}};
@@ -519,7 +519,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 
 		float width, height;
 		c.GetSize(width, height);
-		
+
 		float precision = 1 / historySize;
 		float x;
 		for (int i = line.Count() - 1; i > 0; i--) {
@@ -535,7 +535,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return c;
 	}
-	
+
 	/**
 	*	@brief Create a plot to draw lines
 	*	@param lines - list of lines (which is a list of point (which is a couple of X and Y coordinates))
@@ -573,7 +573,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer() || disabled) return null;
 		CanvasWidget c = canvas();
 		if (!c) return null;
-		
+
 		float min = consumeOrDefault("plot.min", 0.0);
 		float max = consumeOrDefault("plot.max", 1.0);
 		float offsetX = consumeOrDefault("plot.offset.x", 0.0);
@@ -582,10 +582,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		float scaleY = consumeOrDefault("plot.scale.y", 1.0);
 		int penWidthPx = consumeOrDefault("plot.pen.width", 3);
 		SColor penColor = SColor.of(consumeOrDefault("plot.pen.color", "F0544C"));
-		
+
 		float width, height;
 		c.GetSize(width, height);
-		
+
 		foreach (auto line : lines) {	
 			for (int i = 0; i < line.Count() - 1; i++) {
 				c.DrawLine(
@@ -599,7 +599,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return c;
 	}
-	
+
 	/**
 	*	@brief Create a spacer
 	*	@param size - X and Y size defined in screen space (0.0 - 1.0)
@@ -609,8 +609,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer() || disabled) return null;
 		return widget("MyMODS/sFramework/GUI/layouts/debug/spacer.layout");
 	}
-	
-	
+
+
 	/**
 	*	@brief Create a new line
 	*	@param size - height of the empty line
@@ -620,7 +620,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer() || disabled) return null;
 		return withOpt("size", "1 " + height).spacer();
 	}
-	
+
 	/**
 	*	@brief Create a widget
 	*	@param layout - .layout file to load
@@ -657,10 +657,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			consumeSize(w);
 			consumePos(w);
 		}
-		
+
 		return w;
 	}
-	
+
 	/**
 	*	@brief Mark the beginning of the DUI scope
 	*/
@@ -674,32 +674,32 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		clear();
 		return !disabled;
 	}
-	
+
 	/**
 	*	@brief Mark the end of the DUI scope
 	*/
 	void end() {
 		// TODO: add autohide option
 	}
-	
+
 	void enable() {
 		disabled = false;
 		//show();
 	}
-	
+
 	void disable() {
 		disabled = true;
 		//hide();
 	}
-	
+
 	void show() {
 		root.Show(true);
 	}
-	
+
 	void hide() {
 		root.Show(false);
 	}
-	
+
 	/**
 	*	@brief Clear the widgets
 	*/
@@ -711,7 +711,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			w = windows.pop();
 		}
 	}
-	
+
 	protected string consumeOrDefault(string option, string defaultValue) {
 		if (options.Contains(option)) {
 			string value = options.Get(option);
@@ -738,7 +738,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return defaultValue;
 	}
-	
+
 	protected float consumeOrDefault(string option, float defaultValue) {
 		if (options.Contains(option)) {
 			string value = options.Get(option);
@@ -747,13 +747,13 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return defaultValue;
 	}
-	
+
 	protected string consume(string option) {
 		string value = options.Get(option);
 		options.Remove(option);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Recolor the widget and consume the color
 	*	@param widget to color
@@ -765,19 +765,19 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			w.SetColor(SColor.of(value).getARGB());
 		}
 	}
-	
+
 	/**
 	*	@brief Resize the widget and consume the size
 	*	@param widget to resize
 	*/
 	protected void consumeSize(Widget w) {
 		if (!options.Contains("size")) return;
-		
+
 		string value = consume("size");
-		
+
 		array<ref TScreenUnit> units = parseScreenUnits(value);
 		if (units.Count() == 0) return;
-		
+
 		if (units.Count() == 1) {
 			if (units[0].param2) {
 				w.SetFlags(WidgetFlags.EXACTSIZE);
@@ -785,38 +785,38 @@ class SDebugUI : ScriptedWidgetEventHandler {
 				w.ClearFlags(WidgetFlags.EXACTSIZE);
 			}
 			w.SetSize(units[0].param1, units[0].param1);
-			
+
 		} else if (units.Count() >= 2) {
-			
+
 			if (units[0].param2) {
 				w.SetFlags(WidgetFlags.HEXACTSIZE);
 			} else {
 				w.ClearFlags(WidgetFlags.HEXACTSIZE);
 			}
-			
+
 			if (units[1].param2) {
 				w.SetFlags(WidgetFlags.VEXACTSIZE);
 			} else {
 				w.ClearFlags(WidgetFlags.VEXACTSIZE);
 			}
-			
+
 			w.SetSize(units[0].param1, units[1].param1);
 		}
-		
+
 	}
-	
+
 	/**
 	*	@brief Reposition the widget and consume the position
 	*	@param widget to reposition
 	*/
 	protected void consumePos(Widget w) {
 		if (!options.Contains("pos")) return;
-		
+
 		string value = consume("pos");
 		array<ref TScreenUnit> units = parseScreenUnits(value);
-		
+
 		if (units.Count() == 0) return;
-		
+
 		if (units.Count() == 1) {
 			if (units[0].param2) {
 				w.SetFlags(WidgetFlags.EXACTPOS);
@@ -824,25 +824,25 @@ class SDebugUI : ScriptedWidgetEventHandler {
 				w.ClearFlags(WidgetFlags.EXACTPOS);
 			}
 			w.SetSize(units[0].param1, units[0].param1);
-			
+
 		} else if (units.Count() >= 2) {
-			
+
 			if (units[0].param2) {
 				w.SetFlags(WidgetFlags.HEXACTPOS);
 			} else {
 				w.ClearFlags(WidgetFlags.HEXACTPOS);
 			}
-			
+
 			if (units[1].param2) {
 				w.SetFlags(WidgetFlags.VEXACTPOS);
 			} else {
 				w.ClearFlags(WidgetFlags.VEXACTPOS);
 			}
-			
+
 			w.SetPos(units[0].param1, units[1].param1);
 		}
 	}
-	
+
 	/**
 	*	@brief Parse a string into an array of dimensions
 	*	@param words to parse
@@ -867,10 +867,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return units;
 	}
-	
-	
-	
-	
+
+
+
+
 	override bool OnClick(Widget w, int x, int y, int button) {
 		//                    reeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 		Widget rootWindow = w.GetParent().GetParent().GetParent().GetParent();
@@ -887,15 +887,15 @@ class SDebugUI : ScriptedWidgetEventHandler {
 				}
 				body.Show(!body.IsVisible());
 				break;
-				
+
 				case "maximize":
 				break;
-				
+
 				case "close":
 				break;
 			}
 			break;
-			
+
 			case CheckBoxWidget:
 			CheckBoxWidget chk = CheckBoxWidget.Cast(w);
 			string name = chk.GetName();
@@ -904,19 +904,19 @@ class SDebugUI : ScriptedWidgetEventHandler {
 				rootWindow.FindAnyWidget("body").Show(disabled);
 				disabled = !disabled;
 				break;
-				
+
 				default:
 				if (statesCheckbox.Contains(name)) {
 					statesCheckbox.Set(name, !statesCheckbox.Get(name));
 				}
 			}
 			break;
-			
+
 		}
-				
+
 		return true;
 	}
-	
+
 	override bool OnMouseEnter(Widget w, int x, int y);
 	override bool OnModalResult(Widget w, int x, int y, int code, int result);
 	override bool OnDoubleClick(Widget w, int x, int y, int button);
@@ -952,10 +952,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return true;
 	}
-	
-	
+
+
 	private vector dragOffset;
-	
+
 	override bool OnDrag(Widget w, int x, int y) {
 		float wx,wy;
 		w.GetParent().GetPos(wx,wy);
@@ -963,7 +963,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		dragOffset[1] = y - wy;
 		return true;
 	}
-	
+
 	override bool OnDragging(Widget w, int x, int y, Widget reciever) {
 		w.GetParent().SetFlags(WidgetFlags.EXACTPOS);
 		w.GetParent().SetPos(x - dragOffset[0], y - dragOffset[1]);
@@ -977,12 +977,12 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	override bool OnChildRemove(Widget w, Widget child);
 	override bool OnUpdate(Widget w);
 	override bool OnEvent(EventType eventType, Widget target, int parameter0, int parameter1);
-	
-	
+
+
 	protected bool isServer() {
 		return GetGame().IsDedicatedServer();
 	}
-	
+
 }
 
 
@@ -990,7 +990,7 @@ class SDebugButtonCallback : Managed {
 	Class instance;
 	string function;
 	ref Param params;
-	
+
 	void SDebugButtonCallback(Class i, string f, Param p) {
 		instance = i;
 		function = f;

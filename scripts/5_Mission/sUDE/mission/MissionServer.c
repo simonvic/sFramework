@@ -1,10 +1,5 @@
 modded class MissionServer {
 	
-	override void OnInit() {
-		super.OnInit();
-		SUserConfigConstraints.getInstance().onPreload();
-	}
-	
 	override PlayerBase OnClientNewEvent(PlayerIdentity identity, vector pos, ParamsReadContext ctx) {
 		PlayerBase player = super.OnClientNewEvent(identity, pos, ctx);
 		syncSUserConfigConstraints(identity);

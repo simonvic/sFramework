@@ -49,14 +49,14 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	private string duiName;
 
 	/**
-	*	Stack (LIFO) of the instantiated windows.
-	*	The first element is the last created window
-	*/
+	 * Stack (LIFO) of the instantiated windows.
+	 * The first element is the last created window
+	 */
 	private ref SStack<Widget> windows;
 
 	/**
-	*	Disable the debug ui
-	*/
+	 * Disable the debug ui
+	 */
 	private bool disabled;
 
 	private ref map<ButtonWidget, ref SDebugButtonCallback> buttonsCallbacks;	
@@ -80,10 +80,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Get an instance of SDebugUI
-	*	@param name of instance
-	*	@return instance of name, or new one if it doesn't exists
-	*/
+	 * @brief Get an instance of SDebugUI
+	 * @param name of instance
+	 * @return instance of name, or new one if it doesn't exists
+	 */
 	static SDebugUI of(string name) {
 		SDebugUI dui = instances.Get(name);
 		if (dui) return dui;
@@ -130,12 +130,12 @@ class SDebugUI : ScriptedWidgetEventHandler {
 
 
 	/**
-	*	@brief Specify an option
-	*	@param key
-	*	@param value
-	*	@code
-	*	dui.withOpt("key", "value");
-	*/
+	 * @brief Specify an option
+	 * @param key
+	 * @param value
+	 * @code
+	 * 	dui.withOpt("key", "value");
+	 */
 	SDebugUI withOpt(string key, string value) {
 		if (isServer()) return this;
 		options.Set(key.Trim(), value);
@@ -143,11 +143,11 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Specify an option
-	*	@param key value pair separated by '=' (uqual sign)
-	*	@code
-	*	dui.withOpt("key = value");
-	*/
+	 * @brief Specify an option
+	 * @param key value pair separated by '=' (uqual sign)
+	 * @code
+	 * 	dui.withOpt("key = value");
+	 */
 	SDebugUI withOpt(string opt) {
 		if (isServer()) return this;
 		int index = opt.IndexOf("=");
@@ -162,14 +162,14 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Specify a list of options
-	*	@param array of key value pair separated by '=' (uqual sign)
-	*	@code
-	*	dui.with({
-	*		"key = value"
-	*		"key2 = value2"
-	*	});
-	*/
+	 * @brief Specify a list of options
+	 * @param array of key value pair separated by '=' (uqual sign)
+	 * @code
+	 * 	dui.with({
+	 * 		"key = value",
+	 * 		"key2 = value2"
+	 * 	});
+	 */
 	SDebugUI with(array<string> opts) {
 		if (isServer()) return this;
 		foreach (string opt : opts) {
@@ -179,13 +179,13 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Specify a list of key=value options
-	*	@param map of options
-	*	@code
-	*	auto opts = new map<string, string>();
-	*	opts["pos"] = "69px"
-	*	dui.with(opts);
-	*/
+	 * @brief Specify a list of key=value options
+	 * @param map of options
+	 * @code
+	 * 	auto opts = new map<string, string>();
+	 * 	opts["pos"] = "69px"
+	 * 	dui.withOpts(opts);
+	 */
 	SDebugUI withOpts(map<string, string> opts) {
 		if (isServer()) return this;
 		foreach (string key, string value : opts) {
@@ -201,26 +201,26 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Build a new window
-	*	@param title - title of the window
-	*	@param sizePx - X and Y size defined in pixels
-	*	@param posPx - X and Y position defined in pixels
-	*	@return Widget - new window created
-	*
-	*	@note options:
-	*	bg
-	*		type: color
-	*		default: #00000088
-	*	size
-	*		type: "dimension dimension"
-	*		default:
-	*	pos
-	*		type: "dimension dimension"
-	*		default:
-	*	body.bg
-	*		type: color
-	*		default: #00000088
-	*/
+	 * @brief Build a new window
+	 * @param title - title of the window
+	 * @param sizePx - X and Y size defined in pixels
+	 * @param posPx - X and Y position defined in pixels
+	 * @return Widget - new window created
+	 *
+	 * @note options:
+	 * 	- bg
+	 * 		type: color
+	 * 		default: #00000088
+	 * 	- size
+	 * 		type: "dimension dimension"
+	 * 		default:
+	 * 	- pos
+	 * 		type: "dimension dimension"
+	 * 		default:
+	 * 	- body.bg
+	 * 		type: color
+	 * 		default: #00000088
+	 */
 	Widget window(string title = "") {
 		if (isServer()) return null;
 
@@ -248,11 +248,11 @@ class SDebugUI : ScriptedWidgetEventHandler {
 
 
 	/**
-	*	@brief Create a checkbox
-	*	@param name - name of the widget
-	*	@param variable - variable to link
-	*	@return CheckBoxWidget
-	*/
+	 * @brief Create a checkbox
+	 * @param name - name of the widget
+	 * @param variable - variable to link
+	 * @return CheckBoxWidget
+	 */
 	CheckBoxWidget check(string name, out bool variable) {
 		if (isServer() || disabled) return null;
 		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
@@ -271,15 +271,15 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Create a checkbox
-	*	@param name - name of the widget
-	*	@return true if checked, false otherwise
-	*
-	*	@note options:
-	*	checkbox.default
-	*		type: boolean
-	*		default: false
-	*/
+	 * @brief Create a checkbox
+	 * @param name - name of the widget
+	 * @return true if checked, false otherwise
+	 *
+	 * @note options:
+	 * 	- checkbox.default
+	 * 		type: boolean
+	 * 		default: false
+	 */
 	bool check(string name) {
 		if (isServer() || disabled) return false;
 		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
@@ -296,10 +296,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Create a button
-	*	@param text - text to show next i nthe button
-	*	@return ButtonWidget
-	*/
+	 * @brief Create a button
+	 * @param text - text to show next i nthe button
+	 * @return ButtonWidget
+	 */
 	ButtonWidget button(string text, Class instance, string function, Param params = null) {
 		if (isServer() || disabled) return null;
 		ButtonWidget w  = ButtonWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/button.layout"));
@@ -312,10 +312,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Create a text widget
-	*	@param text -
-	*	@return TextWidget
-	*/
+	 * @brief Create a text widget
+	 * @param text -
+	 * @return TextWidget
+	 */
 	TextWidget text(string text) {
 		if (isServer() || disabled) return null;
 		TextWidget w  = TextWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/text.layout"));
@@ -325,10 +325,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Create a rich text widget
-	*	@param text -
-	*	@return RichTextWidget
-	*/
+	 * @brief Create a rich text widget
+	 * @param text -
+	 * @return RichTextWidget
+	 */
 	RichTextWidget textrich(string text) {
 		if (isServer() || disabled) return null;
 		RichTextWidget w  = RichTextWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/textrich.layout"));
@@ -338,25 +338,25 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Create a slider
-	*	@param name - name of the slider
-	*	@param float - value to link to the slider
-	*	@param float - step value of the slider
-	*	@param float - max value of the slider
-	*	@param float - min value of the slider
-	*	@return SliderWidget
-	*	
-	*	@note options:
-	*	slider.step
-	*		type: float
-	*		default: 0.01
-	*	slider.min
-	*		type: float
-	*		default: 0
-	*	slider.max
-	*		type: float
-	*		default: 1
-	*/
+	 * @brief Create a slider
+	 * @param name - name of the slider
+	 * @param float - value to link to the slider
+	 * @param float - step value of the slider
+	 * @param float - max value of the slider
+	 * @param float - min value of the slider
+	 * @return SliderWidget
+	 * 
+	 * @note options:
+	 * 	- slider.step
+	 * 		type: float
+	 * 		default: 0.01
+	 * 	- slider.min
+	 * 		type: float
+	 * 		default: 0
+	 * 	- slider.max
+	 * 		type: float
+	 * 		default: 1
+	 */
 	SliderWidget slider(string name, out float value) {
 		if (isServer() || disabled) return null;
 		SliderWidget w = SliderWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/slider.layout"));
@@ -379,19 +379,19 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Create a table which contains text.
-	*	@param sizePx - X and Y size defined in pixel
-	*	@param data - matrix of rows and columns of string data
-	*	@return WrapSpacerWidget
-	*
-	*	@note options:
-	*	table.cell.flags.set
-	*		type: WidgetFlags
-	*		default:
-	*	table.cell.flags.unset
-	*		type: WidgetFlags
-	*		default:
-	*/
+	 * @brief Create a table which contains text.
+	 * @param sizePx - X and Y size defined in pixel
+	 * @param data - matrix of rows and columns of string data
+	 * @return WrapSpacerWidget
+	 *
+	 * @note options:
+	 * 	- table.cell.flags.set
+	 * 		type: WidgetFlags
+	 * 		default:
+	 * 	- table.cell.flags.unset
+	 * 		type: WidgetFlags
+	 * 		default:
+	 */
 	WrapSpacerWidget table(array<ref array<string>> data) {
 		if (isServer() || disabled) return null;
 		WrapSpacerWidget w = WrapSpacerWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/table.layout"));
@@ -427,16 +427,16 @@ class SDebugUI : ScriptedWidgetEventHandler {
 
 
 	/**
-	*	@brief Create a plot to draw lines
-	*	@param sizePx - X and Y size defined in pixel
-	*	@param title - title of the plot
-	*	@return CanvasWidget
-	*
-	*	@note options:
-	*	canvas.title
-	*		type: string
-	*		default: ""
-	*/
+	 * @brief Create a plot to draw lines
+	 * @param sizePx - X and Y size defined in pixel
+	 * @param title - title of the plot
+	 * @return CanvasWidget
+	 *
+	 * @note options:
+	 * 	- canvas.title
+	 * 		type: string
+	 * 		default: ""
+	 */
 	CanvasWidget canvas() {
 		if (isServer() || disabled) return null;
 		Widget w = widget("MyMODS/sFramework/GUI/layouts/debug/canvas.layout", false);
@@ -453,41 +453,41 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Plot live data
-	*	@param title - title of the plot
-	*	@param y - y axis data
-	*	@return CanvasWidget
-	*	@note options:
-	*	@see canvas()
-	*	plot.min
-	*		type: float
-	*		default: 0.0
-	*	plot.max
-	*		type: float
-	*		default: 1.0
-	*	plot.offset.x
-	*		type: px
-	*		default: 0
-	*	plot.offset.y
-	*		type: px
-	*		default: 0
-	*	plot.scale.x
-	*		type: px
-	*		default: 1
-	*	plot.scale.y
-	*		type: px
-	*		default: 1
-	*	plot.history.size
-	*		type: int
-	*		default: 50
-	*	plot.pen.width
-	*		type: px
-	*		default: 3
-	*	plot.pen.color
-	*		type: "#RRGGBBaa"
-	*		default: "#F0544Cff"
-	*
-	*/
+	 * @brief Plot live data
+	 * @param title - title of the plot
+	 * @param y - y axis data
+	 * @return CanvasWidget
+	 *
+	 * @note options:
+	 * @see canvas()
+	 * 	- plot.min
+	 * 		type: float
+	 * 		default: 0.0
+	 * 	- plot.max
+	 * 		type: float
+	 * 		default: 1.0
+	 * 	- plot.offset.x
+	 * 		type: px
+	 * 		default: 0
+	 * 	- plot.offset.y
+	 * 		type: px
+	 * 		default: 0
+	 * 	- plot.scale.x
+	 * 		type: px
+	 * 		default: 1
+	 * 	- plot.scale.y
+	 * 		type: px
+	 * 		default: 1
+	 * 	- plot.history.size
+	 * 		type: int
+	 * 		default: 50
+	 * 	- plot.pen.width
+	 * 		type: px
+	 * 		default: 3
+	 * 	- plot.pen.color
+	 * 		type: "#RRGGBBaa"
+	 * 		default: "#F0544Cff"
+	 */
 	CanvasWidget plotlive(string title, float y) {
 		if (isServer() || disabled) return null;
 		CanvasWidget c = canvas();
@@ -537,38 +537,37 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Create a plot to draw lines
-	*	@param lines - list of lines (which is a list of point (which is a couple of X and Y coordinates))
-	*	@return CanvasWidget
-	*
-	*	@note options:
-	*	@see canvas()
-	*	plot.min
-	*		type: float
-	*		default: 0.0
-	*	plot.max
-	*		type: float
-	*		default: 1.0
-	*	plot.offset.x
-	*		type: px
-	*		default: 0
-	*	plot.offset.y
-	*		type: px
-	*		default: 0
-	*	plot.scale.x
-	*		type: px
-	*		default: 1
-	*	plot.scale.y
-	*		type: px
-	*		default: 1
-	*	plot.pen.width
-	*		type: px
-	*		default: 3
-	*	plot.pen.color
-	*		type: "#RRGGBBaa"
-	*		default: "#F0544Cff"
-	*
-	*/
+	 * @brief Create a plot to draw lines
+	 * @param lines - list of lines (which is a list of point (which is a couple of X and Y coordinates))
+	 * @return CanvasWidget
+	 *
+	 * @note options:
+	 * @see canvas()
+	 * 	- plot.min
+	 * 		type: float
+	 * 		default: 0.0
+	 * 	- plot.max
+	 * 		type: float
+	 * 		default: 1.0
+	 * 	- plot.offset.x
+	 * 		type: px
+	 * 		default: 0
+	 * 	- plot.offset.y
+	 * 		type: px
+	 * 		default: 0
+	 * 	- plot.scale.x
+	 * 		type: px
+	 * 		default: 1
+	 * 	- plot.scale.y
+	 * 		type: px
+	 * 		default: 1
+	 * 	- plot.pen.width
+	 * 		type: px
+	 * 		default: 3
+	 * 	- plot.pen.color
+	 * 		type: "#RRGGBBaa"
+	 * 		default: "#F0544Cff"
+	 */
 	CanvasWidget plot(array<ref TLine> lines = null) {
 		if (isServer() || disabled) return null;
 		CanvasWidget c = canvas();
@@ -601,10 +600,10 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Create a spacer
-	*	@param size - X and Y size defined in screen space (0.0 - 1.0)
-	*	@return Widget
-	*/
+	 * @brief Create a spacer
+	 * @param size - X and Y size defined in screen space (0.0 - 1.0)
+	 * @return Widget
+	 */
 	Widget spacer() {
 		if (isServer() || disabled) return null;
 		return widget("MyMODS/sFramework/GUI/layouts/debug/spacer.layout");
@@ -612,35 +611,35 @@ class SDebugUI : ScriptedWidgetEventHandler {
 
 
 	/**
-	*	@brief Create a new line
-	*	@param size - height of the empty line
-	*	@return Widget
-	*/
+	 * @brief Create a new line
+	 * @param size - height of the empty line
+	 * @return Widget
+	 */
 	Widget newline(string height = "1px") {
 		if (isServer() || disabled) return null;
 		return withOpt("size", "1 " + height).spacer();
 	}
 
 	/**
-	*	@brief Create a widget
-	*	@param layout - .layout file to load
-	*	@param name - name of the root widget
-	*	@return Widget
-	*
-	*	@note options:
-	*	name
-	*		type: string
-	*		default:
-	*	bg
-	*		type: color
-	*		default: #F0544CFF
-	*	size
-	*		type: "dimension dimension"
-	*		default:
-	*	pos
-	*		type: "dimension dimension"
-	*		default:
-	*/
+	 * @brief Create a widget
+	 * @param layout - .layout file to load
+	 * @param name - name of the root widget
+	 * @return Widget
+	 *
+	 * @note options:
+	 * 	- name
+	 * 		type: string
+	 * 		default:
+	 * 	- bg
+	 * 		type: color
+	 * 		default: #F0544CFF
+	 * 	- size
+	 * 		type: "dimension dimension"
+	 * 		default:
+	 * 	- pos
+	 * 		type: "dimension dimension"
+	 * 		default:
+	 */
 	Widget widget(string layout, bool consumeCommonOptions = true) {
 		if (isServer() || disabled) return null;
 		Widget window = windows.peek();
@@ -662,8 +661,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Mark the beginning of the DUI scope
-	*/
+	 * @brief Mark the beginning of the DUI scope
+	 */
 	bool begin() {
 		if (isServer()) return false;
 		foreach (auto button, auto callback : buttonsCallbacks) {
@@ -676,8 +675,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Mark the end of the DUI scope
-	*/
+	 * @brief Mark the end of the DUI scope
+	 */
 	void end() {
 		// TODO: add autohide option
 	}
@@ -701,8 +700,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Clear the widgets
-	*/
+	 * @brief Clear the widgets
+	 */
 	void clear() {
 		buttonsCallbacks.Clear();
 		Widget w = windows.pop();
@@ -755,9 +754,9 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Recolor the widget and consume the color
-	*	@param widget to color
-	*/
+	 * @brief Recolor the widget and consume the color
+	 * @param widget to color
+	 */
 	protected void consumeBg(Widget w) {
 		if (options.Contains("bg")) {
 			string value = consume("bg");
@@ -767,9 +766,9 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Resize the widget and consume the size
-	*	@param widget to resize
-	*/
+	 * @brief Resize the widget and consume the size
+	 * @param widget to resize
+	 */
 	protected void consumeSize(Widget w) {
 		if (!options.Contains("size")) return;
 
@@ -806,9 +805,9 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Reposition the widget and consume the position
-	*	@param widget to reposition
-	*/
+	 * @brief Reposition the widget and consume the position
+	 * @param widget to reposition
+	 */
 	protected void consumePos(Widget w) {
 		if (!options.Contains("pos")) return;
 
@@ -844,17 +843,17 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	}
 
 	/**
-	*	@brief Parse a string into an array of dimensions
-	*	@param words to parse
-	*	@return array<(float_value, isInPixel)>
-	*
-	*	@code
-	*	parseScreenUnits("69px");           //69px
-	*	parseScreenUnits("0.69");           //69%
-	*	parseScreenUnits("69px 420px");     //69px, 420px
-	*	parseScreenUnits("0.5 0.42");       //50%, 42%
-	*	parseScreenUnits("69px 0.42 1.0");  //69px, 42%, 100%
-	*/
+	 * @brief Parse a string into an array of dimensions
+	 * @param words to parse
+	 * @return array<(float_value, isInPixel)>
+	 *
+	 * @code
+	 * 	parseScreenUnits("69px");           //69px
+	 * 	parseScreenUnits("0.69");           //69%
+	 * 	parseScreenUnits("69px 420px");     //69px, 420px
+	 * 	parseScreenUnits("0.5 0.42");       //50%, 42%
+	 * 	parseScreenUnits("69px 0.42 1.0");  //69px, 42%, 100%
+	 */
 	protected static array<ref TScreenUnit> parseScreenUnits(string words) {
 		array<ref TScreenUnit> units = {};
 		array<string> temp = {};

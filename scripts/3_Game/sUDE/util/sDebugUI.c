@@ -281,17 +281,8 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	 * 		default: false
 	 */
 	bool check(string name) {
-		if (isServer() || disabled) return false;
-		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
-		if (!w) return false;
 		bool checked = consumeOrDefault("checkbox.default", false);
-		w.SetName(name);
-		w.SetText(name);
-		if (statesCheckbox.Contains(name)) {
-			checked = statesCheckbox.Get(name);
-		}
-		statesCheckbox.Set(name, checked);
-		w.SetChecked(checked);
+		check(name, checked);
 		return checked;
 	}
 
@@ -307,7 +298,6 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		w.SetText(text);
 		w.SetName(text);
 		buttonsCallbacks.Set(w, new SDebugButtonCallback(instance, function, params));
-
 		return w;
 	}
 
@@ -376,6 +366,27 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		TextWidget.Cast(w.FindAnyWidget("name")).SetText(name);
 		TextWidget.Cast(w.FindAnyWidget("value")).SetText(""+value);
 		return w;
+	}
+
+	/**
+	 * @brief Create a slider
+	 * @param name - name of the slider
+	 * @param float - value to link to the slider
+	 * @param float - step value of the slider
+	 * @param float - max value of the slider
+	 * @param float - min value of the slider
+	 * @return the value of the slider
+	 * 
+	 * @note options:
+	 * 	@see slider
+	 * 	- slider.default
+	 * 		type: float
+	 * 		default: 0.0
+	 */
+	float slider(string name) {
+		float value = consumeOrDefault("slider.default", 0.0);
+		slider(name, value);
+		return value;
 	}
 
 	/**

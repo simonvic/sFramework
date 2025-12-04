@@ -8,22 +8,20 @@
 		// Example usage for per-frame update
 		void OnUpdate(float timeslice) {
 			auto dui = SDebugUI.of("TestDebugUI");
-			dui.begin();
-			dui.window("Debug monitor");
+			if (dui.begin()) {
+				dui.window("Debug monitor");
 				dui.text("Day Time : " + GetGame().GetDayTime());
 				dui.newline();
 
 				dui.textrich("<image set='dayz_gui' name='icon_pin' /> ");
 				dui.textrich("You can click on the slider, or you can use the mouse wheel");
 				dui.textrich("If you hold shift while using mouse wheel, it will go wrooom!");
-				float sliderValue;
-				dui.slider("mySlider", sliderValue);
+				float sliderValue = dui.slider("mySlider");
 				dui.textrich("The value of <font name='gui/fonts/amorserifpro'>sliderValue</font> is: <b>"+ sliderValue +"</b>");
 
-				bool checkValue
-				dui.check("myCheck", checkValue);
-				dui.text("CheckValue: " + checkValue);
-				dui.button("click me", this, "printSum", new Param2<int,int>(69, 420));
+				if (dui.check("show live plot")) {
+					dui.plotlive("Sin", Easing.EaseInBounce(Math.AbsFloat(Math.Sin(m_time))));
+				}
 				dui.newline();
 				dui.table({
 					{"Attribute",    "Value"},
@@ -32,8 +30,9 @@
 					{"VoIP volume",  ""+GetGame().GetSoundScene().GetVOIPVolume()},
 					{"VoIP level",   ""+GetGame().GetSoundScene().GetAudioLevel()}
 				});
-				dui.plotlive("Sin", Easing.EaseInBounce(Math.AbsFloat(Math.Sin(m_time))));
-			dui.end();
+				dui.button("click me", this, "printSum", new Param2<int,int>(69, 420));
+				dui.end();
+			}
 		}
 
 		void printSum(int x, int y) {

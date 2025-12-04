@@ -274,20 +274,24 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	*	@brief Create a checkbox
 	*	@param name - name of the widget
 	*	@return true if checked, false otherwise
+	*
+	*	@note options:
+	*	checkbox.default
+	*		type: boolean
+	*		default: false
 	*/
 	bool check(string name) {
 		if (isServer() || disabled) return false;
 		CheckBoxWidget w = CheckBoxWidget.Cast(widget("MyMODS/sFramework/GUI/layouts/debug/checkbox.layout"));
 		if (!w) return false;
+		bool checked = consumeOrDefault("checkbox.default", false);
 		w.SetName(name);
 		w.SetText(name);
-		bool checked; // TODO: add default flag
 		if (statesCheckbox.Contains(name)) {
 			checked = statesCheckbox.Get(name);
-			w.SetChecked(checked);
-		} else {
-			statesCheckbox.Set(name, checked);
 		}
+		statesCheckbox.Set(name, checked);
+		w.SetChecked(checked);
 		return checked;
 	}
 
@@ -716,7 +720,16 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		}
 		return defaultValue;
 	}
-	
+
+	protected bool consumeOrDefault(string option, bool defaultValue) {
+		if (options.Contains(option)) {
+			string value = options.Get(option);
+			options.Remove(option);
+			return value == "true";
+		}
+		return defaultValue;
+	}
+
 	protected int consumeOrDefault(string option, int defaultValue) {
 		if (options.Contains(option)) {
 			string value = options.Get(option);

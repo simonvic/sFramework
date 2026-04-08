@@ -263,6 +263,7 @@ class SLOG {
 		}
 		if (variable.IsInherited(array)) {
 			string entries;
+			// TODO: replace with StaticType() ?
 			string arrayType = variable.Type().ToString();
 			switch (arrayType) {
 

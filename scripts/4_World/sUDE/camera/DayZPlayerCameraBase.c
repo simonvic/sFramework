@@ -5,8 +5,11 @@ modded class DayZPlayerCameraBase {
 	
 	override void OnActivate(DayZPlayerCamera pPrevCamera, DayZPlayerCameraResult pPrevCameraResult) {
 		super.OnActivate(pPrevCamera, pPrevCameraResult);
-		if (DayZPlayerCameraBase.Cast(pPrevCamera)) {
-			m_enteringTransitionTime = DayZPlayerCameras.GetTransitionTime(DayZPlayerCameraBase.Cast(pPrevCamera).getRegisteredCameraID(), this.getRegisteredCameraID());
+		DayZPlayerCameraBase prevCamera;
+		if (Class.CastTo(pPrevCamera, prevCamera)) {
+			m_enteringTransitionTime = DayZPlayerCameras.GetTransitionTime(
+				prevCamera.getRegisteredCameraID(),
+				this.getRegisteredCameraID());
 		}
 	}
 	

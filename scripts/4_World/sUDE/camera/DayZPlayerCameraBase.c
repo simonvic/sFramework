@@ -1,8 +1,8 @@
+// TODO: move to sGunplay?
 modded class DayZPlayerCameraBase {
 
-	
 	protected float m_enteringTransitionTime = DayZPlayerCameras.DEFAULT_UNREGISTERED_TIME;
-	
+
 	override void OnActivate(DayZPlayerCamera pPrevCamera, DayZPlayerCameraResult pPrevCameraResult) {
 		super.OnActivate(pPrevCamera, pPrevCameraResult);
 		DayZPlayerCameraBase prevCamera;
@@ -12,15 +12,11 @@ modded class DayZPlayerCameraBase {
 				this.getRegisteredCameraID());
 		}
 	}
-	
-	override void OnUpdate(float pDt, out DayZPlayerCameraResult pOutResult) {
-		super.OnUpdate(pDt, pOutResult);
-	}
-	
+
 	float getTransitionTime() {
 		return m_enteringTransitionTime;
 	}
-	
+
 	int getRegisteredCameraID() {
 		return -1;
 	}

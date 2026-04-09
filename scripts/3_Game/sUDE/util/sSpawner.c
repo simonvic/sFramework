@@ -201,7 +201,7 @@ class SSpawner {
 	*	 @return object created (null if not created)
 	*/
 	static EntityAI spawn(string itemName, vector worldPosition) {
-		return EntityAI.Cast(GetGame().CreateObject(itemName, worldPosition));
+		return EntityAI.Cast(g_Game.CreateObject(itemName, worldPosition));
 	}
 	
 	/**

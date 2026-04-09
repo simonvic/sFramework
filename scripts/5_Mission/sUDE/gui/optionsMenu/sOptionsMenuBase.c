@@ -46,7 +46,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	void onBuild() {
 		m_infoBoxRoot = m_root.FindAnyWidget(getInfoBoxRootContainer());
 		if (m_infoBoxRoot) {
-			GetGame().GetWorkspace().CreateWidgets(getInfoBoxLayout(), m_infoBoxRoot);
+			g_Game.GetWorkspace().CreateWidgets(getInfoBoxLayout(), m_infoBoxRoot);
 			m_infoBoxWarning = m_infoBoxRoot.FindAnyWidget("c_warning");
 			hideInfoBoxWarning();
 		}

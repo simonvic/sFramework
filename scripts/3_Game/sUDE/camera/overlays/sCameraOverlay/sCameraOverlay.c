@@ -307,7 +307,7 @@ class SCameraOverlay : Managed {
 	
 	ImageWidget buildWidget(Widget parent) {
 		if (!m_widget) {
-			m_widget = ImageWidget.Cast(GetGame().GetWorkspace().CreateWidgets(getLayout(), parent));
+			m_widget = ImageWidget.Cast(g_Game.GetWorkspace().CreateWidgets(getLayout(), parent));
 		} else {
 			parent.AddChild(m_widget);
 		}

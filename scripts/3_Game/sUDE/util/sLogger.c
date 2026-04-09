@@ -402,12 +402,12 @@ class SLog {
 		string version;
 		string profileName;
 		string machineName;
-		if (GetGame()) {
-			GetGame().GetPlayerName(playerName);			
-			avgFPS = GetGame().GetFps();			
-			tickTime = GetGame().GetTickTime();
-			GetGame().GetWorldName(worldName);
-			GetGame().GetVersion(version);
+		if (g_Game) {
+			g_Game.GetPlayerName(playerName);
+			avgFPS = g_Game.GetFps();
+			tickTime = g_Game.GetTickTime();
+			g_Game.GetWorldName(worldName);
+			g_Game.GetVersion(version);
 		}
 		profileName = GetProfileName();
 		machineName = GetMachineName();

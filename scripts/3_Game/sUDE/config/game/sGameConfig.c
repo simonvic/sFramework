@@ -127,7 +127,7 @@ class SGameConfig {
 	*/
 	static string getChildName(string path, int index) {
 		string name;
-		GetGame().ConfigGetChildName(path, index, name);
+		g_Game.ConfigGetChildName(path, index, name);
 		return name;
 	}
 	
@@ -138,7 +138,7 @@ class SGameConfig {
 	*/
 	static TStringArray getChildrenNames(string path) {
 		TStringArray children = new TStringArray();
-		int count = GetGame().ConfigGetChildrenCount(path);
+		int count = g_Game.ConfigGetChildrenCount(path);
 		for (int i=0; i<count; i++) {
 			children.InsertAt(getChildName(path, i), 0);
 		}
@@ -155,7 +155,7 @@ class SGameConfig {
 		path.Split(" ", pathWords);
 		auto root = new STreeNode<string>(pathWords.Get(pathWords.Count() - 1));
 		
-		int count = GetGame().ConfigGetChildrenCount(path);
+		int count = g_Game.ConfigGetChildrenCount(path);
 		for (int i=0; i<count; i++) {
 			root.addChild(getTree(path + " " + getChildName(path, i)));
 		}
@@ -173,39 +173,39 @@ class SGameConfig {
 	
 	
 	static void get(string path, out int value) {
-		value = GetGame().ConfigGetInt(path);
+		value = g_Game.ConfigGetInt(path);
 	}
 	
 	static void get(string path, out float value) {
-		value = GetGame().ConfigGetFloat(path);
+		value = g_Game.ConfigGetFloat(path);
 	}
 	
 	static void get(string path, out bool value) {
-		value = GetGame().ConfigGetInt(path);
+		value = g_Game.ConfigGetInt(path);
 	}
 	
 	static void get(string path, out string value) {
-		GetGame().ConfigGetText(path, value);
+		g_Game.ConfigGetText(path, value);
 	}
 	
 	static void get(string path, out vector value) {
-		value = GetGame().ConfigGetVector(path);
+		value = g_Game.ConfigGetVector(path);
 	}
 	
 	static void get(string path, out typename value) {
-		value = GetGame().ConfigGetTextOut(path).ToType();	
+		value = g_Game.ConfigGetTextOut(path).ToType();
 	}
 	
 	static void get(string path, inout TIntArray values) {
-		GetGame().ConfigGetIntArray(path, values);
+		g_Game.ConfigGetIntArray(path, values);
 	}
 	
 	static void get(string path, inout TFloatArray values) {
-		GetGame().ConfigGetFloatArray(path, values);
+		g_Game.ConfigGetFloatArray(path, values);
 	}
 	
 	static void get(string path, inout TStringArray values) {
-		GetGame().ConfigGetTextArray(path, values);
+		g_Game.ConfigGetTextArray(path, values);
 	}
 	
 	static void get(string path, inout TTypenameArray values) {

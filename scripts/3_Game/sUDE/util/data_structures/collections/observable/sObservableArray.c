@@ -42,7 +42,7 @@ class SObservableArray<Class T> : Managed {
 	*/
 	protected void onChange() {
 		foreach (SArrayChangeListener listener : m_onChangeListeners) {
-			GetGame().GameScript.CallFunction(listener.param1, listener.param2, null, null);
+			g_Game.GameScript.CallFunction(listener.param1, listener.param2, null, null);
 		}
 	}
 	
@@ -55,7 +55,7 @@ class SObservableArray<Class T> : Managed {
 	protected void onInsert(T value, int insertPosition) {
 		onChange();
 		foreach (SArrayInsertListener listener : m_onInsertListeners) {
-			GetGame().GameScript.CallFunctionParams(listener.param1, listener.param2, null, new Param2<T,int>(value, insertPosition));
+			g_Game.GameScript.CallFunctionParams(listener.param1, listener.param2, null, new Param2<T,int>(value, insertPosition));
 		}
 	}
 	
@@ -67,7 +67,7 @@ class SObservableArray<Class T> : Managed {
 	protected void onPreRemove(int index) {
 		onChange();
 		foreach (SArrayPreRemoveListener listener : m_onPreRemoveListeners) {
-			GetGame().GameScript.CallFunctionParams(listener.param1, listener.param2, null, new Param1<int>(index));
+			g_Game.GameScript.CallFunctionParams(listener.param1, listener.param2, null, new Param1<int>(index));
 		}
 	}
 	
@@ -78,7 +78,7 @@ class SObservableArray<Class T> : Managed {
 	protected void onClear() {
 		onChange();
 		foreach (SArrayClearListener listener : m_onClearListeners) {
-			GetGame().GameScript.CallFunctionParams(listener.param1, listener.param2, null, null);
+			g_Game.GameScript.CallFunctionParams(listener.param1, listener.param2, null, null);
 		}
 	}
 	

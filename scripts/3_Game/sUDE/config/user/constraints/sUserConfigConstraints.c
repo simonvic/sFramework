@@ -27,7 +27,7 @@ class SUserConfigConstraints {
 	 * @return loaded module, null on fail
 	 */
 	SUserConfigConstraintsBase load(typename moduleType, bool reload = false) {
-		if (GetGame().IsClient()) {
+		if (g_Game.IsClient()) {
 			SLOG.w("SUserConfigConstraints::load", "Trying to load user config constraints from client!, Ignoring...");
 			return null;
 		}

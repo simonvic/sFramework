@@ -5,7 +5,7 @@ modded class IngameHud {
 	
 	void IngameHud() {
 		m_cameraOverlayManager = SCameraOverlaysManager.getInstance();
-		m_overlaysRoot = GetGame().GetWorkspace().CreateWidgets( getOverlayLayoutName(), m_HudPanelWidget );
+		m_overlaysRoot = g_Game.GetWorkspace().CreateWidgets( getOverlayLayoutName(), m_HudPanelWidget );
 	}
 	
 	string getOverlayLayoutName() {

@@ -525,7 +525,7 @@ class SomeClass {
         auto dui = SDebugUI.of("TestDebugUI");
         dui.begin();
         dui.window("Debug monitor");
-            dui.text("Day Time : " + GetGame().GetDayTime());
+            dui.text("Day Time : " + g_Game.GetDayTime());
             dui.newline();
             
             dui.textrich("<image set='dayz_gui' name='icon_pin' /> ");
@@ -542,10 +542,10 @@ class SomeClass {
             dui.newline();
             dui.table({
                 {"Attribute",    "Value"},
-                {"Time",         ""+GetGame().GetTickTime()},
-                {"Radio volume", ""+GetGame().GetSoundScene().GetRadioVolume()},
-                {"VoIP volume",  ""+GetGame().GetSoundScene().GetVOIPVolume()},
-                {"VoIP level",   ""+GetGame().GetSoundScene().GetAudioLevel()}
+                {"Time",         ""+g_Game.GetTickTime()},
+                {"Radio volume", ""+g_Game.GetSoundScene().GetRadioVolume()},
+                {"VoIP volume",  ""+g_Game.GetSoundScene().GetVOIPVolume()},
+                {"VoIP level",   ""+g_Game.GetSoundScene().GetAudioLevel()}
             });
             dui.plotlive("Sin", Easing.EaseInBounce(Math.AbsFloat(Math.Sin(m_time))));
         dui.end();

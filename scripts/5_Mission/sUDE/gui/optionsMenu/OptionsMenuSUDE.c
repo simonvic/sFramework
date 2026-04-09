@@ -11,7 +11,7 @@ class OptionsMenuSUDE : ScriptedWidgetEventHandler {
 	}
 	
 	void OptionsMenuSUDE(Widget parent) {
-		m_root = GetGame().GetWorkspace().CreateWidgets( getLayout(), parent );
+		m_root = g_Game.GetWorkspace().CreateWidgets( getLayout(), parent );
 		initMenus();
 	}
 	
@@ -22,12 +22,12 @@ class OptionsMenuSUDE : ScriptedWidgetEventHandler {
 	}
 	
 	protected void addMenu(SOptionsMenuBase menu) {
-		ButtonWidget btn = ButtonWidget.Cast(GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/tab_head_button.layout",m_root.FindAnyWidget("header")) );
+		ButtonWidget btn = ButtonWidget.Cast(g_Game.GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/tab_head_button.layout",m_root.FindAnyWidget("header")) );
 		TextWidget.Cast(btn.FindAnyWidget("txt")).SetText(menu.getName());
 		btn.SetName(menu.getName());
 		btn.SetHandler(this);
 		
-		menu.setRoot( GetGame().GetWorkspace().CreateWidgets(menu.getLayout(), getMenusRoot()) );
+		menu.setRoot( g_Game.GetWorkspace().CreateWidgets(menu.getLayout(), getMenusRoot()) );
 		menu.onBuild();
 		if (m_menus.Count() == 0) {
 			TextWidget.Cast(btn.FindAnyWidget("txt")).SetColor(ARGB(255, 240, 84, 76));

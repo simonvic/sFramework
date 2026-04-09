@@ -10,7 +10,7 @@
 			auto dui = SDebugUI.of("TestDebugUI");
 			if (dui.begin()) {
 				dui.window("Debug monitor");
-				dui.text("Day Time : " + GetGame().GetDayTime());
+				dui.text("Day Time : " + g_Game.GetDayTime());
 				dui.newline();
 
 				dui.textrich("<image set='dayz_gui' name='icon_pin' /> ");
@@ -25,10 +25,10 @@
 				dui.newline();
 				dui.table({
 					{"Attribute",    "Value"},
-					{"Time",         ""+GetGame().GetTickTime()},
-					{"Radio volume", ""+GetGame().GetSoundScene().GetRadioVolume()},
-					{"VoIP volume",  ""+GetGame().GetSoundScene().GetVOIPVolume()},
-					{"VoIP level",   ""+GetGame().GetSoundScene().GetAudioLevel()}
+					{"Time",         ""+g_Game.GetTickTime()},
+					{"Radio volume", ""+g_Game.GetSoundScene().GetRadioVolume()},
+					{"VoIP volume",  ""+g_Game.GetSoundScene().GetVOIPVolume()},
+					{"VoIP level",   ""+g_Game.GetSoundScene().GetAudioLevel()}
 				});
 				dui.button("click me", this, "printSum", new Param2<int,int>(69, 420));
 				dui.end();
@@ -67,7 +67,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 	private void SDebugUI(string name) {
 		if (isServer()) return;
 		duiName = name;
-		root = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/root.layout");
+		root = g_Game.GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/root.layout");
 		root.SetHandler(this);
 		root.SetSort(999);
 		windows = new SStack<Widget>();
@@ -227,7 +227,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 
 		title = duiName + " / " + title;
 
-		Widget w = GetGame().GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/window.layout", root);
+		Widget w = g_Game.GetWorkspace().CreateWidgets("MyMODS/sFramework/GUI/layouts/debug/window.layout", root);
 		w.SetHandler(this);
 		consumeBg(w);
 		consumeSize(w);
@@ -417,7 +417,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			if (row == null || row.Count() == 0) continue;
 			float width = 1 / row.Count();
 			foreach (auto entry : row) {
-				TextWidget t = TextWidget.Cast(GetGame().GetWorkspace().CreateWidget(TextWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, w));
+				TextWidget t = TextWidget.Cast(g_Game.GetWorkspace().CreateWidget(TextWidgetTypeID, 0, 0, 1, 1, WidgetFlags.VISIBLE, 0xffffffff, 0, w));
 				t.SetFlags(WidgetFlags.CENTER | WidgetFlags.VCENTER | WidgetFlags.IGNOREPOINTER);
 				if (cellFlagsUnset != string.Empty) {
 					t.ClearFlags(cellFlagsUnset.ToInt());
@@ -657,7 +657,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 			SLOG.e(""+this, "No window to place widget on!");
 			return null;
 		}
-		Widget w = GetGame().GetWorkspace().CreateWidgets(layout, window.FindAnyWidget("body"));
+		Widget w = g_Game.GetWorkspace().CreateWidgets(layout, window.FindAnyWidget("body"));
 		w.SetHandler(this);
 
 		if (consumeCommonOptions) {
@@ -677,7 +677,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 		if (isServer()) return false;
 		foreach (auto button, auto callback : buttonsCallbacks) {
 			if (button.GetState()) {
-				GetGame().GameScript.CallFunctionParams(callback.instance, callback.function, null, callback.params);
+				g_Game.GameScript.CallFunctionParams(callback.instance, callback.function, null, callback.params);
 			}
 		}
 		clear();
@@ -989,7 +989,7 @@ class SDebugUI : ScriptedWidgetEventHandler {
 
 
 	protected bool isServer() {
-		return GetGame().IsDedicatedServer();
+		return g_Game.IsDedicatedServer();
 	}
 
 }

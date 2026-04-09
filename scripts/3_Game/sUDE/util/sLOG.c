@@ -173,10 +173,10 @@ class SLOG {
 		string version;
 		string profileName;
 		string machineName;
-		if (GetGame()) {
-			GetGame().GetPlayerName(playerName);			
-			GetGame().GetWorldName(worldName);
-			GetGame().GetVersion(version);
+		if (g_Game) {
+			g_Game.GetPlayerName(playerName);
+			g_Game.GetWorldName(worldName);
+			g_Game.GetVersion(version);
 		}
 		profileName = GetProfileName();
 		machineName = GetMachineName();
@@ -212,12 +212,12 @@ class SLOG {
 		float maxFPS = -1;
 		float avgFPS = -1;
 		float minFPS = -1;
-		if (GetGame()) {
-			avgFrametime = GetGame().GetFps();
-			tickTime = GetGame().GetTickTime();
-			maxFPS = GetGame().GetMaxFPS();
-			avgFPS = GetGame().GetAvgFPS();
-			minFPS = GetGame().GetMinFPS();
+		if (g_Game) {
+			avgFrametime = g_Game.GetFps();
+			tickTime = g_Game.GetTickTime();
+			maxFPS = g_Game.GetMaxFPS();
+			avgFPS = g_Game.GetAvgFPS();
+			minFPS = g_Game.GetMinFPS();
 		}
 		string footer;
 		footer += string.Format("--------------------------------------------------------------------\n");

@@ -55,7 +55,7 @@ class SUserConfig {
 	 * @return loaded module, null on fail
 	 */
 	SUserConfigBase load(typename moduleType, bool reload = false) {
-		if (GetGame().IsDedicatedServer()) {
+		if (g_Game.IsDedicatedServer()) {
 			SLOG.w("SUserConfig::load", "Trying to load user config from server!, Ignoring...");
 			return null;
 		}

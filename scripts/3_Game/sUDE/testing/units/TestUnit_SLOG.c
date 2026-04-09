@@ -12,7 +12,7 @@ class TestUnit_SLOG : STestUnit {
 	}
 
 	void testAll() {
-		SLOG.d(GetGame());
+		SLOG.d(g_Game);
 		SLOG.d(CGame);
 		SLOG.d(6.9);
 		SLOG.d(69);
@@ -20,7 +20,7 @@ class TestUnit_SLOG : STestUnit {
 		SLOG.d(Vector(0, 0, 0));
 		SLOG.d("hello world");
 
-		SLOG.d("caller", GetGame());
+		SLOG.d("caller", g_Game);
 		SLOG.d("caller", CGame);
 		SLOG.d("caller", 6.9);
 		SLOG.d("caller", 69);
@@ -28,7 +28,7 @@ class TestUnit_SLOG : STestUnit {
 		SLOG.d("caller", Vector(0, 0, 0));
 		SLOG.d("caller", "hello world");
 
-		SLOG.d(1, GetGame());
+		SLOG.d(1, g_Game);
 		SLOG.d(1, CGame);
 		SLOG.d(1, 6.9);
 		SLOG.d(1, 69);
@@ -36,7 +36,7 @@ class TestUnit_SLOG : STestUnit {
 		SLOG.d(1, Vector(0, 0, 0));
 		SLOG.d(1, "hello world");
 
-		SLOG.d(2, "caller", GetGame());
+		SLOG.d(2, "caller", g_Game);
 		SLOG.d(2, "caller", CGame);
 		SLOG.d(2, "caller", 6.9);
 		SLOG.d(2, "caller", 69);
@@ -47,7 +47,7 @@ class TestUnit_SLOG : STestUnit {
 	}
 
 	void testClasses() {
-		SLOG.d(GetGame());
+		SLOG.d(g_Game);
 		SLOG.d(null);
 		pass();
 	}

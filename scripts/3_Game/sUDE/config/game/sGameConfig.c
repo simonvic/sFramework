@@ -1,11 +1,11 @@
 class SGameConfig {
 
 	static const string CFG_BASENAME = "Cfg_sUDE";
-	
+
 	static string getCfgName() {
 		return CFG_BASENAME;
 	}
-	
+
 	/**
 	*	@brief Read integer from config.cpp
 	*	 @param path \p string - Path to read
@@ -16,7 +16,7 @@ class SGameConfig {
 		get(path, value);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Read float from config.cpp
 	*	 @param path \p string - Path to read
@@ -27,7 +27,7 @@ class SGameConfig {
 		get(path, value);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Read boolean from config.cpp
 	*	 @param path \p string - Path to read
@@ -38,7 +38,7 @@ class SGameConfig {
 		get(path, value);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Read string from config.cpp
 	*	 @param path \p string - Path to read
@@ -49,7 +49,7 @@ class SGameConfig {
 		get(path, value);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Read vector from config.cpp
 	*	 @param path \p string - Path to read
@@ -60,7 +60,7 @@ class SGameConfig {
 		get(path, value);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Read string from config.cpp and convert to typename
 	*	 @param path \p string - Path to read
@@ -71,7 +71,7 @@ class SGameConfig {
 		get(path, value);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Read array of integer from config.cpp
 	*	 @param path \p string - Path to read
@@ -82,7 +82,7 @@ class SGameConfig {
 		get(path, value);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Read array of float from config.cpp
 	*	 @param path \p string - Path to read
@@ -93,7 +93,7 @@ class SGameConfig {
 		get(path, value);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Read array of string from config.cpp
 	*	 @param path \p string - Path to read
@@ -104,7 +104,7 @@ class SGameConfig {
 		get(path, value);
 		return value;
 	}
-	
+
 	/**
 	*	@brief Read array of string from config.cpp and convert them to types
 	*	 @param path \p string - Path to read
@@ -118,7 +118,7 @@ class SGameConfig {
 		}
 		return value;
 	}
-	
+
 	/**
 	*	@brief Get the child name at index position
 	*	 @param path \p string - Path to read
@@ -130,7 +130,7 @@ class SGameConfig {
 		g_Game.ConfigGetChildName(path, index, name);
 		return name;
 	}
-	
+
 	/**
 	*	@brief Get the children names, one level deep
 	*	 @param path \p string - Path to read
@@ -144,7 +144,7 @@ class SGameConfig {
 		}
 		return children;
 	}
-	
+
 	/**
 	*	@brief Get a tree representation of the config.cpp
 	*	 @param path \p string - root path to read
@@ -154,62 +154,62 @@ class SGameConfig {
 		TStringArray pathWords = new TStringArray;
 		path.Split(" ", pathWords);
 		auto root = new STreeNode<string>(pathWords.Get(pathWords.Count() - 1));
-		
+
 		int count = g_Game.ConfigGetChildrenCount(path);
 		for (int i=0; i<count; i++) {
 			root.addChild(getTree(path + " " + getChildName(path, i)));
 		}
-		
+
 		return root;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
 	static void get(string path, out int value) {
 		value = g_Game.ConfigGetInt(path);
 	}
-	
+
 	static void get(string path, out float value) {
 		value = g_Game.ConfigGetFloat(path);
 	}
-	
+
 	static void get(string path, out bool value) {
 		value = g_Game.ConfigGetInt(path);
 	}
-	
+
 	static void get(string path, out string value) {
 		g_Game.ConfigGetText(path, value);
 	}
-	
+
 	static void get(string path, out vector value) {
 		value = g_Game.ConfigGetVector(path);
 	}
-	
+
 	static void get(string path, out typename value) {
 		value = g_Game.ConfigGetTextOut(path).ToType();
 	}
-	
+
 	static void get(string path, inout TIntArray values) {
 		g_Game.ConfigGetIntArray(path, values);
 	}
-	
+
 	static void get(string path, inout TFloatArray values) {
 		g_Game.ConfigGetFloatArray(path, values);
 	}
-	
+
 	static void get(string path, inout TStringArray values) {
 		g_Game.ConfigGetTextArray(path, values);
 	}
-	
+
 	static void get(string path, inout TTypenameArray values) {
 		values = getTypenameArray(path);
 	}
-	
+
 }

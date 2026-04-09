@@ -1,15 +1,15 @@
 typedef array<ref SSpawnable> TSSpawnableAttachments;
 
 class SSpawnable {
-	
+
 	protected string name;
 	protected ref TSSpawnableAttachments attachments = new TSSpawnableAttachments;
 	protected EntityAI entity = null;
-	
+
 	void SSpawnable(string itemName) {
 		name = itemName;
 	}
-	
+
 	/**
 	*	@brief Get an instance of a SSpawnable
 	*	 @return new instance
@@ -17,7 +17,7 @@ class SSpawnable {
 	static SSpawnable build(string itemName) {
 		return new SSpawnable(itemName);
 	}
-	
+
 	/**
 	*	@brief Add attachments
 	*	 @param attachmentsName \p array<string> - List of attachments names
@@ -34,7 +34,7 @@ class SSpawnable {
 		}
 		return this;
 	}
-	
+
 	/**
 	*	@brief Add attachment
 	*	 @param attachmentName \p string - Name of attachment
@@ -45,7 +45,7 @@ class SSpawnable {
 		attachments.Insert(new SSpawnable(attachmentName));
 		return this;
 	}	
-	
+
 	/**
 	*	@brief Add SSpawnable attachments
 	*	 @param newAttachments \p TSSpawnableAttachments - List of SSpawnable attachments
@@ -56,7 +56,7 @@ class SSpawnable {
 		}
 		return this;
 	}
-	
+
 	/**
 	*	@brief Add SSpawnable attachments
 	*	 @param newAttachments \p TSSpawnableAttachments - List of SSpawnable attachments
@@ -82,7 +82,7 @@ class SSpawnable {
 		withSpawnableAttachment(a9);
 		return this;
 	}
-	
+
 	/**
 	*	@brief Add SSpawnable attachment
 	*	 @param newAttachment \p SSpawnable - SSpawnable attachment
@@ -91,7 +91,7 @@ class SSpawnable {
 		if (newAttachment != null) attachments.Insert(newAttachment);
 		return this;
 	}
-	
+
 	/**
 	*	@brief Spawn the SSpawnable at the given world coordinates
 	*	 @param worldPosition \p vector - World Position coordinates
@@ -123,7 +123,7 @@ class SSpawnable {
 	EntityAI collect() {
 		return entity;
 	}
-	
+
 	/**
 	*	@brief Collect the spawned entity
 	*	 @param EntityAI [out] - spawned entity (null, if not spawned)
@@ -132,68 +132,68 @@ class SSpawnable {
 		outEntity = entity;
 		return this;
 	}
-	
+
 	string getName() {
 		return name;
 	}
-	
+
 	TSSpawnableAttachments getAttachments() {
 		return attachments;
 	}
-	
+
 	string toString() {
 		return string.Format("%1 = { name=%2 | attachments=%3 | entity=%4}",
 			this, getName(), attachmentsToString(), entity);
 	}
-	
+
 	private string attachmentsToString() {
 		string output = "[";
-		
+
 		foreach (SSpawnable a : attachments) {
 			output += a.toString() + " , \n";
 		}
-		
+
 		return output + "]";
 	}
-	
+
 	void debugPrint(int level = 0) {
 		SLOG.d(level, getName(), this);
 		debugPrintAttachments(level + 2);		
 	}
-	
+
 	void debugPrintAttachments(int level = 2) {
 		foreach (SSpawnable a : attachments) {
 			a.debugPrint(level);
 		}
 	}
-	
+
 }
 
 class SSpawnableBundle : Managed {
-	
+
 	protected ref array<ref SSpawnable> m_bundle = new array<ref SSpawnable>;
-	
+
 	void SSpawnableBundle(array<string> itemsNames) {
 		foreach (string itemName : itemsNames) {
 			build(itemName);
 		}
-		
+
 	}
-	
+
 	SSpawnable build(string itemName) {
 		SSpawnable item = new SSpawnable(itemName);
 		m_bundle.Insert(item);
 		return item;
 	}
-	
+
 	array<ref SSpawnable> getBundle() {
 		return m_bundle;
 	}
-	
+
 }
 
 class SSpawner {
-	
+
 	/**
 	*	@brief Spawn the item in the world
 	*	 @param itemName \p string - Name of the item
@@ -203,7 +203,7 @@ class SSpawner {
 	static EntityAI spawn(string itemName, vector worldPosition) {
 		return EntityAI.Cast(g_Game.CreateObject(itemName, worldPosition));
 	}
-	
+
 	/**
 	*	@brief Spawn the item in the given inventory
 	*	 @param itemName \p string - Name of the item

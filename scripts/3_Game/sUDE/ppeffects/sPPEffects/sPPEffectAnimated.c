@@ -15,31 +15,31 @@ class SPPEffectAnimated : SPPEffect {
 		onInit();
 		setAnimationState(ePPEAnimationStates.PLAYING);
 	}
-	
+
 	override void Stop(Param par = null) {
 		super.Stop(par);
 		m_time = 0;
 		resetAllToDefault();
 		setAnimationState(ePPEAnimationStates.STOPPED);
 	}
-	
+
 	override void OnUpdate(float delta) {
 		super.OnUpdate(delta);
 		animate(delta);
 	}
-	
+
 	void animate(float deltaTime) {
 		if (!isPlaying()) return;
-		
+
 		// cheat to keep the effect animating even if requested data is the same
 		// otherwise it would stop
 		SetRequesterUpdating(true);
 		m_time += deltaTime;
 		onAnimate(deltaTime);
 	}
-	
+
 	void onAnimate(float deltaTime);
-		
+
 	/**
 	*	@brief Set the animation state to PLAYING and reset the time
 	*/
@@ -47,21 +47,21 @@ class SPPEffectAnimated : SPPEffect {
 		SetRequesterUpdating(true);
 		Start();
 	}
-	
+
 	/**
 	*	@brief Reset values to default and prepare to stop
 	*/
 	void stop() {
 		Stop();
 	}
-	
+
 	/**
 	*	@brief Pause the animation from animating without resetting the time
 	*/
 	void pause() {
 		setAnimationState(ePPEAnimationStates.PAUSED);
 	}
-	
+
 	/**
 	*	@brief Resume the animation
 	*/
@@ -69,7 +69,7 @@ class SPPEffectAnimated : SPPEffect {
 		SetRequesterUpdating(true);
 		setAnimationState(ePPEAnimationStates.PLAYING);
 	}
-	
+
 	/**
 	*	@brief Get the time elapsed from the animation start
 	*	@return \p float - time elapsed
@@ -77,23 +77,23 @@ class SPPEffectAnimated : SPPEffect {
 	float getTime() {
 		return m_time;
 	}
-	
+
 	bool isPlaying() {
 		return m_animationState == ePPEAnimationStates.PLAYING;
 	}
-	
+
 	bool isPaused() {
 		return m_animationState == ePPEAnimationStates.PAUSED;
 	}
-	
+
 	bool hasStopped() {
 		return m_animationState == ePPEAnimationStates.STOPPED;
 	}
-	
+
 	ePPEAnimationStates getAnimationState() {
 		return m_animationState;
 	}
-	
+
 	protected void setAnimationState(ePPEAnimationStates state) {
 		m_animationState = state;
 	}

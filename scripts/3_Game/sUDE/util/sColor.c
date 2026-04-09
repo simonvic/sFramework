@@ -2,11 +2,11 @@
 class SColor {
 
 	protected int argbValue = 0xff000000; //current color represented in ARGB format
-	
+
 	void SColor(int r = 0, int g = 0, int b = 0, int a = 255) {
 		setRGBA(r, g, b, a);
 	}
-	
+
 	/**
 	*	@brief Set current color using r g b values
 	*	 @param r \p int - Red
@@ -17,7 +17,7 @@ class SColor {
 		argbValue = (getAlpha() << 24 ) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8)  | ((b & 0xFF) << 0);
 		return this;
 	}
-	
+
 	/**
 	*	@brief Set current color using RGB value (e.g. 0xF0544C)
 	*	 @param rgb \p int - Color represented in RGB format
@@ -26,8 +26,8 @@ class SColor {
 		setARGB((getAlpha() << 24 ) | rgb);
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Set current color using r g b a values
 	*	 @param r \p int - Red
@@ -39,7 +39,7 @@ class SColor {
 		setARGB(a, r, g, b);
 		return this;
 	}
-		
+
 	/**
 	*	@brief Set current color using RGBA value (e.g. 0xF0544Caa)
 	*	 @param rgba \p int - Color represented in RGBA format
@@ -48,8 +48,8 @@ class SColor {
 		argbValue = toARGB(rgba);
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Set current color using a r g b  values
 	*	 @param a \p int - Alpha
@@ -61,7 +61,7 @@ class SColor {
 		argbValue = ((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8)  | ((b & 0xFF) << 0);
 		return this;
 	}
-	
+
 	/**
 	*	@brief Set current color using ARGB value (e.g. 0xaaF0544C)
 	*	 @param argb \p int - Color represented in ARGB format
@@ -70,7 +70,7 @@ class SColor {
 		argbValue = argb;
 		return this;
 	}
-	
+
 	/**
 	*	@brief Set current color using hue, saturation, brightness values [0 - 1] (e.g. 0.03, 0.683, 0.941)
 	*	 @param hue \p float - Hue of color [0 - 1]
@@ -81,7 +81,7 @@ class SColor {
 		setARGB((getAlpha() << 24) | SColor.HSBtoRGB(hue, saturation, brightness));
 		return this;
 	}
-	
+
 	/**
 	*	@brief Set alpha value
 	*	 @param alpha \p int - Alpha
@@ -90,7 +90,7 @@ class SColor {
 		argbValue = (argbValue & 0x00ffffff) | (alpha << 24);
 		return this;
 	}
-	
+
 	/**
 	*	@brief Set red value
 	*	 @param red \p int - Red
@@ -99,7 +99,7 @@ class SColor {
 		argbValue = (argbValue & 0xff00ffff) | (red << 16);
 		return this;
 	}
-	
+
 	/**
 	*	@brief Set green value
 	*	 @param green \p int - Alpha
@@ -108,7 +108,7 @@ class SColor {
 		argbValue = (argbValue & 0xffff00ff) | (green << 8);
 		return this;
 	}
-	
+
 	/**
 	*	@brief Set blue value
 	*	 @param blue \p int - Alpha
@@ -117,8 +117,8 @@ class SColor {
 		argbValue = (argbValue & 0xffffff00) | blue;
 		return this;
 	}
-	
-		
+
+
 	/**
 	*	@brief Brighten the current color
 	*	 @param factor \p float - Factor of brightening [0 - 1]
@@ -128,7 +128,7 @@ class SColor {
 		int g = getGreen();
 		int b = getBlue();
 		int alpha = getAlpha();
-		
+
 		int i = (1.0/(1.0-factor));
 		if ( r == 0 && g == 0 && b == 0) {
 			setRGBA(i, i, i, alpha);
@@ -138,12 +138,13 @@ class SColor {
 		if ( g > 0 && g < i ) g = i;
 		if ( b > 0 && b < i ) b = i;
 
-		setRGBA(Math.Min((r/factor), 255),
-		        Math.Min((g/factor), 255),
-		        Math.Min((b/factor), 255),
-		        alpha);
+		setRGBA(
+			Math.Min((r/factor), 255),
+			Math.Min((g/factor), 255),
+			Math.Min((b/factor), 255),
+			alpha);
 		return this;
-		
+
 	}
 
 	/**
@@ -151,10 +152,11 @@ class SColor {
 	*	 @param factor \p float - Factor of darkening [0 - 1]
 	*/
 	SColor darken(float factor = 0.7) {
-		setRGBA(Math.Max((getRed() * factor), 0),
-		        Math.Max((getGreen() * factor), 0),
-		        Math.Max((getBlue() * factor), 0),
-		        getAlpha());
+		setRGBA(
+			Math.Max((getRed() * factor), 0),
+			Math.Max((getGreen() * factor), 0),
+			Math.Max((getBlue() * factor), 0),
+			getAlpha());
 		return this;
 	}
 
@@ -180,7 +182,7 @@ class SColor {
 		rgb[2] = getBlue();
 		return this;
 	}
-	
+
 	/**
 	*	@brief Get the current color represented in RGB format
 	*	 @return int - RGB color
@@ -188,7 +190,7 @@ class SColor {
 	int getRGB() {
 		return (getRGBA() >> 8) & 0xFFFFFF; // TODO: masked to reset sign bit. Find general solution to make it unsigned
 	}
-		
+
 	/**
 	*	@brief Get the current color represented in RGBA format
 	*	 @return int - RGBA color
@@ -196,7 +198,7 @@ class SColor {
 	int getRGBA() {
 		return SColor.toRGBA(getARGB());
 	}
-	
+
 	/**
 	*	@brief Get RGBA color array normalized 
 	*	@return array of {r, g, b, a}
@@ -209,7 +211,7 @@ class SColor {
 			SMath.normalize(getAlpha(), 0, 255)
 		};
 	}
-	
+
 	/**
 	*	@brief Get the current color represented in ARGB format
 	*	 @return int - ARGB color
@@ -217,7 +219,7 @@ class SColor {
 	int getARGB() {
 		return argbValue;
 	}
-	
+
 	/**
 	*	@brief Get the current alpha value (opacity)
 	*	 @return int - Alpha
@@ -249,8 +251,8 @@ class SColor {
 	int getBlue() {
 		return SColor.getBlue(getARGB());
 	}
-	
-	
+
+
 	/**
 	*	@brief Get the current color name (if present in RGBColors)
 	*	 @return string - Color name
@@ -258,15 +260,15 @@ class SColor {
 	string getRGBName() {
 		return SColor.getRGBName(this);
 	}
-	
+
 	bool equals(SColor color) {
 		return SColor.equals(this, color);
 	}
-	
+
 	bool equals(int argb) {
 		return SColor.equals(getARGB(), argb);
 	}
-	
+
 	SColor debugPrint(bool verbose = false) {
 		SLOG.d(""+this, string.Format("R: %1 | G: %2 | B: %3 | A: %4", getRed(), getGreen(), getBlue(), getAlpha()));
 		if (verbose) {
@@ -275,10 +277,10 @@ class SColor {
 		}
 		return this;
 	}
-	
+
 	////////////////////////////////////////////
 	// STATIC METHODS
-	
+
 	/**
 	*	@brief Build color from string representation
 	*	@param color - currently supported formats:
@@ -296,7 +298,7 @@ class SColor {
 		}
 		return SColor.rgba(0xFFFFFFFF);
 	}
-	
+
 	/**
 	*	@brief Build a color using another color represented in RGB format
 	*	 @param rgb \p int - Color
@@ -307,7 +309,7 @@ class SColor {
 		c.setRGB(rgb);
 		return c;
 	}
-	
+
 	/**
 	*	@brief Build a color using R G B values
 	*	 @param r \p int - Red
@@ -320,8 +322,8 @@ class SColor {
 		c.setRGB(r, g, b);
 		return c;
 	}
-	
-	
+
+
 	/**
 	*	@brief Build a color using another color represented in RGBA format
 	*	 @param rgba \p int - Color
@@ -332,7 +334,7 @@ class SColor {
 		c.setRGBA(rgba);
 		return c;
 	}
-	
+
 	/**
 	*	@brief Build a color using R G B A values
 	*	 @param r \p int - Red
@@ -346,8 +348,8 @@ class SColor {
 		c.setRGBA(r, g, b, a);
 		return c;
 	}
-	
-	
+
+
 	/**
 	*	@brief Build a color using another color represented in ARGB format
 	*	 @param argb \p int - Color
@@ -358,7 +360,7 @@ class SColor {
 		c.setARGB(argb);
 		return c;
 	}
-	
+
 	/**
 	*	@brief Build a color using A R G B values
 	*	 @param a \p int - Alpha
@@ -372,8 +374,8 @@ class SColor {
 		c.setARGB(a, r, g, b);
 		return c;
 	}
-	
-	
+
+
 	/**
 	*	@brief Build a color using hue, saturation and brightness values
 	*	 @param hue \p float - Hue of color [0 - 1]
@@ -386,7 +388,7 @@ class SColor {
 		c.setHSB(hue, saturation, brightness);
 		return c;
 	}
-	
+
 	/**
 	*	@brief Get the alpha value of the color represented in ARGB
 	*	 @param argb \p int - Color
@@ -422,7 +424,7 @@ class SColor {
 	static int getBlue(int argb) {
 		return (argb >> 0) & 0xFF;
 	}
-	
+
 	/**
 	*	@brief Convert a color represented in ARGB to RGBA
 	*	 @param argb \p int - Color
@@ -432,7 +434,7 @@ class SColor {
 		//remove alpha by shifting left, add alpha at the end
 		return ((argb << 8) | ((argb >> 24) & 0xff));
 	}
-	
+
 	/**
 	*	@brief Convert a color represented in RGBA to ARGB
 	*	 @param rgba \p int - Color
@@ -442,7 +444,7 @@ class SColor {
 		//get the alpha bits, move them to the left, move rgba to the right, insert alpha bits
 		return (((rgba >> 8) & 0x00ffffff) | ((rgba & 0x000000ff) << 24));
 	}
- 
+
 	/**
 	*	@brief Convert hue, saturation and brightness values to a RGB color
 	*	 @param hue \p float - Hue of color [0 - 1]
@@ -464,32 +466,32 @@ class SColor {
 			float t = brightness * (1.0 - (saturation * (1.0 - f)));
 			int h2 = h;
 			switch (h2) {
-			case 0:
+				case 0:
 				r = (brightness * 255.0 + 0.5);
 				g = (t * 255.0 + 0.5);
 				b = (p * 255.0 + 0.5);
 				break;
-			case 1:
+				case 1:
 				r = (q * 255.0 + 0.5);
 				g = (brightness * 255.0 + 0.5);
 				b = (p * 255.0 + 0.5);
 				break;
-			case 2:
+				case 2:
 				r = (p * 255.0 + 0.5);
 				g = (brightness * 255.0 + 0.5);
 				b = (t * 255.0 + 0.5);
 				break;
-			case 3:
+				case 3:
 				r = (p * 255.0 + 0.5);
 				g = (q * 255.0 + 0.5);
 				b = (brightness * 255.0 + 0.5);
 				break;
-			case 4:
+				case 4:
 				r = (t * 255.0 + 0.5);
 				g = (p * 255.0 + 0.5);
 				b = (brightness * 255.0 + 0.5);
 				break;
-			case 5:
+				case 5:
 				r = (brightness * 255.0 + 0.5);
 				g = (p * 255.0 + 0.5);
 				b = (q * 255.0 + 0.5);
@@ -498,7 +500,7 @@ class SColor {
 		}
 		return (r << 16) | (g << 8) | (b << 0);
 	}
-	
+
 	/**
 	*	@brief Convert an RGB color to hue, saturation and brightness values
 	*	 @param r \p int - Red
@@ -517,42 +519,46 @@ class SColor {
 		if (b < cmin) cmin = b;
 
 		brightness = ( cmax) / 255.0;
-		if (cmax != 0)
+		if (cmax != 0) {
 			saturation = ( (cmax - cmin)) / ( cmax);
-		else
+		} else {
 			saturation = 0;
-		if (saturation == 0)
+		}
+		if (saturation == 0) {
 			hue = 0;
+		}
 		else {
 			float redc = ( (cmax - r)) / ( (cmax - cmin));
 			float greenc = ( (cmax - g)) / ( (cmax - cmin));
 			float bluec = ( (cmax - b)) / ( (cmax - cmin));
-			if (r == cmax)
+			if (r == cmax) {
 				hue = bluec - greenc;
-			else if (g == cmax)
+			} else if (g == cmax) {
 				hue = 2.0 + redc - bluec;
-			else
+			} else {
 				hue = 4.0 + greenc - redc;
+			}
 			hue = hue / 6.0;
-			if (hue < 0)
+			if (hue < 0) {
 				hue = hue + 1.0;
+			}
 		}
 	}
-	
+
 	static string getRGBName(SColor color) {
 		return typename.EnumToString(RGBColors, Math.AbsInt(color.getRGB()));
 	}
-	
+
 	static bool equals(SColor color1, SColor color2) {
 		if (color1 == color2) return true;
 		if (color1 == null || color2 == null) return false;
 		return equals(color1.getARGB(), color2.getARGB());
 	}
-	
+
 	static bool equals(int argb1, int argb2) {
 		return argb1 == argb2;
 	}
-	
+
 }
 
 ////////////////////////////////////////////

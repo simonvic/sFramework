@@ -1,9 +1,9 @@
 // TODO: managed?
 class SRaycast {
-	
+
 	protected vector m_startPos;
 	protected vector m_endPos;
-	
+
 	protected float m_radius;
 	protected int m_intersectionType;
 	protected CollisionFlags m_collisionFlags;
@@ -15,9 +15,9 @@ class SRaycast {
 	protected vector m_contactDir;
 	protected int m_contactComponent;
 	protected ref set<Object> m_hitObjects = new set<Object>;
-		
+
 	protected bool m_hasHit;
-	
+
 	void SRaycast(vector from, vector to, float radius = 0.1, int intersectionType = ObjIntersectView, CollisionFlags collisionFlags = CollisionFlags.NEARESTCONTACT, bool sorted = false, bool groundOnly = false) {
 		m_startPos = from;
 		m_endPos = to;
@@ -27,8 +27,8 @@ class SRaycast {
 		m_isSorted = sorted;
 		m_isGroundOnly = groundOnly;
 	}
-	
-	
+
+
 	/**
 	*	@brief Quickly set raycast parameters
 	*	 @param from \p vector - starting position
@@ -49,8 +49,8 @@ class SRaycast {
 		m_isGroundOnly = groundOnly;
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Quickly set raycast parameters
 	*	 @param from \p vector - starting position
@@ -61,7 +61,7 @@ class SRaycast {
 		m_endPos = to;
 		return this;
 	}
-	
+
 	/**
 	*	@brief Quickly set starting position
 	*	 @param from \p vector - starting position
@@ -70,7 +70,7 @@ class SRaycast {
 		m_startPos = from;
 		return this;
 	}
-	
+
 	/**
 	*	@brief Quickly set ending position
 	*	 @param to \p vector - ending position
@@ -79,7 +79,7 @@ class SRaycast {
 		m_endPos = to;
 		return this;
 	}
-		
+
 	/**
 	*	@brief Quickly set ignored objects
 	*	 @param Object \p obj1 - object to ignore
@@ -89,7 +89,7 @@ class SRaycast {
 		m_ignoredObjects = {obj1, obj2};
 		return this;
 	}
-		
+
 	/**
 	*	@brief Launch the ray	
 	*/
@@ -108,89 +108,89 @@ class SRaycast {
 			m_collisionFlags);
 		return this;		
 	}
-	
+
 	// TODO: add setters
-		
+
 	bool hasHit() {
 		return m_hasHit;
 	}
-	
+
 	vector getStartPosition() {
 		return m_startPos;
 	}
-	
+
 	vector getEndPosition() {
 		return m_endPos;
 	}
-	
+
 	vector getContactPosition() {
 		return m_contactPos;
 	}
-	
+
 	vector getContactDirection() {
 		return m_contactDir;
 	}
-	
+
 	int getContactComponent() {
 		return m_contactComponent;
 	}
-	
+
 	set<Object> getHitObjects() {
 		return m_hitObjects;
 	}
-	
+
 	array<Object> getIgnoredObjects() {
 		return m_ignoredObjects;
 	}
-	
+
 	bool isSorted() {
 		return m_isSorted;
 	}
-	
+
 	bool isGroundOnly() {
 		return m_isGroundOnly;
 	}
-	
+
 	int getIntersectionType() {
 		return m_intersectionType;
 	}
-	
+
 	float getRadius() {
 		return m_radius;
 	}
-	
+
 	CollisionFlags getCollisionFlags() {
 		return m_collisionFlags;
 	}
-	
+
 
 
 	void setStartPosition(vector startPos) {
 		m_startPos = startPos;
 	}
-	
+
 	void setEndPosition(vector endPos) {
 		m_endPos = endPos;
 	}
-	
+
 	void setIsSorted(bool isSorted) {
 		m_isSorted = isSorted;
 	}
-	
+
 	void setIsGroundOnly(bool isGroundOnly) {
 		m_isGroundOnly = isGroundOnly;
 	}
-	
+
 	void setIntersectionType(int intersectionType) {
 		m_intersectionType = intersectionType;
 	}
-	
+
 	void setRadius(float radius) {
 		m_radius = radius;
 	}
-	
+
 	void setCollisionFlags(CollisionFlags collisionFlags) {
 		m_collisionFlags = collisionFlags;
 	}	
-	
+
 }

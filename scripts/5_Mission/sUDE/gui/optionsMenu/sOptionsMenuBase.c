@@ -1,33 +1,33 @@
 class SOptionsMenuBase : ScriptedWidgetEventHandler {
-	
+
 	string getName();
 	string getLayout();
 	string getInfoBoxRootContainer();
-	
+
 	string getInfoBoxLayout() {
 		return "MyMODS/sFramework/GUI/layouts/user_config_info_box.layout";
 	}
-	
+
 	protected SUserConfigBase m_sUserConfig;
 	protected ref map<Widget, SUserConfigOptionBase> m_optionsWidgets = new map<Widget, SUserConfigOptionBase>;
 	protected ref map<Widget, ref array<int>> m_indecesLinks = new map<Widget, ref array<int>>;
-	
+
 	protected ref Widget m_root;
 	protected ref Widget m_infoBoxRoot;
 	protected ref Widget m_infoBoxWarning;
-	
+
 	void SOptionsMenuBase() {
 		onInit();
 	}
-	
+
 	protected void onInit() {
 	}
-	
+
 	void setRoot(Widget root) {
 		m_root = root;
 		m_root.SetHandler(this);
 	}
-	
+
 	/**
 	*	@brief Set the user config this menu is related to
 	*	@param user config
@@ -35,11 +35,11 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	void setUserConfig(SUserConfigBase userConfig) {
 		m_sUserConfig = userConfig;
 	}
-	
+
 	protected SUserConfigBase getUserConfig() {
 		return m_sUserConfig;
 	}
-	
+
 	/**
 	*	@brief Called when the menu root has been built
 	*/
@@ -51,7 +51,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 			hideInfoBoxWarning();
 		}
 	}
-	
+
 	/**
 	*	@brief Init slider widget with a float option
 	*	@param widget to initialize
@@ -62,15 +62,15 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
 		slider.SetCurrent(option.get());
 		slider.SetHandler(this);
-		
+
 		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name + "_value")); // TODO: hardcode goes brrrr. Change this
 		if (!txt) return;
 		txt.SetText(slider.GetCurrent().ToString());
 		txt.SetHandler(this);
-		
+
 		m_optionsWidgets.Set(slider, option);
 	}
-	
+
 	/**
 	*	@brief Init slider widget with a float array option
 	*	@param widget to initialize
@@ -80,7 +80,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	*/
 	protected void initOptionWidget(out SliderWidget slider, string name, SUserConfigOptionArray<float> option, array<int> indices) {
 		slider = SliderWidget.Cast(m_root.FindAnyWidget(name));
-		
+
 		if (indices && indices.Count() > 0) {
 			slider.SetCurrent(option.get()[indices[0]]);
 			m_indecesLinks.Set(slider, indices);
@@ -89,15 +89,15 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 			m_indecesLinks.Set(slider, {0});
 		}
 		slider.SetHandler(this);
-				
+
 		TextWidget txt = TextWidget.Cast(slider.FindAnyWidget(name + "_value")); // TODO: hardcode goes brrrr. Change this
 		if (!txt) return;
 		txt.SetText(slider.GetCurrent().ToString());
 		txt.SetHandler(this);
-		
+
 		m_optionsWidgets.Set(slider, option);
 	}
-	
+
 	/**
 	*	@brief Init slider widget with a float array option
 	*	@param widget to initialize
@@ -109,7 +109,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		array<int> indeces = {index};
 		initOptionWidget(slider, name, option, indeces);
 	}
-	
+
 	/**
 	*	@brief Init Checkbox widget with a bool option
 	*	@param widget to initialize
@@ -120,10 +120,10 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		checkbox = CheckBoxWidget.Cast(m_root.FindAnyWidget( name ));
 		checkbox.SetChecked(option.get());
 		checkbox.SetHandler(this);
-		
+
 		m_optionsWidgets.Set(checkbox, option);
 	}
-	
+
 	/**
 	*	@brief Init combo widget with an int option (index of combo item)
 	*	@param widget to initialize
@@ -149,7 +149,7 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		updateInfoBox(m_optionsWidgets.Get(w));
 		return true;
 	}
-	
+
 	protected void updateInfoBox(SUserConfigOptionBase option) {
 		if (!m_infoBoxRoot || !option) return;
 		if (option.getInfo()) {
@@ -159,13 +159,13 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 			hideInfoBox();
 		}
 	}
-	
+
 	protected void initInfoBox(SUserConfigOptionBase option) {
 		if (!m_infoBoxRoot) return;
 		TextWidget.Cast(m_infoBoxRoot.FindAnyWidget("title")).SetText(option.getInfo().getTitle());
 		RichTextWidget.Cast(m_infoBoxRoot.FindAnyWidget("description_body")).SetText(option.getInfo().getDescription());
-		
-		
+
+
 		if (option.isConstrained()) {
 			showInfoBoxWarning();			
 			RichTextWidget.Cast(m_infoBoxWarning.FindAnyWidget("warning_body")).SetText(option.getWarningMessage());
@@ -177,48 +177,48 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 	void show() {
 		m_root.Show(true);
 	}
-	
+
 	void hide() {
 		m_root.Show(false);	
 		hideInfoBox();
 	}
-	
+
 	void showInfoBox() {
 		m_infoBoxRoot.Show(true);
 	}
-	
+
 	void hideInfoBox() {
 		m_infoBoxRoot.Show(false);	
 	}
-	
+
 	void showInfoBoxWarning() {
 		m_infoBoxWarning.Show(true);
 	}
-	
+
 	void hideInfoBoxWarning() {
 		m_infoBoxWarning.Show(false);	
 	}
-	
+
 	override bool OnMouseButtonUp(Widget w, int x, int y, int button) {
 		if ( button == MouseState.LEFT ) {
 			onConfigChange();
 		}
 		return true;
 	}
-	
+
 	protected void onConfigChange() { // TODO: lol change this shit
 		m_sUserConfig.save();
 	}
-	
+
 	override bool OnChange(Widget w, int x, int y, bool finished) {
 		if (!w) return false;
-		
+
 		switch (w.Type()) {
 			case SliderWidget:   return onChange(SliderWidget.Cast(w));
 			case CheckBoxWidget: return onChange(CheckBoxWidget.Cast(w));
 			case XComboBoxWidget: return onChange(XComboBoxWidget.Cast(w));
 		}
-		
+
 		return true;
 	}
 
@@ -227,14 +227,14 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		onChangeArrayFloat(w, SUserConfigOptionArray<float>.Cast(m_optionsWidgets.Get(w)));
 		return true;
 	}
-	
+
 	// this is the most unsafe code of the history of unsafe code, forgive me
 	protected bool onChangeArrayFloat(SliderWidget w, SUserConfigOptionArray<float> option) {
 		if (!option) return false;
-		
+
 		array<int> indices = m_indecesLinks.Get(w);
 		if (!indices || indices.Count() <= 0) return false;
-		
+
 		float newValue = w.GetCurrent();
 		array<float> newOptionValue = {};
 		newOptionValue.Copy(option.get());
@@ -243,43 +243,43 @@ class SOptionsMenuBase : ScriptedWidgetEventHandler {
 		}
 		option.set(newOptionValue);
 		w.SetCurrent(option.get()[indices[0]]);
-		
+
 		TextWidget txt = TextWidget.Cast(w.FindAnyWidget(w.GetName()+"_value"));
 		if (txt) txt.SetText(w.GetCurrent().ToString());
-		
+
 		return true;
 	}
-	
+
 	protected bool onChangeFloat(SliderWidget w, SUserConfigOption<float> option) {
 		if (!option) return false;
-		
+
 		option.set(w.GetCurrent());
 		w.SetCurrent(option.get());
-		
+
 		TextWidget txt = TextWidget.Cast(w.FindAnyWidget(w.GetName()+"_value"));
 		if (txt) txt.SetText(w.GetCurrent().ToString());
 		return true;
 	}
-		
-	
+
+
 	protected bool onChange(CheckBoxWidget w) {
 		auto option = SUserConfigOption<bool>.Cast(m_optionsWidgets.Get(w));
 		if (!option) return false;
-		
+
 		option.set(w.IsChecked());
 		w.SetChecked(option.get());
 		return true;
 	}
-	
+
 	protected int onChange(XComboBoxWidget w) {
 		auto option = SUserConfigOption<int>.Cast(m_optionsWidgets.Get(w));
 		if (!option) return false;
-		
+
 		option.set(w.GetCurrentItem());
 		w.SetCurrentItem(option.get());
-		
+
 		return true;
 	}
-	
+
 
 }

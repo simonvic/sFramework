@@ -72,7 +72,7 @@ class TestUnit_SLOG : STestUnit {
 
 		array<string> stringArray = {"a", "d", "c"};
 		SLOG.d(stringArray);
-		
+
 		array<ref array<string>> stringMatrix = {
 			{"a", "a", "a"},
 			{"b", "b", "b"},

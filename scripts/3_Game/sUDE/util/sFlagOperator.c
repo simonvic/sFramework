@@ -1,14 +1,14 @@
 class SFlagOperator : Managed {
 	int flag;
-	
+
 	void SFlagOperator(int x = 0) {
 		flag = x;
 	}
-	
+
 	void ~SFlagOperator() {
 	}
-	
-	
+
+
 	/**
 	*	@brief Flip all bits (NOT operator)
 	*	 @code 
@@ -20,8 +20,8 @@ class SFlagOperator : Managed {
 		flag = ~flag;
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Apply a mask (AND operator)
 	*	 @code 
@@ -35,8 +35,8 @@ class SFlagOperator : Managed {
 		flag &= x;
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Set bits to 1 (OR operator)
 	*	 @code 
@@ -50,8 +50,8 @@ class SFlagOperator : Managed {
 		flag |= x;
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Set bits to 0 (AND + NOT operator)
 	*	 @code 
@@ -65,8 +65,8 @@ class SFlagOperator : Managed {
 		flag &= ~x;
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Flip bits to 0 (XOR operator)
 	*	 @code 
@@ -80,8 +80,8 @@ class SFlagOperator : Managed {
 		flag = (~flag & x) | (flag & ~x);
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Collect integer value
 	*	 @param value \p int [out] - output integer value
@@ -90,8 +90,8 @@ class SFlagOperator : Managed {
 		value = flag;
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Collect binary formatted string
 	*	 @param value \p string [out] - output string value
@@ -102,8 +102,8 @@ class SFlagOperator : Managed {
 		value = toBinaryString(flag, digits, spacingEvery);
 		return this;
 	}
-	
-	
+
+
 	/**
 	*	@brief Collect integer value
 	*	 @return int
@@ -111,8 +111,8 @@ class SFlagOperator : Managed {
 	int collect() {
 		return flag;
 	}
-	
-	
+
+
 	/**
 	*	@brief Collect binary string value
 	*	 @return string
@@ -120,8 +120,8 @@ class SFlagOperator : Managed {
 	string collectBinaryString(int digits = 32, int spacingEvery = 8) {
 		return toBinaryString(flag, digits, spacingEvery);
 	}
-	
-	
+
+
 	/**
 	*	@brief Check if a bit is set
 	*	 @bool if bit is 1
@@ -129,8 +129,8 @@ class SFlagOperator : Managed {
 	bool check(int x) {
 		return flag & x;
 	}
-	
-	
+
+
 	/**
 	*	@brief Convert integer to binary formatted string
 	*	 @param x \p int - value to convert
@@ -148,8 +148,8 @@ class SFlagOperator : Managed {
 		}
 		return result;
 	}
-	
-	
+
+
 	/**
 	*	@brief Get an instance of SFlagOperator
 	*	 @param x \p int - flag value
@@ -157,7 +157,7 @@ class SFlagOperator : Managed {
 	static SFlagOperator from(int x = 0) {
 		return new SFlagOperator(x);
 	}
-	
+
 	/**
 	*	@brief Get an instance of SFlagOperator
 	*	 @param fop \p SFlagOperator - 
@@ -165,5 +165,5 @@ class SFlagOperator : Managed {
 	static SFlagOperator from(SFlagOperator fop) {
 		return new SFlagOperator(fop.collect());
 	}
-		
+
 }

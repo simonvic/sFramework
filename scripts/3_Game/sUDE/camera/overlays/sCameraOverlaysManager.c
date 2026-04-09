@@ -10,21 +10,21 @@ enum eSCameraOverlayState {
 // TODO(perf): pre-cache images on boot
 
 class SCameraOverlaysManager {
-	
+
 	private static ref SCameraOverlaysManager INSTANCE = new SCameraOverlaysManager();
 	private void SCameraOverlaysManager() {}
 	static SCameraOverlaysManager getInstance() {
 		return INSTANCE;
 	}
-	
+
 	protected typename m_activeCameraType = DayZPlayerCamera;
-	
+
 	protected Widget m_root;
 	protected bool m_overlaysHaveChanged;
 	protected bool m_ingameHUDIsVisible;
 	protected ref map<ref SCameraOverlay, eSCameraOverlayState> m_overlays = new map<ref SCameraOverlay, eSCameraOverlayState>();
 
-	
+
 	/**
 	*	@brief Request to show an overlay
 	*	 @param overlay \p SCameraOverlay - overlay
@@ -35,7 +35,7 @@ class SCameraOverlaysManager {
 			SLOG.w("SCameraOverlaysManager::activate", "ACTIVATING " + overlay + " ON SERVER!");
 			return;
 		}
-		
+
 		m_overlays.Set(overlay, eSCameraOverlayState.REQUESTED);
 		m_overlaysHaveChanged = true;
 	}
@@ -50,11 +50,11 @@ class SCameraOverlaysManager {
 			SLOG.w("SCameraOverlaysManager::deactivate", "DEACTIVATING " + overlay + " ON SERVER!");
 			return;
 		}
-		
+
 		m_overlays.Set(overlay, eSCameraOverlayState.PENDING_DELETION);
 		m_overlaysHaveChanged = true;
 	}
-	
+
 	/**
 	*	@brief Remove all overlays
 	*/	
@@ -63,7 +63,7 @@ class SCameraOverlaysManager {
 			deactivate(overlay);
 		}
 	}
-	
+
 
 
 	/**
@@ -76,7 +76,7 @@ class SCameraOverlaysManager {
 			SCameraOverlayAnimated.Cast(overlay).resume();
 		}
 	}
-	
+
 	/**
 	*	@brief Hide an overlay
 	*	 @param overlay \p SCameraOverlay - overlay to make invisible
@@ -87,7 +87,7 @@ class SCameraOverlaysManager {
 			SCameraOverlayAnimated.Cast(overlay).pause();
 		}
 	}
-	
+
 	/**
 	*	@brief Make visible all overlays with the specified priority
 	*	 @param priority \p eSCOPriority - 
@@ -99,7 +99,7 @@ class SCameraOverlaysManager {
 			}
 		}
 	}
-	
+
 	/**
 	*	@brief Hide all overlays with the specified priority
 	*	 @param priority \p eSCOPriority - 
@@ -111,7 +111,7 @@ class SCameraOverlaysManager {
 			}
 		}
 	}
-	
+
 	/**
 	*	@brief Make visible all overlays with priority between the range (inclusive)
 	*	 @param min \p eSCOPriority - 
@@ -124,7 +124,7 @@ class SCameraOverlaysManager {
 			}
 		}
 	}
-	
+
 	/**
 	*	@brief Hide all overlays with priority between the range (inclusive)
 	*	 @param min \p eSCOPriority - 
@@ -137,31 +137,31 @@ class SCameraOverlaysManager {
 			}
 		}
 	}
-	
+
 	/**
 	*	@brief Make all overlays visible
 	*/
 	void showAll() {
 		if (m_root) m_root.Show(true);
-		
+
 		foreach (SCameraOverlay overlay, eSCameraOverlayState state : m_overlays) {
 			show(overlay);
 		}
-		
+
 	}
-	
+
 	/**
 	*	@brief Hide all overlays
 	*/
 	void hideAll() {
 		if (m_root) m_root.Show(false);
-		
+
 		foreach (SCameraOverlay overlay, eSCameraOverlayState state : m_overlays) {
 			hide(overlay);
 		}
-		
+
 	}
-	
+
 	/**
 	*	@brief Called when the player hides the ingame HUD
 	*/
@@ -169,7 +169,7 @@ class SCameraOverlaysManager {
 		m_ingameHUDIsVisible = visible;
 		updateVisibilityAll();
 	}
-	
+
 	/**
 	*	@brief Set the currently active camera and update the visibility of overlays
 	*	 @param cameraType \p typename - typename of a camera
@@ -179,7 +179,7 @@ class SCameraOverlaysManager {
 		m_activeCameraType = cameraType;
 		updateVisibilityAll();
 	}
-	
+
 	/**
 	*	@brief Update visibility state of overlays based	
 	*/
@@ -188,7 +188,7 @@ class SCameraOverlaysManager {
 			updateVisibility(overlay);
 		}	
 	}
-	
+
 	/**
 	*	@brief Change visibility state of an overlay based on a camera type
 	*	 @param overlay \p SCameraOverlay
@@ -200,7 +200,7 @@ class SCameraOverlaysManager {
 		}
 		show(overlay);		
 	}
-	
+
 	/**
 	*	@brief Update requested overlays
 	*	 @param root \p Widget - root widget of overlays
@@ -210,45 +210,45 @@ class SCameraOverlaysManager {
 		animateOverlays(deltaTime, root);
 
 		if (!m_overlaysHaveChanged) return;
-		
+
 		updateOverlays(deltaTime, root);
-		
+
 		m_overlaysHaveChanged = false;
 	}
-	
+
 	protected void animateOverlays(float deltaTime, Widget root) {
 		foreach (SCameraOverlay overlay, eSCameraOverlayState state : m_overlays) {
 			SCameraOverlayAnimated animated = SCameraOverlayAnimated.Cast(overlay);
 			if (!animated) continue;
-			
+
 			if (animated.isPlaying()) {
 				animated.animate(deltaTime);
-			
+
 			    //if an active timed overlay has stopped and needs deactivation
 			}else if (animated.hasStopped() && state == eSCameraOverlayState.ACTIVE && animated.IsInherited(SCameraOverlayTimed) && SCameraOverlayTimed.Cast(animated).shouldDeactivateOnStop()) {
 				deactivate(animated);
 			}
 		}
 	}
-	
+
 	protected void updateOverlays(float deltaTime, Widget root) {
 		foreach (SCameraOverlay overlay, eSCameraOverlayState state : m_overlays) {
 			if (!overlay) SLOG.w("SCameraOverlaysManager", "Found null overlay!");
-			
+
 			switch (m_overlays.Get(overlay)) {
 				case eSCameraOverlayState.REQUESTED:
-					performActivate(overlay, root);
-					break;
+				performActivate(overlay, root);
+				break;
 				case eSCameraOverlayState.PENDING_DELETION:
-					performDeactivate(overlay, root);
-					break;
+				performDeactivate(overlay, root);
+				break;
 			}
-			
+
 			updateVisibility(overlay);
 		}
 	}
 
-	
+
 	/**
 	*	@brief Actual creation of widget
 	*	 @param overlay \p SCameraOverlay - overlay to show
@@ -261,8 +261,8 @@ class SCameraOverlaysManager {
 			SCameraOverlayAnimated.Cast(overlay).start();
 		}
 	}
-	
-	
+
+
 	/**
 	*	@brief Actual removal of widget
 	*	 @param overlay \p SCameraOverlay - overlay to remove
@@ -277,15 +277,15 @@ class SCameraOverlaysManager {
 			SCameraOverlayAnimated.Cast(overlay).stop();
 		}
 	}
-	
+
 	bool overlaysHaveChanged() {
 		return m_overlaysHaveChanged;
 	}
-	
+
 	bool isActive(SCameraOverlay overlay) {
 		return m_overlays.Contains(overlay);
 	}
-		
+
 	set<ref SCameraOverlay> getActive() {
 		set<ref SCameraOverlay> overlays = new set<ref SCameraOverlay>();
 		foreach (auto overlay, auto state: m_overlays) {
@@ -295,7 +295,7 @@ class SCameraOverlaysManager {
 		}
 		return overlays;
 	}
-	
+
 	set<ref SCameraOverlay> getRequested() {
 		set<ref SCameraOverlay> overlays = new set<ref SCameraOverlay>();
 		foreach (auto overlay, auto state: m_overlays) {
@@ -305,7 +305,7 @@ class SCameraOverlaysManager {
 		}
 		return overlays;
 	}
-	
+
 	set<ref SCameraOverlay> getPendingDeletion() {
 		set<ref SCameraOverlay> overlays = new set<ref SCameraOverlay>();
 		foreach (auto overlay, auto state: m_overlays) {
@@ -315,7 +315,7 @@ class SCameraOverlaysManager {
 		}
 		return overlays;
 	}
-	
+
 	set<ref SCameraOverlayAnimated> getAnimating() {
 		set<ref SCameraOverlayAnimated> overlays  = new set<ref SCameraOverlayAnimated>();
 		foreach (auto overlay, auto state : m_overlays) {
@@ -325,5 +325,5 @@ class SCameraOverlaysManager {
 		}
 		return overlays;
 	}
-	
+
 }

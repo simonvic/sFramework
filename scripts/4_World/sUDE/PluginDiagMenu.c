@@ -1,6 +1,6 @@
 #ifdef DIAG_DEVELOPER
 modded class PluginDiagMenu {
-	
+
 	protected int m_id_sUDE;
 	protected int m_id_sUDE_sFramework;
 	protected int m_id_sUDE_sFramework_testsVerbosity;
@@ -8,7 +8,7 @@ modded class PluginDiagMenu {
 	protected int m_id_sUDE_sFramework_runTests;
 	protected int m_id_sUDE_sFramework_logLevel;
 	protected int m_id_sUDE_sFramework_logSimpleFloat;
-	
+
 	override void RegisterModdedDiagsIDs() {
 		super.RegisterModdedDiagsIDs();	
 		m_id_sUDE = GetModdedDiagID();
@@ -19,7 +19,7 @@ modded class PluginDiagMenu {
 		m_id_sUDE_sFramework_logLevel = GetModdedDiagID();
 		m_id_sUDE_sFramework_logSimpleFloat = GetModdedDiagID();
 	}
-	
+
 	override void RegisterModdedDiags() {
 		super.RegisterModdedDiags();
 		DiagMenu.RegisterMenu( m_id_sUDE, "sUDE", GetModdedRootMenu());
@@ -30,12 +30,12 @@ modded class PluginDiagMenu {
 		DiagMenu.RegisterItem( m_id_sUDE_sFramework_logLevel,            "", "sLOG  | Level",            m_id_sUDE_sFramework, "DEBUG, INFO, WARNING, ERROR, CRITICAL, NONE", simonvicCallback_sFramework_logLevel);
 		DiagMenu.RegisterBool( m_id_sUDE_sFramework_logSimpleFloat,      "", "sLOG  | Simple float",     m_id_sUDE_sFramework, false, simonvicCallback_sFramework_logSimpleFloat);
 	}
-	
+
 
 	protected int getSUDERootMenu() {
 		return m_id_sUDE;
 	}
-	
+
 	static void simonvicCallback_sFramework_runTests(bool value) {
 		STest.runSUDE();
 	}
@@ -43,7 +43,7 @@ modded class PluginDiagMenu {
 	static void simonvicCallback_sFramework_continueTestsAtFail(bool value) {
 		STest.shouldContinueAtFail = value;
 	}
-	
+
 	static void simonvicCallback_sFramework_testsVerbsity(float value) {
 		STest.verbosity = value;
 	}

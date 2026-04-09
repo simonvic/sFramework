@@ -26,28 +26,28 @@ class SAnimable<Class T> {
 	void setSuper(T zuper) {
 		m_super = zuper;
 	}
-	
+
 	protected eSAnimableState m_animationState = eSAnimableState.STOPPED;
 	protected float m_time;
-	
+
 	void SAnimable() {
 		onInit();
 	}
-	
+
 	void onInit();
 	void onStart();
 	void onAnimate(float deltaTime);
 	void onStop();
 	void onPause();
 	void onResume();
-	
+
 	void animate(float deltaTime) {
 		if (!isPlaying()) return;
-		
+
 		m_time += deltaTime;
 		onAnimate(deltaTime);
 	}
-		
+
 	/**
 	* @brief Set the animation state to PLAYING and reset the time
 	*/
@@ -56,7 +56,7 @@ class SAnimable<Class T> {
 		setAnimationState(eSAnimableState.PLAYING);
 		onStart();
 	}
-	
+
 	/**
 	* @brief Reset values to default and prepare to stop
 	*/
@@ -64,7 +64,7 @@ class SAnimable<Class T> {
 		setAnimationState(eSAnimableState.STOPPED);
 		onStop();
 	}
-	
+
 	/**
 	* @brief Pause the animation from animating without resetting the time
 	*/
@@ -72,7 +72,7 @@ class SAnimable<Class T> {
 		setAnimationState(eSAnimableState.PAUSED);
 		onPause();
 	}
-	
+
 	/**
 	* @brief Resume the animation
 	*/
@@ -80,7 +80,7 @@ class SAnimable<Class T> {
 		setAnimationState(eSAnimableState.PLAYING);
 		onResume();
 	}
-	
+
 	/**
 	* @brief Get the time elapsed from the animation start
 	* 	@return \p float - time elapsed
@@ -88,23 +88,23 @@ class SAnimable<Class T> {
 	float getTime() {
 		return m_time;
 	}
-	
+
 	bool isPlaying() {
 		return m_animationState == eSAnimableState.PLAYING;
 	}
-	
+
 	bool isPaused() {
 		return m_animationState == eSAnimableState.PAUSED;
 	}
-	
+
 	bool hasStopped() {
 		return m_animationState == eSAnimableState.STOPPED;
 	}
-	
+
 	eSAnimableState getAnimationState() {
 		return m_animationState;
 	}
-	
+
 	protected void setAnimationState(eSAnimableState state) {
 		m_animationState = state;
 	}
@@ -112,9 +112,9 @@ class SAnimable<Class T> {
 
 /*
 class SAnimableTimed<Class T> : SAnimable<Class> {
-	
+
 	protected float m_duration;
-	
+
 	void SAnimableTimed(float duration) {
 		m_duration = duration;
 	}
@@ -123,14 +123,14 @@ class SAnimableTimed<Class T> : SAnimable<Class> {
 		if ( !isPlaying() ) {
 			return; 
 		}
-		
+
 		if (getTime() >= m_duration ) {
 			stop();
 			return;
 		}
 		super.animate(deltaTime);
 	}
-	
+
 	/**
 	* @brief Set the duration of the animation
 	* 	@param duration \p float - animation duration (seconds)
@@ -138,7 +138,7 @@ class SAnimableTimed<Class T> : SAnimable<Class> {
 	void setDuration(float duration) {
 		m_duration = duration;
 	}
-		
+
 	/**
 	* @brief Get the animation duration
 	* 	@return \p float - animation duration (seconds)
@@ -146,7 +146,7 @@ class SAnimableTimed<Class T> : SAnimable<Class> {
 	float getDuration() {
 		return m_duration;
 	}
-		
+
 	/**
 	* @brief Get the time remaining to the completition
 	* 	@return \p float - time remaining (seconds)
@@ -154,5 +154,5 @@ class SAnimableTimed<Class T> : SAnimable<Class> {
 	float getRemaining() {
 		return m_duration - m_time;
 	}
-	
+
 }

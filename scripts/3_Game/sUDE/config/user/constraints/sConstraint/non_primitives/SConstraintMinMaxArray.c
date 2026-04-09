@@ -1,21 +1,21 @@
 class SConstraintMinMaxArray<Class T> : SConstraintNonPrimitiveBase {
-	
+
 	protected ref array<T> min;
 	protected ref array<T> max;
-	
+
 	void SConstraintMinMaxArray(array<T> minimum, array<T> maximum) {
 		min = minimum;
 		max = maximum;
 	}
-	
+
 	array<T> getMin() {
 		return min;
 	}
-	
+
 	array<T> getMax() {
 		return max;
 	}
-	
+
 	/**
 	*	@brief A wrapper for the base constrain method, in order to expose a simpler method signature
 	*	 @param toConstrain \p T - Generic value to constrain
@@ -26,7 +26,7 @@ class SConstraintMinMaxArray<Class T> : SConstraintNonPrimitiveBase {
 		constrain(p);
 		return p.param1;
 	}
-	
+
 	/**
 	*	@brief A wrapper for the base isValid method, in order to expose a simpler method signature
 	*	 @param toValidate \p T - Generic value to validate
@@ -35,7 +35,7 @@ class SConstraintMinMaxArray<Class T> : SConstraintNonPrimitiveBase {
 	bool isValid(array<T> toValidate) {
 		return isValid(new Param1<array<T>>(toValidate));
 	}
-	
+
 
 	override string toString() {
 		return string.Format(
@@ -43,5 +43,5 @@ class SConstraintMinMaxArray<Class T> : SConstraintNonPrimitiveBase {
 			getMin(),
 			getMax());
 	}
-	
+
 }

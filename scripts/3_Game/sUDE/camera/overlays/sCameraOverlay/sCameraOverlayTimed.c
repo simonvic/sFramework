@@ -1,24 +1,24 @@
 class SCameraOverlayTimed : SCameraOverlayAnimated {
-	
+
 	static SCameraOverlayTimedBuilder builderTimed() {
 		return new SCameraOverlayTimedBuilder();
 	}
-	
+
 	protected float m_duration;
 	protected bool m_deactivateOnStop;
-	
+
 	override void animate(float deltaTime) {
 		if ( !isPlaying() ) {
 			return; 
 		}
-		
+
 		if (getTime() >= m_duration ) {
 			stop();
 			return;
 		}
 		super.animate(deltaTime);
 	}
-	
+
 	/**
 	*	@brief Set the duration of the animation
 	*	@param duration \p float - animation duration (seconds)
@@ -26,7 +26,7 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	void setDuration(float duration) {
 		m_duration = duration;
 	}
-		
+
 	/**
 	*	@brief Get the animation duration
 	*	@return \p float - animation duration(seconds)
@@ -34,7 +34,7 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	float getDuration() {
 		return m_duration;
 	}
-		
+
 	/**
 	*	@brief Get the time remaining to the completition
 	*	@return \p float - time remaining (seconds)
@@ -42,14 +42,14 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	float getRemaining() {
 		return m_duration - m_time;
 	}
-	
+
 	/**
 	*	@brief Get if the animation should be deactivated when ends
 	*/
 	bool shouldDeactivateOnStop() {
 		return m_deactivateOnStop;
 	}
-	
+
 	/**
 	*	@brief Set if the overlay has to be deactivated on has stopped
 	*	@param deactivateOnStop \p bool 
@@ -57,24 +57,24 @@ class SCameraOverlayTimed : SCameraOverlayAnimated {
 	void setDeactivateOnStop(bool deactivateOnStop) {
 		m_deactivateOnStop = deactivateOnStop;
 	}
-	
+
 }
 
 class SCameraOverlayTimedBuilder : SCameraOverlayAnimatedBuilder {
-	
+
 	protected float m_duration = Math.PI;
 	protected bool m_deactivateOnStop = true;
-	
+
 	SCameraOverlayTimedBuilder duration(float duration) {
 		m_duration = duration;
 		return this;
 	}
-	
+
 	SCameraOverlayTimedBuilder deativateOnStop(bool deactivateOnStop) {
 		m_deactivateOnStop = deactivateOnStop;
 		return this;
 	}
-	
+
 	SCameraOverlayTimed buildTimed() {
 		SCameraOverlayTimed o = new SCameraOverlayTimed();
 		o.setImage(m_image);
@@ -97,5 +97,5 @@ class SCameraOverlayTimedBuilder : SCameraOverlayAnimatedBuilder {
 	}
 
 }
-	
+
 

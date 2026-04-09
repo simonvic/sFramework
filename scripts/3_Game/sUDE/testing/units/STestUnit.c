@@ -6,30 +6,30 @@ typedef Param2<Class, string> STestAfterCallback;
 typedef Param2<Class, string> STestAfterClassCallback;
 
 class STestUnit : Managed {
-	
+
 	/**
 	*	@brief If set to true, next TestCase will be run
 	*/
 	protected bool shouldContinueAfterFail;
-	
+
 	protected bool hasFailed;
-	
+
 	protected ref array<ref STestCase> m_testCases = new array<ref STestCase>();
 	protected ref array<ref STestBeforeCallback> m_beforeCallbacks = new array<ref STestBeforeCallback>();
 	protected ref array<ref STestBeforeClassCallback> m_beforeClassCallbacks = new array<ref STestBeforeClassCallback>();
 	protected ref array<ref STestAfterCallback> m_afterCallbacks = new array<ref STestAfterCallback>();
 	protected ref array<ref STestAfterClassCallback> m_afterClassCallbacks = new array<ref STestAfterClassCallback>();
-	
+
 	protected STestCase m_currentTestCaseTested;
 	protected STestCase m_lastTestCaseTested;
-	
+
 	void STestUnit(bool shouldContinue = true) {
 		shouldContinueAfterFail = shouldContinue;
 		init();
 	}
-		
+
 	protected void init();
-	
+
 	/**
 	*	@brief Register a list of TestCases to be run
 	*	@param functionsName \p array<string> - array of function name of the test case
@@ -39,7 +39,7 @@ class STestUnit : Managed {
 			m_testCases.Insert(new STestCase(this, functionName));
 		}
 	}
-	
+
 	/**
 	*	@brief Register a list of callbacks to be executed before the TestUnit
 	*	@param functionsName \p array<string> - array of function name of the callbacks
@@ -49,7 +49,7 @@ class STestUnit : Managed {
 			m_beforeClassCallbacks.Insert(new STestBeforeClassCallback(this, functionName));
 		}
 	}
-	
+
 	/**
 	*	@brief Register a list of callbacks to be executed before each TestCase
 	*	@param functionsName \p array<string> - array of function name of the callbacks
@@ -59,7 +59,7 @@ class STestUnit : Managed {
 			m_beforeCallbacks.Insert(new STestBeforeCallback(this, functionName));
 		}
 	}
-	
+
 	/**
 	*	@brief Register a list of callbacks to be executed after each TestCase
 	*	@param functionsName \p array<string> - array of function name of the callbacks
@@ -69,7 +69,7 @@ class STestUnit : Managed {
 			m_afterCallbacks.Insert(new STestAfterCallback(this, functionName));
 		}
 	}
-	
+
 	/**
 	*	@brief Register a list of callbacks to be executed after the TestUnit
 	*	@param functionsName \p array<string> - array of function name of the callbacks
@@ -79,11 +79,11 @@ class STestUnit : Managed {
 			m_afterClassCallbacks.Insert(new STestAfterClassCallback(this, functionName));
 		}
 	}
-	
+
 	array<ref STestCase> getTestCases() {
 		return m_testCases;
 	}
-	
+
 	/**
 	*	@brief If one or more TestCases have failed
 	*	@return bool
@@ -91,7 +91,7 @@ class STestUnit : Managed {
 	bool hasFailed() {
 		return hasFailed;
 	}
-	
+
 	/**
 	*	@brief Specify if next TestCases should be run after a failed one
 	*	@param shouldContinue \p bool
@@ -99,7 +99,7 @@ class STestUnit : Managed {
 	protected void continueAfterFail(bool shouldContinue) {
 		shouldContinueAfterFail = shouldContinue;
 	}
-	
+
 	void run() {
 		executeBeforeClassCallbacks();
 		foreach (STestCase testCase : m_testCases) {
@@ -117,36 +117,36 @@ class STestUnit : Managed {
 		m_currentTestCaseTested = null;
 		m_lastTestCaseTested = null;
 	}
-	
+
 	protected void executeBeforeClassCallbacks() {
 		foreach (STestBeforeClassCallback beforeClassCallback : m_beforeClassCallbacks) {
 			g_Game.GameScript.CallFunctionParams( beforeClassCallback.param1, beforeClassCallback.param2, null, null);
 		}
 	}
-	
+
 	protected void executeBeforeCallbacks(STestCase nextTestCase) {
 		foreach (STestBeforeCallback beforeCallback : m_beforeCallbacks) {
 			g_Game.GameScript.CallFunction( beforeCallback.param1, beforeCallback.param2, null, nextTestCase);
 		}
 	}
-	
+
 	protected void executeTestCase(STestCase testCase) {
 		g_Game.GameScript.CallFunctionParams( testCase.getClass(), testCase.getFunction(), null, null);
 	}
-	
+
 	protected void executeAfterCallbacks(STestCase lastTestCase) {
 		foreach (STestAfterCallback afterCallback : m_afterCallbacks) {
 			g_Game.GameScript.CallFunction( afterCallback.param1, afterCallback.param2, null, lastTestCase);
 		}
 	}
-	
+
 	protected void executeAfterClassCallbacks() {
 		foreach (STestAfterClassCallback afterClassCallback : m_afterClassCallbacks) {
 			g_Game.GameScript.CallFunctionParams( afterClassCallback.param1, afterClassCallback.param2, null, null);
 		}
 	}
 
-	
+
 	/**
 	*	@brief Assert if the actual value is equal to the expected
 	*	@param expected \p array<float>
@@ -159,7 +159,7 @@ class STestUnit : Managed {
 			fail(string.Format("%1", expected), string.Format("%1", actual));
 		}
 	}
-	
+
 	/**
 	*	@brief Assert if the actual value is equal to the expected
 	*	@param expected \p float
@@ -172,7 +172,7 @@ class STestUnit : Managed {
 			fail(expected.ToString(), actual.ToString());
 		}
 	}
-	
+
 	/**
 	*	@brief Assert if the actual value is equal to the expected
 	*	@param expected \p int
@@ -185,7 +185,7 @@ class STestUnit : Managed {
 			fail(expected.ToString(), actual.ToString());
 		}
 	}
-	
+
 	/**
 	*	@brief Assert if the actual value is equal to the expected
 	*	@param expected \p string
@@ -198,7 +198,7 @@ class STestUnit : Managed {
 			fail(expected, actual);
 		}
 	}
-	
+
 	/**
 	*	@brief Assert if the actual value is equal to the expected
 	*	@param expected \p bool
@@ -211,7 +211,7 @@ class STestUnit : Managed {
 			fail(expected.ToString(), actual.ToString());
 		}
 	}
-	
+
 	/**
 	*	@brief Assert if the actual value is true
 	*	@param actual \p bool
@@ -223,7 +223,7 @@ class STestUnit : Managed {
 			fail("true", actual.ToString());
 		}
 	}
-	
+
 	/**
 	*	@brief Assert if the actual value is false
 	*	@param actual \p bool
@@ -235,7 +235,7 @@ class STestUnit : Managed {
 			fail("false", actual.ToString());
 		}
 	}
-	
+
 	/**
 	*	@brief Assert if the actual value is null
 	*	@param actual \p Class
@@ -247,7 +247,7 @@ class STestUnit : Managed {
 			fail("null", actual.ToString());
 		}
 	}
-	
+
 	/**
 	*	@brief Assert if the actual value is not null
 	*	@param actual \p Class
@@ -259,8 +259,8 @@ class STestUnit : Managed {
 			fail("(non-null class)", actual.ToString());
 		}
 	}
-	
-	
+
+
 	/**
 	*	@brief Pass the current TestCase
 	*	@param expected \p string
@@ -272,7 +272,7 @@ class STestUnit : Managed {
 		m_currentTestCaseTested.setActual(actual);
 		m_currentTestCaseTested.setMessage(message);
 	}
-	
+
 	/**
 	*	@brief Fail the current TestCase
 	*	@param expected \p string
@@ -285,16 +285,16 @@ class STestUnit : Managed {
 		m_currentTestCaseTested.setExpected(expected);
 		m_currentTestCaseTested.setActual(actual);
 		m_currentTestCaseTested.setMessage(message);
-		
+
 	}	
-	
+
 	/**
 	*	@brief Skip the current TestCase
 	*/
 	protected void skip(string message = string.Empty) {
 		m_currentTestCaseTested.setSkipped();
 		m_currentTestCaseTested.setMessage(message);
-		
+
 	}
 }
 

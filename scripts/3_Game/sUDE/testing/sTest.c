@@ -6,19 +6,19 @@ class STest : Managed {
 	*	@brief Higher values will means more verbosity in logging
 	*/
 	static int verbosity = 3;
-	
+
 	/**
 	*	@brief If set to true, next TestUnits will be run
 	*/
 	static bool shouldContinueAtFail = false;
-	
+
 	static string PASSED_OUTPUT  = "[ + ] PASSED  - %1";
 	static string FAILED_OUTPUT  = "[ - ] FAILED  - %1";
 	static string SKIPPED_OUTPUT = "[   ] SKIPPED - %1";
-	
+
 	protected ref array<ref STestUnit> toTest = new array<ref STestUnit>();
 	protected ref map<eSTestCaseStatus, int> results = new map<eSTestCaseStatus, int>();
-	
+
 	/**
 	*	@brief Run predefined set of tests, meant for sUDE mods
 	*/
@@ -37,7 +37,7 @@ class STest : Managed {
 		};
 		STest.run(tests);
 	}
-	
+
 	/**
 	*	@brief Run a single TestUnit
 	*	@param testUnit \p typename - Typename of TestUnit to run
@@ -47,7 +47,7 @@ class STest : Managed {
 		t.addTestUnit(testUnit);
 		t.run();
 	}
-	
+
 	/**
 	*	@brief Run a single TestUnit
 	*	@param testUnits \p array<typename> - array of typenames of TestUnits to run
@@ -57,33 +57,33 @@ class STest : Managed {
 		t.addTestUnits(testUnits);
 		t.run();
 	}
-	
+
 	void clearTestUnits() {
 		toTest.Clear();
 	}
-		
+
 	void addTestUnit(typename testUnit) {
 		if (!testUnit.IsInherited(STestUnit)) return;
 		toTest.Insert(STestUnit.Cast(testUnit.Spawn()));
 	}
-	
+
 	void addTestUnits(array<typename> testUnits) {
 		foreach (typename testUnit : testUnits) {
 			addTestUnit(testUnit);
 		}
 	}
-	
+
 	void run() {
 		clearResults();
-		
+
 		SLOG.d("=======================================================================");
 		SLOG.d("Running tests...");
-		
+
 		foreach (STestUnit unit : toTest) {
 			unit.run();
 			if (unit.hasFailed() && !shouldContinueAtFail) break;
 		}
-		
+
 		SLOG.d("-----------------------------------------------------------------------");
 		foreach (STestUnit unit2 : toTest) {
 			if (unit2.hasFailed()) {
@@ -106,8 +106,8 @@ class STest : Managed {
 		SLOG.d("=======================================================================");
 		if (verbosity == 69) SLOG.c("| NICE! |");
 	}
-	
-	
+
+
 	/**
 	*	@brief Update results and log the output when a TestCase has passed
 	*	@param testCase \p STestCase - test case that has passed
@@ -129,7 +129,7 @@ class STest : Managed {
 			}
 		}
 	}
-	
+
 	/**
 	*	@brief Update results and log the output when a TestCase has failed
 	*	@param testCase \p STestCase - test case that has failed
@@ -143,7 +143,7 @@ class STest : Managed {
 			SLOG.d(2, "Message:  " + testCase.getMessage());
 		}
 	}
-	
+
 	/**
 	*	@brief Update results and log the output when a TestCase has been skipped
 	*	@param testCase \p STestCase - test case that has been skipped
@@ -157,14 +157,14 @@ class STest : Managed {
 			}
 		}
 	}
-	
+
 	protected void clearResults() {
 		results.Clear();
 		results.Set(eSTestCaseStatus.PASSED, 0);
 		results.Set(eSTestCaseStatus.FAILED, 0);
 		results.Set(eSTestCaseStatus.SKIPPED, 0);
 	}
-	
+
 }
 
 

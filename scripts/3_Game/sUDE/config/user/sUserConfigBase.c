@@ -98,7 +98,7 @@ class SUserConfigBase : SJSONSerializable {
 	void getOption(string optionName, out SUserConfigOption<bool> option) {
 		option = getOptionBool(optionName);
 	}
-	
+
 	/**
 	 * @brief Get a float array option based on its name.
 	 * @param optionName

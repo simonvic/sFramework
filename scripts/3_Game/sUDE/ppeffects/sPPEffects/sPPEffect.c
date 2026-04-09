@@ -6,16 +6,16 @@ enum eSPPEPriority {
 }
 
 class SPPEffect : PPERequesterBase {
-	
+
 	protected bool m_initialized;
 	protected PPOperators m_operator = PPOperators.SET;
 	protected int m_priority = eSPPEPriority.DEFAULT;
 	protected bool m_normalized = false;
-	
+
 	override int GetCategoryMask() {
 		return PPERequesterCategory.GAMEPLAY_EFFECTS;
 	}
-	
+
 	override void Start(Param par = null) {
 		super.Start(par);
 		if (!m_initialized) {
@@ -24,12 +24,12 @@ class SPPEffect : PPERequesterBase {
 		}
 		onActivate();
 	}
-	
+
 	override void Stop(Param par = null) {
 		super.Stop(par);
 		onDeactivate();
 	}
-	
+
 	/**
 	*	@brief Check if the ppeffect is active
 	*	@return true if active, false otherwise
@@ -37,21 +37,21 @@ class SPPEffect : PPERequesterBase {
 	bool isActive() {
 		return IsRequesterRunning();
 	}
-	
+
 	/**
 	*	@brief Activate the ppeffect
 	*/
 	void activate() {
 		Start();
 	}
-	
+
 	/**
 	*	@brief Deactivate the ppeffect
 	*/
 	void deactivate() {
 		Stop();
 	}
-	
+
 	/**
 	*	@brief Activate the ppeffect if not active, deactivate it otherwise
 	*/
@@ -62,14 +62,14 @@ class SPPEffect : PPERequesterBase {
 			Start();
 		}
 	}
-	
+
 	/**
 	* @brief Delete all parameters
 	*/
 	void clear() {
 		ClearRequesterData();
 	}
-	
+
 	/**
 	* @brief Reset all currently set parameters to their default values
 	*/
@@ -81,34 +81,34 @@ class SPPEffect : PPERequesterBase {
 	*	@brief Callback invoked ONCE when the ppeffect is activated for the first time
 	*/
 	void onInit();
-	
+
 	/**
 	*	@brief Callback invoked every time the effect is activated
 	*/
 	void onActivate();
-	
+
 	/**
 	*	@brief Callback invoked every time the effect is deactivated
 	*/
 	void onDeactivate();
-	
+
 	////////////////////////////
 	// SETTER HELPER
-	
+
 	void normalized(bool normalized) {
 		m_normalized = normalized;
 	}
-	
+
 	void priority(int priority) {
 		m_priority = priority;
 	}
-	
+
 	void op(PPOperators operator) {
 		m_operator = operator;
 	}
-	
+
 	////////////// VIGNETTE
-	
+
 	/**
 	* @brief Quickly set vignette parameters
 	* 	@param intensity \p float - Intensity of vignette
@@ -118,7 +118,7 @@ class SPPEffect : PPERequesterBase {
 		setVignetteIntensity(intensity);
 		setVignetteColor(color);
 	}
-	
+
 	/**
 	* @brief Quickly set vignette intensity
 	* 	@param intensity \p float - Intensity of vignette
@@ -126,7 +126,7 @@ class SPPEffect : PPERequesterBase {
 	void setVignetteIntensity(float intensity) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_VIGNETTE, intensity);
 	}
-	
+
 	/**
 	* @brief Quickly set vignette color
 	* 	@param color \p SColor - Color of vignette
@@ -134,10 +134,10 @@ class SPPEffect : PPERequesterBase {
 	void setVignetteColor(SColor color) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_VIGNETTECOLOR, color);
 	}
-	
-	
+
+
 	////////////// OVERLAY
-	
+
 	/**
 	* @brief Quickly set overlay parameters
 	* 	@param factor \p float - Factor(strength?) of overlay
@@ -147,7 +147,7 @@ class SPPEffect : PPERequesterBase {
 		setOverlayFactor(factor);
 		setOverlayColor(color);
 	}
-	
+
 	/**
 	* @brief Quickly set overlay factor
 	* 	@param factor \p float - Factor(strength?) of overlay
@@ -155,7 +155,7 @@ class SPPEffect : PPERequesterBase {
 	void setOverlayFactor(float factor) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_OVERLAYFACTOR, factor);
 	}
-	
+
 	/**
 	* @brief Quickly set overlay color
 	* 	@param color \p SColor - Color of overlay
@@ -163,11 +163,11 @@ class SPPEffect : PPERequesterBase {
 	void setOverlayColor(SColor color) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_OVERLAYCOLOR, color);
 	}
-	
-	
+
+
 
 	////////////// RADIAL BLUR
-	
+
 	/**
 	* @brief Quickly set radial blur parameters
 	* 	@param powerX \p float - Horizontal strength
@@ -181,7 +181,7 @@ class SPPEffect : PPERequesterBase {
 		setRadialBlurOffsetX(offsetX);	
 		setRadialBlurOffsetY(offsetY);	
 	}
-	
+
 	/**
 	* @brief Quickly set radial blur power
 	* 	@param power \p float - Horizontal and Vertical strength
@@ -190,7 +190,7 @@ class SPPEffect : PPERequesterBase {
 		setRadialBlurPowerX(power);
 		setRadialBlurPowerY(power);
 	}
-	
+
 	/**
 	* @brief Quickly set radial blur horizontal power
 	* 	@param powerX \p float - Horizontal strength
@@ -198,7 +198,7 @@ class SPPEffect : PPERequesterBase {
 	void setRadialBlurPowerX(float powerX) {
 		setParam(PostProcessEffectType.RadialBlur, PPERadialBlur.PARAM_POWERX, powerX);
 	}
-	
+
 	/**
 	* @brief Quickly set radial blur vertical power
 	* 	@param powerY \p float - Vertical strength
@@ -206,7 +206,7 @@ class SPPEffect : PPERequesterBase {
 	void setRadialBlurPowerY(float powerY) {
 		setParam(PostProcessEffectType.RadialBlur, PPERadialBlur.PARAM_POWERY, powerY);
 	}
-	
+
 	/**
 	* @brief Quickly set radial blur offset
 	* 	@param power \p float - Horizontal and Vertical offset
@@ -215,7 +215,7 @@ class SPPEffect : PPERequesterBase {
 		setRadialBlurOffsetX(offset);
 		setRadialBlurOffsetY(offset);
 	}
-	
+
 	/**
 	* @brief Quickly set radial blur horizontal offset
 	* 	@param offsetX \p float - Horizontal offset
@@ -223,7 +223,7 @@ class SPPEffect : PPERequesterBase {
 	void setRadialBlurOffsetX(float offsetX) {
 		setParam(PostProcessEffectType.RadialBlur, PPERadialBlur.PARAM_OFFSETX, offsetX);
 	}
-	
+
 	/**
 	* @brief Quickly set radial blur vertical offset
 	* 	@param offsetY \p float - Vertical offset
@@ -231,12 +231,12 @@ class SPPEffect : PPERequesterBase {
 	void setRadialBlurOffsetY(float offsetY) {
 		setParam(PostProcessEffectType.RadialBlur, PPERadialBlur.PARAM_OFFSETY, offsetY);
 	}
-	
-	
-	
-	
+
+
+
+
 	////////////// FILM GRAIN
-	
+
 	/**
 	* @brief Quickly set film grain parameters
 	* 	@param sharpness \p float - Sharpness
@@ -246,7 +246,7 @@ class SPPEffect : PPERequesterBase {
 		setFilmGrainSharpness(sharpness);
 		setFilmGrainSize(grainSize);
 	}
-	
+
 	/**
 	* @brief Quickly set film grain sharpness
 	* 	@param sharpness \p float - Sharpness
@@ -254,7 +254,7 @@ class SPPEffect : PPERequesterBase {
 	void setFilmGrainSharpness(float sharpness) {
 		setParam(PostProcessEffectType.FilmGrain, PPEFilmGrain.PARAM_SHARPNESS, sharpness);
 	}
-	
+
 	/**
 	* @brief Quickly set film grain size
 	* 	@param grainSize \p float - Grain size
@@ -262,13 +262,13 @@ class SPPEffect : PPERequesterBase {
 	void setFilmGrainSize(float grainSize) {
 		setParam(PostProcessEffectType.FilmGrain, PPEFilmGrain.PARAM_GRAINSIZE, grainSize);
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	////////////// GAUSSIAN BLUR
-	
+
 	/**
 	* @brief Quickly set gaussian blur parameters
 	* 	@param intensity \p float - Intensity
@@ -276,11 +276,11 @@ class SPPEffect : PPERequesterBase {
 	void setGausBlur(float intensity) {
 		setParam(PostProcessEffectType.GaussFilter, PPEGaussFilter.PARAM_INTENSITY, intensity);
 	}
-	
-	
-	
+
+
+
 	////////////// CHROMATIC ABERATION
-	
+
 	/**
 	* @brief Quickly set chromatic aberration parameters
 	* 	@param power \p float - Horizontal and Vertical intensity
@@ -288,7 +288,7 @@ class SPPEffect : PPERequesterBase {
 	void setChromAber(float power) {
 		setChromAber(power, power);
 	}
-	
+
 	/**
 	* @brief Quickly set chromatic aberration parameters
 	* 	@param powerX \p float - Horizontal intensity
@@ -298,7 +298,7 @@ class SPPEffect : PPERequesterBase {
 		setChromAberPowerX(powerX);
 		setChromAberPowerY(powerY);
 	}
-	
+
 	/**
 	* @brief Quickly set chromatic horizontal intensity
 	* 	@param powerX \p float - Horizontal intensity
@@ -306,7 +306,7 @@ class SPPEffect : PPERequesterBase {
 	void setChromAberPowerX(float powerX) {
 		setParam(PostProcessEffectType.ChromAber, PPEChromAber.PARAM_POWERX, powerX);
 	}
-	
+
 	/**
 	* @brief Quickly set chromatic vertical intensity
 	* 	@param powerY \p float - Vertical intensity
@@ -314,12 +314,12 @@ class SPPEffect : PPERequesterBase {
 	void setChromAberPowerY(float powerY) {
 		setParam(PostProcessEffectType.ChromAber, PPEChromAber.PARAM_POWERY, powerY);
 	}
-	
-	
-	
-	
+
+
+
+
 	////////////// MAGNIFICATION LENS
-	
+
 	/**
 	* @brief Quickly set magnification lens parameters
 	* 	@param intensity \p float - Magnification power
@@ -333,7 +333,7 @@ class SPPEffect : PPERequesterBase {
 		setLensCenterY(centerY);
 		setLensChromAber(chromAber);
 	}
-	
+
 	/**
 	* @brief Quickly set magnification lens intensity
 	* 	@param intensity \p float - Magnification power
@@ -341,7 +341,7 @@ class SPPEffect : PPERequesterBase {
 	void setLensIntensity(float intensity) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_LENSDISTORT, intensity);
 	}
-	
+
 	/**
 	* @brief Quickly set magnification horizontal position
 	* 	@param centerX \p float - Horizontal screen position
@@ -349,7 +349,7 @@ class SPPEffect : PPERequesterBase {
 	void setLensCenterX(float centerX) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_LENSCENTERX, centerX);
 	}
-	
+
 	/**
 	* @brief Quickly set magnification vertical position
 	* 	@param centerY \p float - Vertical screen position
@@ -357,7 +357,7 @@ class SPPEffect : PPERequesterBase {
 	void setLensCenterY(float centerY) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_LENSCENTERY, centerY);
 	}
-	
+
 	/**
 	* @brief Quickly set magnification lens chromatic aberration
 	* 	@param chromAber \p float - Lens chromatic aberration
@@ -365,12 +365,12 @@ class SPPEffect : PPERequesterBase {
 	void setLensChromAber(float chromAber) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_LENSCENTERY, chromAber);
 	}
-	
-	
-	
-	
+
+
+
+
 	////////////// MOTION BLUR
-	
+
 	/**
 	* @brief Quickly set motion blur parameters
 	* 	@param power \p float - Power
@@ -384,7 +384,7 @@ class SPPEffect : PPERequesterBase {
 		setMotionBlurMinAnglePerSec(minAnglePerSec);
 		setMotionBlurMaxAnglePerSec(maxAnglePerSec);
 	}
-	
+
 	/**
 	* @brief Quickly set motion blur power
 	* 	@param power \p float - Power
@@ -392,7 +392,7 @@ class SPPEffect : PPERequesterBase {
 	void setMotionBlurPower(float power) {
 		setParam(PostProcessEffectType.RotBlur, PPERotBlur.PARAM_POWER, power);
 	}
-	
+
 	/**
 	* @brief Quickly set motion blur minimum depth
 	* 	@param minDepth \p float - Minimum depth from the camera position
@@ -400,7 +400,7 @@ class SPPEffect : PPERequesterBase {
 	void setMotionBlurMinDepth(float minDepth) {
 		setParam(PostProcessEffectType.RotBlur, PPERotBlur.PARAM_MINDEPTH, minDepth);
 	}
-	
+
 	/**
 	* @brief Quickly set motion blur maximum depth
 	* 	@param maxDepth \p float - Maximum depth from the camera position
@@ -408,7 +408,7 @@ class SPPEffect : PPERequesterBase {
 	void setMotionBlurMaxDepth(float maxDepth) {
 		setParam(PostProcessEffectType.RotBlur, PPERotBlur.PARAM_MAXDEPTH, maxDepth);
 	}
-	
+
 	/**
 	* @brief Quickly set motion blur minimum angle per second
 	* 	@param maxDepth \p float - Minimum angle
@@ -416,7 +416,7 @@ class SPPEffect : PPERequesterBase {
 	void setMotionBlurMinAnglePerSec(float minAnglePerSec) {
 		setParam(PostProcessEffectType.RotBlur, PPERotBlur.PARAM_MINANGLEPERSEC, minAnglePerSec);
 	}
-	
+
 	/**
 	* @brief Quickly set motion blur maximum angle per second
 	* 	@param maxDepth \p float - Maximum angle
@@ -424,14 +424,14 @@ class SPPEffect : PPERequesterBase {
 	void setMotionBlurMaxAnglePerSec(float maxAnglePerSec) {
 		setParam(PostProcessEffectType.RotBlur, PPERotBlur.PARAM_MAXANGLEPERSEC, maxAnglePerSec);
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	////////////// BLOOM
-	
+
 	/**
 	* @brief Quickly set bloom parameters
 	* 	@param steepness \p float - The "smoothness" of the bloom (also used as strength setting instead of `Intensity`)	
@@ -443,7 +443,7 @@ class SPPEffect : PPERequesterBase {
 		setBloomIntensity(intensity);		
 		setBloomTreshold(treshold);		
 	}
-	
+
 	/**
 	* @brief Quickly set bloom steepness
 	* 	@param steepness \p float - The "smoothness" of the bloom (also used as strength setting instead of `Intensity`)	
@@ -451,7 +451,7 @@ class SPPEffect : PPERequesterBase {
 	void setBloomSteepness(float steepness) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_BLOOMSTEEPNESS, steepness);
 	}
-	
+
 	/**
 	* @brief Quickly set bloom intensity
 	* 	@param intensity \p float - Intensity	
@@ -459,7 +459,7 @@ class SPPEffect : PPERequesterBase {
 	void setBloomIntensity(float intensity) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_BLOOMINTENSITY, intensity);
 	}
-	
+
 	/**
 	* @brief Quickly set bloom treshold
 	* 	@param treshold \p float - Treshold of bloom, lower treshold means bloom on less reflective materials
@@ -467,12 +467,12 @@ class SPPEffect : PPERequesterBase {
 	void setBloomTreshold(float treshold) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_BLOOMTHRESHOLD, treshold);
 	}
-	
-	
-	
+
+
+
 	////////////// GODRAYS
 	// TODO: complete doc
-	
+
 	/**
 	*	@brief Quickly set godrays parameters
 	*	 @param intensity \p float - 
@@ -494,7 +494,7 @@ class SPPEffect : PPERequesterBase {
 		setGodraysVerticalIntensity(verticalIntensity);
 		setGodraysDiagonalIntensity(diagonalIntensity);
 	}
-	
+
 	/**
 	*	@brief Quickly set godrays intensity
 	*	 @param intensity \p float - 
@@ -502,7 +502,7 @@ class SPPEffect : PPERequesterBase {
 	void setGodraysIntensity(float intensity) {
 		setParam(PostProcessEffectType.GodRays, PPEGodRays.PARAM_INTENSITY, intensity);
 	}
-	
+
 	/**
 	*	@brief Quickly set godrays overburn
 	*	 @param overburn \p float - 
@@ -510,7 +510,7 @@ class SPPEffect : PPERequesterBase {
 	void setGodraysOverburn(float overburn) {
 		setParam(PostProcessEffectType.GodRays, PPEGodRays.PARAM_OVERBURNINTENSITY, overburn);
 	}
-	
+
 	/**
 	*	@brief Quickly set godrays overburn start
 	*	 @param overburnStart \p float - 
@@ -518,8 +518,8 @@ class SPPEffect : PPERequesterBase {
 	void setGodraysOverburnStart(float overburnStart) {
 		setParam(PostProcessEffectType.GodRays, PPEGodRays.PARAM_OVERBURNSTART, overburnStart);
 	}
-	
-	
+
+
 	/**
 	*	@brief Quickly set godrays overburn end
 	*	 @param overburnEnd \p float - 
@@ -527,7 +527,7 @@ class SPPEffect : PPERequesterBase {
 	void setGodraysOverburnEnd(float overburnEnd) {
 		setParam(PostProcessEffectType.GodRays, PPEGodRays.PARAM_OVERBURNEND, overburnEnd);
 	}
-	
+
 	/**
 	*	@brief Quickly set godrays mask
 	*	 @param mask \p float - 
@@ -536,34 +536,34 @@ class SPPEffect : PPERequesterBase {
 		//Warning, not to be used until DECLARE_RESOURCE_NAME solution is implemented!
 		//setParam(PostProcessEffectType.GodRays, PPEGodRays.PARAM_SUNMASKMAT, mask);
 	}
-	
+
 	/**
 	*	@brief Quickly set godrays sun size
 	*	 @param size \p float - 
 	*/
 	void setGodraysSize(float size) {
-		
+
 	}
-	
+
 	/**
 	*	@brief Quickly set godrays vertical intensity
 	*	 @param verticalIntensity \p float - 
 	*/
 	void setGodraysVerticalIntensity(float verticalIntensity) {
-		
+
 	}
-	
+
 	/**
 	*	@brief Quickly set godrays diagonal intensity
 	*	 @param diagonalIntensity \p float - 
 	*/
 	void setGodraysDiagonalIntensity(float diagonalIntensity) {
-		
+
 	}
-	
-	
+
+
 	////////////// CAMERA EFFECTS
-	
+
 	/**
 	* @brief Quickly set camera effects parameters
 	* 	@param saturation \p float - Saturation of the camera
@@ -573,8 +573,8 @@ class SPPEffect : PPERequesterBase {
 		setSaturation(saturation);
 		setColorization(colorization);
 	}
-	
-	
+
+
 	/**
 	* @brief Quickly set saturation
 	* 	@param saturation \p float - Saturation of the camera
@@ -582,7 +582,7 @@ class SPPEffect : PPERequesterBase {
 	void setSaturation(float saturation) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_SATURATION, saturation);
 	}
-	
+
 	/**
 	* @brief Quickly set colorization
 	* 	@param colorization \p SColor - Some kind of instagram color effect lol (pretty cool)
@@ -590,12 +590,12 @@ class SPPEffect : PPERequesterBase {
 	void setColorization(SColor colorization) {
 		setParam(PostProcessEffectType.Glow, PPEGlow.PARAM_COLORIZATIONCOLOR, colorization);
 	}
-	
-	
+
+
 	////////////////////////////////////////////////////////////
 	//				LOW LEVEL SETTERS
 
-	
+
 	/**
 	* @brief Set a float parameter, (instantiate the maps if not instantiated)
 	* 	@param ppeType - Type of post processing effect
@@ -608,7 +608,7 @@ class SPPEffect : PPERequesterBase {
 	void setParam(PostProcessEffectType ppeType, int paramIndex, float paramValue) {
 		SetTargetValueFloat(ppeType, paramIndex, m_normalized, paramValue, m_priority, m_operator);
 	}
-	
+
 	/**
 	* @brief Set a float parameter, (instantiate the maps if not instantiated)
 	* 	@param ppeType - Type of post processing effect
@@ -621,7 +621,7 @@ class SPPEffect : PPERequesterBase {
 	void setParam(PostProcessEffectType ppeType, int paramIndex, int paramValue) {
 		SetTargetValueInt(ppeType, paramIndex, m_normalized, paramValue, m_priority, m_operator);
 	}
-	
+
 	/**
 	* @brief Set a float parameter, (instantiate the maps if not instantiated)
 	* 	@param ppeType - Type of post processing effect
@@ -634,7 +634,7 @@ class SPPEffect : PPERequesterBase {
 	void setParam(PostProcessEffectType ppeType, int paramIndex, bool paramValue) {
 		SetTargetValueBool(ppeType, paramIndex, paramValue, m_priority, m_operator);
 	}
-	
+
 	/**
 	* @brief Set a float parameter, (instantiate the maps if not instantiated)
 	* 	@param ppeType - Type of post processing effect
@@ -647,5 +647,5 @@ class SPPEffect : PPERequesterBase {
 	void setParam(PostProcessEffectType ppeType, int paramIndex, SColor paramValue) {
 		SetTargetValueColor(ppeType, paramIndex, paramValue.getRGBANormalizedArray(), m_priority, m_operator);
 	}
-	
+
 }

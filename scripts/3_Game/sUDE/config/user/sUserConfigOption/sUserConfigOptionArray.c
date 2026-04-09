@@ -1,15 +1,15 @@
 class SUserConfigOptionArray<Class T> : SUserConfigOptionBase {
-	
+
 	void SUserConfigOptionArray(array<T> value, SConstraintBase constraint = null, SUserConfigOptionInfo info = null) {
 		m_constraint = constraint;
 		super.setParam(new Param1<array<T>>(value));
 		m_info = info;
 	}
-	
+
 	array<T> get() {
 		return Param1<array<T>>.Cast(getParam()).param1;
 	}
-	
+
 	void set(array<T> value) {
 		setParam(new Param1<array<T>>(value));
 	}
@@ -30,6 +30,6 @@ class SUserConfigOptionArray<Class T> : SUserConfigOptionBase {
 			}
 		}
 	}
-	
+
 	protected void onValueChange(array<T> previousValue, array<T> newValue);
 }
